@@ -9,12 +9,13 @@ usage: SigSci.py [-h] [--from  =<value>] [--until =<value>]
                  [--server SERVER] [--limit LIMIT]
                  [--field {all,totalCount,next,data}] [--file FILE] [--list]
                  [--format {json,csv}] [--sort {desc,asc}] [--agents] [--feed]
-                 [--whitelist-parameters] [--whitelist-parameters-add]
-                 [--whitelist-parameters-delete] [--whitelist-paths]
-                 [--whitelist-paths-add] [--whitelist-paths-delete]
-                 [--whitelist] [--whitelist-add] [--whitelist-delete]
-                 [--blacklist] [--blacklist-add] [--blacklist-delete]
-                 [--redactions] [--redactions-add] [--redactions-delete]
+                 [--timeseries] [--rollup ROLLUP] [--whitelist-parameters]
+                 [--whitelist-parameters-add] [--whitelist-parameters-delete]
+                 [--whitelist-paths] [--whitelist-paths-add]
+                 [--whitelist-paths-delete] [--whitelist] [--whitelist-add]
+                 [--whitelist-delete] [--blacklist] [--blacklist-add]
+                 [--blacklist-delete] [--redactions] [--redactions-add]
+                 [--redactions-delete]
 
 Signal Sciences API Client.
 
@@ -37,6 +38,8 @@ optional arguments:
   --sort {desc,asc}     Specify sort order (default: desc).
   --agents              Retrieve agent metrics.
   --feed                Retrieve data feed.
+  --timeseries          Retrieve timeseries data.
+  --rollup ROLLUP       Rollup interval in seconds for timeseries requests.
   --whitelist-parameters
                         Retrieve whitelist parameters.
   --whitelist-parameters-add
