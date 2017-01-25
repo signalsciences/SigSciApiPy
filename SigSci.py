@@ -33,9 +33,12 @@ SORT   = None # example: SORT = 'asc'
 ###########################################
 
 # default for retriveing agent metrics
-AGENTS = False
+AGENTS     = False
 # default for feed requests
-FEED   = False
+FEED       = False
+# default for timeseries
+TIMESERIES = False
+ROLLUP     = 60
 # default for whitelist parameters
 WHITELIST_PARAMETERS        = False
 WHITELIST_PARAMETERS_ADD    = False
@@ -119,6 +122,7 @@ class SigSciAPI:
     REQEUSTS_EP   = '/requests'
     AGENTS_EP     = '/agents'
     FEED_EP       = '/feed/requests'
+    TIMESERIES_EP = '/timeseries/requests'
     WLPARAMS_EP   = '/paramwhitelist'
     WLPATHS_EP    = '/pathwhitelist'
     WHITELIST_EP  = '/whitelist'
@@ -338,6 +342,48 @@ class SigSciAPI:
             print('Error: %s ' % str(e))
             print('Query: %s ' % url)
 
+    def get_timeseries(self, tag, rollup=60):
+        """
+        SigSciAPI.get_timeseries(tag, rollup)
+        
+        Before calling, set:
+            (Required):
+                SigSciAPI.corp
+                SigSciAPI.site
+                SigSciAPI.tags
+            
+            (Optional):
+                SigSciAPI.from_time
+                SigSciAPI.until_time
+                SigSciAPI.file
+                SigSciAPI.format
+        
+        """
+        # https://dashboard.signalsciences.net/documentation/api#_corps__corpName__sites__siteName__timeseries_requests_get
+        # /corps/{corpName}/sites/{siteName}/timeseries/requests
+        
+        try:
+            headers = { 'Content-type': 'application/json', 'User-Agent': self.ua }
+            self.query = '?tag=%s&rollup=%s' % (str(tag).strip(), str(rollup).strip())
+            
+            if None != self.from_time:
+                self.query += '&from=%s' % str(self.from_time)
+            
+            if None != self.until_time:
+                self.query += '&until=%s' % str(self.until_time)
+
+            url        = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.TIMESERIES_EP + self.query
+            r          = requests.get(url, cookies=self.authn.cookies, headers=headers)
+            j          = json.loads(r.text)
+
+            self.json_out(j)
+
+        except Exception as e:
+            print('Error: %s ' % str(e))
+            print('Query: %s ' % url)
+            quit()
+
+    
     def get_agent_metrics(self):
         # https://dashboard.signalsciences.net/documentation/api#_corps__corpName__sites__siteName__agents_get
         # /corps/{corpName}/sites/{siteName}/agents
@@ -531,6 +577,8 @@ if __name__ == '__main__':
     parser.add_argument('--sort',   help='Specify sort order (default: desc).', type=str, default=None, choices=['desc', 'asc'])
     parser.add_argument('--agents', help='Retrieve agent metrics.', default=False, action='store_true')
     parser.add_argument('--feed',   help='Retrieve data feed.', default=False, action='store_true')
+    parser.add_argument('--timeseries',   help='Retrieve timeseries data.', default=False, action='store_true')
+    parser.add_argument('--rollup',   help='Rollup interval in seconds for timeseries requests.', default=60)
     parser.add_argument('--whitelist-parameters',  help='Retrieve whitelist parameters.', default=False, action='store_true')
     parser.add_argument('--whitelist-parameters-add',  help='Add whitelist parameters.', default=False, action='store_true')
     parser.add_argument('--whitelist-parameters-delete',  help='Delete whitelist parameters.', default=False, action='store_true')
@@ -578,6 +626,8 @@ if __name__ == '__main__':
     sigsci.sort       = os.environ.get("SIGSCI_SORT")     if None != os.environ.get('SIGSCI_SORT') else SORT
     sigsci.agents     = os.environ.get("SIGSCI_AGENTS")   if None != os.environ.get('SIGSCI_AGENTS') else AGENTS
     sigsci.feed       = os.environ.get("SIGSCI_FEED")     if None != os.environ.get('SIGSCI_FEED') else FEED
+    sigsci.timeseries = os.environ.get("SIGSCI_TIMESERIES")                                   if None != os.environ.get('SIGSCI_TIMESERIES') else TIMESERIES
+    sigsci.rollup     = os.environ.get("SIGSCI_ROLLUP")                                       if None != os.environ.get('SIGSCI_ROLLUP') else ROLLUP
     sigsci.whitelist_parameters        = os.environ.get("SIGSCI_WHITELIST_PARAMETERS")        if None != os.environ.get('SIGSCI_WHITELIST_PARAMETERS') else WHITELIST_PARAMETERS
     sigsci.whitelist_parameters_add    = os.environ.get("SIGSCI_WHITELIST_PARAMETERS_ADD")    if None != os.environ.get('SIGSCI_WHITELIST_PARAMETERS_ADD') else WHITELIST_PARAMETERS_ADD
     sigsci.whitelist_parameters_delete = os.environ.get("SIGSCI_WHITELIST_PARAMETERS_DELETE") if None != os.environ.get('SIGSCI_WHITELIST_PARAMETERS_DELETE') else WHITELIST_PARAMETERS_DELETE
@@ -608,6 +658,8 @@ if __name__ == '__main__':
     sigsci.sort       = arguments.sort       if None != arguments.sort else sigsci.sort
     sigsci.agents     = arguments.agents     if None != arguments.agents else sigsci.agents
     sigsci.feed       = arguments.feed       if None != arguments.feed else sigsci.feed
+    sigsci.timeseries = arguments.timeseries if None != arguments.timeseries else sigsci.timeseries
+    sigsci.rollup     = arguments.rollup     if None != arguments.rollup else sigsci.rollup
     sigsci.whitelist_parameters        = arguments.whitelist_parameters        if None != arguments.whitelist_parameters else sigsci.whitelist_parameters
     sigsci.whitelist_parameters_add    = arguments.whitelist_parameters_add    if None != arguments.whitelist_parameters_add else sigsci.whitelist_parameters_add
     sigsci.whitelist_parameters_delete = arguments.whitelist_parameters_delete if None != arguments.whitelist_parameters_delete else sigsci.whitelist_parameters_delete
@@ -624,7 +676,7 @@ if __name__ == '__main__':
     sigsci.redactions_add              = arguments.redactions_add              if None != arguments.redactions_add else sigsci.redactions_add
     sigsci.redactions_delete           = arguments.redactions_delete           if None != arguments.redactions_delete else sigsci.redactions_delete
     
-    # determine if we are getting agent metrics or performing a query.
+    # determine what we are doing.
     if sigsci.agents:
         # authenticate and get agent metrics
         if sigsci.authenticate():
@@ -634,6 +686,13 @@ if __name__ == '__main__':
         # authenticate and get feed
         if sigsci.authenticate():
             sigsci.get_feed_requests()
+    
+    elif sigsci.timeseries:
+        # authenticate and get timeseries data
+        if sigsci.authenticate():
+            if None != sigsci.tags:
+                for tag in sigsci.tags:
+                    sigsci.get_timeseries(tag, sigsci.rollup)
     
     elif sigsci.whitelist_parameters:
         # authenticate and get whitelist parameters
