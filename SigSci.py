@@ -25,6 +25,7 @@ UNTIL  = None # example: UNTIL = '-4h'
 TAGS   = None # example: TAGS = 'SQLI XSS TRAVERSAL'
 CTAGS  = None # example: CTAGS = 'bad-bot failed-login'
 SERVER = None # example: SERVER = 'example.com'
+IP     = None # example: IP = '66.228.162.36'
 LIMIT  = None # example: LIMIT = 250
 FIELD  = None # example: FIELD = 'all'
 FILE   = None # example: FILE = '/tmp/sigsci.json'
@@ -39,6 +40,9 @@ FEED       = False
 # default for timeseries
 TIMESERIES = False
 ROLLUP     = 60
+# list events
+LIST_EVENTS = False
+EVENT_BY_ID = None
 # default for whitelist parameters
 WHITELIST_PARAMETERS        = False
 WHITELIST_PARAMETERS_ADD    = False
@@ -107,27 +111,30 @@ class SigSciAPI:
     tags       = None
     ctags      = None
     server     = None
+    ip         = None
     limit      = 100
     field      = 'data'
     file       = None
     format     = 'json'
     sort       = 'desc'
     ua         = 'Signal Sciences Client API (Python)'
+    event_by_id = None
     
     # api end points
-    LOGIN_EP      = '/auth/login'
-    LOGOUT_EP     = '/auth/logout'
-    CORPS_EP      = '/corps/'
-    SITES_EP      = '/sites/'
-    REQEUSTS_EP   = '/requests'
-    AGENTS_EP     = '/agents'
-    FEED_EP       = '/feed/requests'
-    TIMESERIES_EP = '/timeseries/requests'
-    WLPARAMS_EP   = '/paramwhitelist'
-    WLPATHS_EP    = '/pathwhitelist'
-    WHITELIST_EP  = '/whitelist'
-    BLACKLIST_EP  = '/blacklist'
-    REDACTIONS_EP = '/redactions'
+    LOGIN_EP       = '/auth/login'
+    LOGOUT_EP      = '/auth/logout'
+    CORPS_EP       = '/corps/'
+    SITES_EP       = '/sites/'
+    REQEUSTS_EP    = '/requests'
+    AGENTS_EP      = '/agents'
+    FEED_EP        = '/feed/requests'
+    TIMESERIES_EP  = '/timeseries/requests'
+    EVENTS_EP      = '/events'
+    WLPARAMS_EP    = '/paramwhitelist'
+    WLPATHS_EP     = '/pathwhitelist'
+    WHITELIST_EP   = '/whitelist'
+    BLACKLIST_EP   = '/blacklist'
+    REDACTIONS_EP  = '/redactions'
 
     def authenticate(self):
         """
@@ -175,6 +182,9 @@ class SigSciAPI:
         
         if None != self.server:
             self.query += 'server:%s ' % str(self.server)
+        
+        if None != self.ip:
+            self.query += 'ip:%s ' % str(self.ip)
         
         if None != self.sort:
             self.query += 'sort:time-%s ' % str(self.sort)
@@ -383,7 +393,68 @@ class SigSciAPI:
             print('Query: %s ' % url)
             quit()
 
-    
+    def get_list_events(self):
+        """
+        SigSciAPI.get_list_events()
+        
+        Before calling, set:
+            (Required):
+                SigSciAPI.corp
+                SigSciAPI.site
+            
+            (Optional):
+                SigSciAPI.tags
+                SigSciAPI.from_time
+                SigSciAPI.until_time
+                SigSciAPI.file
+                SigSciAPI.format
+        
+        """
+        # https://dashboard.signalsciences.net/documentation/api#_corps__corpName__sites__siteName__events_get
+        # /corps/{corpName}/sites/{siteName}/events
+        try:
+            headers = { 'Content-type': 'application/json', 'User-Agent': self.ua }
+            url     = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.EVENTS_EP
+            r       = requests.get(url, cookies=self.authn.cookies, headers=headers)
+            j       = json.loads(r.text)
+
+            self.json_out(j)
+
+        except Exception as e:
+            print('Error: %s ' % str(e))
+            print('Query: %s ' % url)
+            quit()
+
+    def get_event_by_id(self):
+        """
+        SigSciAPI.get_event_by_id()
+        
+        Before calling, set:
+            (Required):
+                SigSciAPI.corp
+                SigSciAPI.site
+                SigSciAPI.event_id
+            
+            (Optional):
+                SigSciAPI.file
+                SigSciAPI.format
+        
+        """
+        # https://dashboard.signalsciences.net/documentation/api#_corps__corpName__sites__siteName__events__eventID__get
+        # /corps/{corpName}/sites/{siteName}/events/{eventID}
+        try:
+            headers = { 'Content-type': 'application/json', 'User-Agent': self.ua }
+            url     = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.EVENTS_EP + '/' + self.event_by_id
+            r       = requests.get(url, cookies=self.authn.cookies, headers=headers)
+            j       = json.loads(r.text)
+
+            self.json_out(j)
+
+        except Exception as e:
+            print('Error: %s ' % str(e))
+            print('Query: %s ' % url)
+            quit()
+        
     def get_agent_metrics(self):
         # https://dashboard.signalsciences.net/documentation/api#_corps__corpName__sites__siteName__agents_get
         # /corps/{corpName}/sites/{siteName}/agents
@@ -569,6 +640,7 @@ if __name__ == '__main__':
     parser.add_argument('--tags',   help='Filter results on one or more tags.', nargs='*')
     parser.add_argument('--ctags',  help='Filter results on one or more custom tags.', nargs='*')
     parser.add_argument('--server', help='Filter results by server name.', default=None)
+    parser.add_argument('--ip',     help='Filter results by remote ip.', default=None)
     parser.add_argument('--limit',  help='Limit the number of results returned from the server (default: 100).', type=int, default=100)
     parser.add_argument('--field',  help='Specify fields to return (default: data).', type=str, default=None, choices=['all', 'totalCount', 'next', 'data'])
     parser.add_argument('--file',   help='Output results to the specified file.', type=str, default=None)
@@ -579,6 +651,8 @@ if __name__ == '__main__':
     parser.add_argument('--feed',   help='Retrieve data feed.', default=False, action='store_true')
     parser.add_argument('--timeseries',   help='Retrieve timeseries data.', default=False, action='store_true')
     parser.add_argument('--rollup',   help='Rollup interval in seconds for timeseries requests.', default=60)
+    parser.add_argument('--list-events',   help='List events (flagged IPs).', default=False, action='store_true')
+    parser.add_argument('--event-by-id',   help='Get an event by event ID.', type=str, default=None, dest='event_by_id', metavar='=<value>')
     parser.add_argument('--whitelist-parameters',  help='Retrieve whitelist parameters.', default=False, action='store_true')
     parser.add_argument('--whitelist-parameters-add',  help='Add whitelist parameters.', default=False, action='store_true')
     parser.add_argument('--whitelist-parameters-delete',  help='Delete whitelist parameters.', default=False, action='store_true')
@@ -619,6 +693,7 @@ if __name__ == '__main__':
     sigsci.tags       = os.environ.get("SIGSCI_TAGS")     if None != os.environ.get('SIGSCI_TAGS') else TAGS
     sigsci.ctags      = os.environ.get("SIGSCI_CTAGS")    if None != os.environ.get('SIGSCI_CTAGS') else CTAGS
     sigsci.server     = os.environ.get("SIGSCI_SERVER")   if None != os.environ.get('SIGSCI_SERVER') else SERVER
+    sigsci.ip         = os.environ.get("SIGSCI_IP")       if None != os.environ.get('SIGSCI_IP') else IP
     sigsci.limit      = os.environ.get("SIGSCI_LIMIT")    if None != os.environ.get('SIGSCI_LIMIT') else LIMIT
     sigsci.field      = os.environ.get("SIGSCI_FIELD")    if None != os.environ.get('SIGSCI_FIELD') else FIELD
     sigsci.file       = os.environ.get("SIGSCI_FILE")     if None != os.environ.get('SIGSCI_FILE') else FILE
@@ -628,6 +703,8 @@ if __name__ == '__main__':
     sigsci.feed       = os.environ.get("SIGSCI_FEED")     if None != os.environ.get('SIGSCI_FEED') else FEED
     sigsci.timeseries = os.environ.get("SIGSCI_TIMESERIES")                                   if None != os.environ.get('SIGSCI_TIMESERIES') else TIMESERIES
     sigsci.rollup     = os.environ.get("SIGSCI_ROLLUP")                                       if None != os.environ.get('SIGSCI_ROLLUP') else ROLLUP
+    sigsci.list_events                 = os.environ.get("SIGSCI_LIST_EVENTS")                 if None != os.environ.get('SIGSCI_LIST_EVENTS') else LIST_EVENTS
+    sigsci.event_by_id                 = os.environ.get("SIGSCI_EVENT_BY_ID")                 if None != os.environ.get('SIGSCI_EVENT_BY_ID') else EVENT_BY_ID
     sigsci.whitelist_parameters        = os.environ.get("SIGSCI_WHITELIST_PARAMETERS")        if None != os.environ.get('SIGSCI_WHITELIST_PARAMETERS') else WHITELIST_PARAMETERS
     sigsci.whitelist_parameters_add    = os.environ.get("SIGSCI_WHITELIST_PARAMETERS_ADD")    if None != os.environ.get('SIGSCI_WHITELIST_PARAMETERS_ADD') else WHITELIST_PARAMETERS_ADD
     sigsci.whitelist_parameters_delete = os.environ.get("SIGSCI_WHITELIST_PARAMETERS_DELETE") if None != os.environ.get('SIGSCI_WHITELIST_PARAMETERS_DELETE') else WHITELIST_PARAMETERS_DELETE
@@ -651,6 +728,7 @@ if __name__ == '__main__':
     sigsci.tags       = arguments.tags       if None != arguments.tags else sigsci.tags
     sigsci.ctags      = arguments.ctags      if None != arguments.ctags else sigsci.ctags        
     sigsci.server     = arguments.server     if None != arguments.server else sigsci.server
+    sigsci.ip         = arguments.ip         if None != arguments.ip else sigsci.ip
     sigsci.limit      = arguments.limit      if None != arguments.limit else sigsci.limit
     sigsci.field      = arguments.field      if None != arguments.field else sigsci.field
     sigsci.file       = arguments.file       if None != arguments.file else sigsci.file
@@ -660,6 +738,8 @@ if __name__ == '__main__':
     sigsci.feed       = arguments.feed       if None != arguments.feed else sigsci.feed
     sigsci.timeseries = arguments.timeseries if None != arguments.timeseries else sigsci.timeseries
     sigsci.rollup     = arguments.rollup     if None != arguments.rollup else sigsci.rollup
+    sigsci.list_events                 = arguments.list_events                 if None != arguments.list_events else sigsci.list_events
+    sigsci.event_by_id                 = arguments.event_by_id                 if None != arguments.event_by_id else sigsci.event_by_id
     sigsci.whitelist_parameters        = arguments.whitelist_parameters        if None != arguments.whitelist_parameters else sigsci.whitelist_parameters
     sigsci.whitelist_parameters_add    = arguments.whitelist_parameters_add    if None != arguments.whitelist_parameters_add else sigsci.whitelist_parameters_add
     sigsci.whitelist_parameters_delete = arguments.whitelist_parameters_delete if None != arguments.whitelist_parameters_delete else sigsci.whitelist_parameters_delete
@@ -694,6 +774,16 @@ if __name__ == '__main__':
                 for tag in sigsci.tags:
                     sigsci.get_timeseries(tag, sigsci.rollup)
     
+    elif sigsci.list_events:
+        # authenticate and get event data
+        if sigsci.authenticate():
+            sigsci.get_list_events()
+   
+    elif None != sigsci.event_by_id:
+         # authenticate and get event data
+        if sigsci.authenticate():
+            sigsci.get_event_by_id()
+
     elif sigsci.whitelist_parameters:
         # authenticate and get whitelist parameters
         if sigsci.authenticate():
