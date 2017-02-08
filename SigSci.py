@@ -417,7 +417,7 @@ class SigSciAPI:
         # /corps/{corpName}/sites/{siteName}/events
         try:
             headers = { 'Content-type': 'application/json', 'User-Agent': self.ua }
-            url     = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.EVENTS_EP
+            url     = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.EVENTS_EP + '?limit=' + str(self.limit)
             r       = requests.get(url, cookies=self.authn.cookies, headers=headers)
             j       = json.loads(r.text)
 

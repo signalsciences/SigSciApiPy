@@ -70,13 +70,13 @@ optional arguments:
 
 ### Example Usage
 
-Return the most recent 100 rows for all tags.
-
-`./SigSci.py`
-
 Display help.
 
 `./SigSci.py -h`
+
+Return the most recent 100 rows for all tags.
+
+`./SigSci.py`
 
 Return the most recent 1000 rows within the last hour for all tags.
 
@@ -97,6 +97,10 @@ Retrieve agent metrics.
 Requests feed (bulk download).
 
 `./SigSci.py --feed`
+
+Retrieve list of events.
+`./SigSci.py --list-events`
+
 
 ### Example Module Usage
 
