@@ -6,16 +6,17 @@ Signal Sciences Python API Client
 ```
 usage: SigSci.py [-h] [--from  =<value>] [--until =<value>]
                  [--tags [TAGS [TAGS ...]]] [--ctags [CTAGS [CTAGS ...]]]
-                 [--server SERVER] [--limit LIMIT]
+                 [--server SERVER] [--ip IP] [--limit LIMIT]
                  [--field {all,totalCount,next,data}] [--file FILE] [--list]
-                 [--format {json,csv}] [--sort {desc,asc}] [--agents] [--feed]
-                 [--timeseries] [--rollup ROLLUP] [--whitelist-parameters]
-                 [--whitelist-parameters-add] [--whitelist-parameters-delete]
-                 [--whitelist-paths] [--whitelist-paths-add]
-                 [--whitelist-paths-delete] [--whitelist] [--whitelist-add]
-                 [--whitelist-delete] [--blacklist] [--blacklist-add]
-                 [--blacklist-delete] [--redactions] [--redactions-add]
-                 [--redactions-delete]
+                 [--format {json,csv}] [--pretty] [--sort {desc,asc}]
+                 [--agents] [--feed] [--timeseries] [--rollup ROLLUP]
+                 [--list-events] [--event-by-id =<value>]
+                 [--whitelist-parameters] [--whitelist-parameters-add]
+                 [--whitelist-parameters-delete] [--whitelist-paths]
+                 [--whitelist-paths-add] [--whitelist-paths-delete]
+                 [--whitelist] [--whitelist-add] [--whitelist-delete]
+                 [--blacklist] [--blacklist-add] [--blacklist-delete]
+                 [--redactions] [--redactions-add] [--redactions-delete]
 
 Signal Sciences API Client.
 
@@ -28,6 +29,7 @@ optional arguments:
   --ctags [CTAGS [CTAGS ...]]
                         Filter results on one or more custom tags.
   --server SERVER       Filter results by server name.
+  --ip IP               Filter results by remote ip.
   --limit LIMIT         Limit the number of results returned from the server
                         (default: 100).
   --field {all,totalCount,next,data}
@@ -35,11 +37,15 @@ optional arguments:
   --file FILE           Output results to the specified file.
   --list                List all supported tags
   --format {json,csv}   Specify output format (default: json).
+  --pretty              Pretty print the JSON ourput.
   --sort {desc,asc}     Specify sort order (default: desc).
   --agents              Retrieve agent metrics.
   --feed                Retrieve data feed.
   --timeseries          Retrieve timeseries data.
   --rollup ROLLUP       Rollup interval in seconds for timeseries requests.
+  --list-events         List events (flagged IPs).
+  --event-by-id =<value>
+                        Get an event by event ID.
   --whitelist-parameters
                         Retrieve whitelist parameters.
   --whitelist-parameters-add
@@ -59,8 +65,7 @@ optional arguments:
   --blacklist-delete    Delete IP blacklist.
   --redactions          Retrieve redactions.
   --redactions-add      Add to redactions.
-  --redactions-delete   Delete redactions.
-
+  --redactions-delete   Delete redactions..
   ```
 
 ### Example Usage
@@ -96,7 +101,7 @@ Requests feed (bulk download).
 ### Example Module Usage
 
 ```
-#!/usr/local/bin/python
+#!/usr/bin/env python
 # Retrieve agent metrics and output to file.
 #
 
