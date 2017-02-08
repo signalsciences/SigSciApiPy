@@ -30,6 +30,7 @@ LIMIT  = None # example: LIMIT = 250
 FIELD  = None # example: FIELD = 'all'
 FILE   = None # example: FILE = '/tmp/sigsci.json'
 FORMAT = None # example: FORMAT = 'csv'
+PRETTY = None # PRETTY = true
 SORT   = None # example: SORT = 'asc'
 ###########################################
 
@@ -116,6 +117,7 @@ class SigSciAPI:
     field      = 'data'
     file       = None
     format     = 'json'
+    pretty     = False
     sort       = 'desc'
     ua         = 'Signal Sciences Client API (Python)'
     event_by_id = None
@@ -228,6 +230,7 @@ class SigSciAPI:
                 if not self.file:
                     if None == f:
                         print('%s' % json.dumps(j))
+                        self.json_out(j)
                     else:
                         print('%s' % json.dumps(j[f]))
                 else:
@@ -616,7 +619,10 @@ class SigSciAPI:
 
         if 'json' == self.format:
             if not self.file:
-                print('%s' % json.dumps(j))
+                if self.pretty:
+                    print('%s' % json.dumps(j, sort_keys=True, indent=4, separators=(',', ': ')))
+                else:
+                    print('%s' % json.dumps(j))
 
             else:
                 with open(self.file, 'a') as outfile:
@@ -646,6 +652,7 @@ if __name__ == '__main__':
     parser.add_argument('--file',   help='Output results to the specified file.', type=str, default=None)
     parser.add_argument('--list',   help='List all supported tags', default=False, action='store_true')
     parser.add_argument('--format', help='Specify output format (default: json).', type=str, default='json', choices=['json', 'csv'])
+    parser.add_argument('--pretty', help='Pretty print the JSON ourput.', default=False, action='store_true')
     parser.add_argument('--sort',   help='Specify sort order (default: desc).', type=str, default=None, choices=['desc', 'asc'])
     parser.add_argument('--agents', help='Retrieve agent metrics.', default=False, action='store_true')
     parser.add_argument('--feed',   help='Retrieve data feed.', default=False, action='store_true')
@@ -698,6 +705,7 @@ if __name__ == '__main__':
     sigsci.field      = os.environ.get("SIGSCI_FIELD")    if None != os.environ.get('SIGSCI_FIELD') else FIELD
     sigsci.file       = os.environ.get("SIGSCI_FILE")     if None != os.environ.get('SIGSCI_FILE') else FILE
     sigsci.format     = os.environ.get("SIGSCI_FORMAT")   if None != os.environ.get('SIGSCI_FORMAT') else FORMAT
+    sigsci.pretty     = os.environ.get("SIGSCI_PRETTY")   if None != os.environ.get('SIGSCI_PRETTY') else PRETTY
     sigsci.sort       = os.environ.get("SIGSCI_SORT")     if None != os.environ.get('SIGSCI_SORT') else SORT
     sigsci.agents     = os.environ.get("SIGSCI_AGENTS")   if None != os.environ.get('SIGSCI_AGENTS') else AGENTS
     sigsci.feed       = os.environ.get("SIGSCI_FEED")     if None != os.environ.get('SIGSCI_FEED') else FEED
@@ -733,6 +741,7 @@ if __name__ == '__main__':
     sigsci.field      = arguments.field      if None != arguments.field else sigsci.field
     sigsci.file       = arguments.file       if None != arguments.file else sigsci.file
     sigsci.format     = arguments.format     if None != arguments.format else sigsci.format
+    sigsci.pretty     = arguments.pretty     if None != arguments.pretty else sigsci.pretty
     sigsci.sort       = arguments.sort       if None != arguments.sort else sigsci.sort
     sigsci.agents     = arguments.agents     if None != arguments.agents else sigsci.agents
     sigsci.feed       = arguments.feed       if None != arguments.feed else sigsci.feed
