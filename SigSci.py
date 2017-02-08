@@ -396,9 +396,9 @@ class SigSciAPI:
             print('Query: %s ' % url)
             quit()
 
-    def get_list_events(self):
+    def get_list_events(self, tag=None):
         """
-        SigSciAPI.get_list_events()
+        SigSciAPI.get_list_events(tag)
         
         Before calling, set:
             (Required):
@@ -417,7 +417,12 @@ class SigSciAPI:
         # /corps/{corpName}/sites/{siteName}/events
         try:
             headers = { 'Content-type': 'application/json', 'User-Agent': self.ua }
-            url     = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.EVENTS_EP + '?limit=' + str(self.limit)
+            query_params = '?limit=' + str(self.limit)
+
+            if None != tag:
+                query_params += '&tag=%s' % (str(tag).strip())
+            
+            url     = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.EVENTS_EP + query_params
             r       = requests.get(url, cookies=self.authn.cookies, headers=headers)
             j       = json.loads(r.text)
 
@@ -786,7 +791,11 @@ if __name__ == '__main__':
     elif sigsci.list_events:
         # authenticate and get event data
         if sigsci.authenticate():
-            sigsci.get_list_events()
+            if None != sigsci.tags:
+                for tag in sigsci.tags:
+                    sigsci.get_list_events(tag.upper())
+            else:
+                    sigsci.get_list_events()
    
     elif None != sigsci.event_by_id:
          # authenticate and get event data
