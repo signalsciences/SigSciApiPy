@@ -123,7 +123,8 @@ class SigSciAPI:
     event_by_id = None
     
     # api end points
-    LOGIN_EP       = '/auth/login'
+    LEGACY_LOGIN_EP = '/auth/login'
+    LOGIN_EP       = '/auth'
     LOGOUT_EP      = '/auth/logout'
     CORPS_EP       = '/corps/'
     SITES_EP       = '/sites/'
@@ -150,7 +151,7 @@ class SigSciAPI:
             SigSciAPI.authn.cookies
         """
         
-        self.authn = requests.post(self.base_url + self.LOGIN_EP,
+        self.authn = requests.post(self.base_url + self.LEGACY_LOGIN_EP,
             data = { 'email': self.email, 'password': self.pword }, 
             allow_redirects = False)
         
