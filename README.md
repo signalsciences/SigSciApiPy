@@ -1,5 +1,5 @@
 # SigSciApiPy
-Signal Sciences Python API Client
+Sample Signal Sciences Python API Client
 
 ### Usage
 
@@ -68,6 +68,42 @@ optional arguments:
   --redactions-delete   Delete redactions..
   ```
 
+### Authentication
+
+There are two options for authentication:
+
+__Environment Variables__
+
+```
+export SIGSCI_EMAIL=<API User Email>
+export SIGSCI_PASSWORD=<API User Password>
+export SIGSCI_CORP=<Corp Name>
+export SIGSCI_SITE=<Site Name>
+```
+
+__Set Variables in Script__
+
+Edit SigSci.py by setting the following variables in the configuration section of the script:
+
+```
+...
+#### Configuration Section ################
+EMAIL    = '' # The email address associated with your
+              # Signal Sciences account, e.g. user@yourdomain.com
+
+PASSWORD = '' # The password associated with your Signal Sciences account.
+
+# Your CORP and SITE can be found by logging
+# into the Signal Sciences Dashboard. The URL 
+# for the overview page contains these values.
+# Example:
+# https://dashboard.signalsciences.net/<CORP>/<SITE>
+#
+CORP = ''
+SITE = ''
+...
+```
+
 ### Example Usage
 
 Display help.
@@ -100,7 +136,6 @@ Requests feed (bulk download).
 
 Retrieve list of events.
 `./SigSci.py --list-events`
-
 
 ### Example Module Usage
 
