@@ -306,9 +306,9 @@ class SigSciAPI:
                 tm              = now - datetime.timedelta(minutes=5)
                 stm             = tm.strftime("%Y-%m-%d %H:%M:00")
                 self.until_time = int(tm.strptime(stm, "%Y-%m-%d %H:%M:00").strftime("%s"))
-                self.query      = '&until+=%s' % str(self.until_time)
+                self.query      += '&until=%s' % str(self.until_time)
             else:
-                self.query = '&until+=%s' % str(self.until_time)
+                self.query += '&until=%s' % str(self.until_time)
             
             if None != self.tags:
                 self.query += '&tags='
@@ -322,6 +322,7 @@ class SigSciAPI:
             
             headers = { 'Content-type': 'application/json', 'User-Agent': self.ua, 'Authorization': 'Bearer %s' % self.token }
             url     = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.FEED_EP + '?' + str(self.query).strip()
+            print url
             r       = requests.get(url, headers=headers)
             j       = json.loads(r.text)
 
