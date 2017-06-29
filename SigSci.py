@@ -322,7 +322,6 @@ class SigSciAPI:
             
             headers = { 'Content-type': 'application/json', 'User-Agent': self.ua, 'Authorization': 'Bearer %s' % self.token }
             url     = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.FEED_EP + '?' + str(self.query).strip()
-            print url
             r       = requests.get(url, headers=headers)
             j       = json.loads(r.text)
 
