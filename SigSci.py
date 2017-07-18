@@ -156,13 +156,13 @@ class SigSciAPI:
             allow_redirects = False)
         
         if self.authn.status_code == 401:
-            print self.authn.json()['message']
+            print(self.authn.json()['message'])
             return False
         elif self.authn.status_code == 403:
-            print self.authn.json()['message']
+            print(self.authn.json()['message'])
             return False
         elif self.authn.status_code != 200:
-            print 'Unexpected status: %s response: %s' % (auth.status_code, auth.text)
+            print('Unexpected status: %s response: %s' % (auth.status_code, auth.text))
             return False
         else:
             self.token = self.authn.json()['token']
@@ -639,7 +639,7 @@ class SigSciAPI:
                     outfile.write('%s' % json.dumps(j))
         
         elif 'csv' == self.format:
-            print("CSV output not availible for this request.")
+            print("CSV output not available for this request.")
 
     def __init__(self):
         self.base_url = self.url + self.version
@@ -690,7 +690,7 @@ if __name__ == '__main__':
     
     # list supported tags and quit
     if arguments.list:
-        print 'Supported tags:'
+        print('Supported tags:')
         for tag in TAGLIST:
             print('\t%s' % str(tag))
 
@@ -700,7 +700,7 @@ if __name__ == '__main__':
     sigsci       = SigSciAPI()
     
     # first get configuration, environment variables (if set) override 
-    # settings specified at the begining of this script.
+    # settings specified at the beginning of this script.
     sigsci.email      = os.environ.get('SIGSCI_EMAIL')    if None != os.environ.get('SIGSCI_EMAIL') else EMAIL
     sigsci.pword      = os.environ.get("SIGSCI_PASSWORD") if None != os.environ.get('SIGSCI_PASSWORD') else PASSWORD
     sigsci.corp       = os.environ.get("SIGSCI_CORP")     if None != os.environ.get('SIGSCI_CORP') else CORP
