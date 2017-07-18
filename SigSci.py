@@ -156,13 +156,13 @@ class SigSciAPI:
             allow_redirects = False)
         
         if self.authn.status_code == 401:
-            print self.authn.json()['message']
+            print(self.authn.json()['message'])
             return False
         elif self.authn.status_code == 403:
-            print self.authn.json()['message']
+            print(self.authn.json()['message'])
             return False
         elif self.authn.status_code != 200:
-            print 'Unexpected status: %s response: %s' % (auth.status_code, auth.text)
+            print('Unexpected status: %s response: %s' % (auth.status_code, auth.text))
             return False
         else:
             self.token = self.authn.json()['token']
@@ -690,7 +690,7 @@ if __name__ == '__main__':
     
     # list supported tags and quit
     if arguments.list:
-        print 'Supported tags:'
+        print('Supported tags:')
         for tag in TAGLIST:
             print('\t%s' % str(tag))
 
