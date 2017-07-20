@@ -664,6 +664,11 @@ class SigSciAPI:
         # /corps/{corpName}/sites/{siteName}/redactions/{field}
         self.delete_configuration(self.REDACTIONS_EP)
 
+    def get_integrations(self):
+        # https://dashboard.signalsciences-stage.net/documentation/api#_corps__corpName__sites__siteName__redactions_get
+        # /corps/{corpName}/sites/{siteName}/redactions
+        self.get_configuration(self.INTEGRATIONS_EP)
+
     def json_out(self, j):
         if 'message' in j:
             raise ValueError(j['message'])
