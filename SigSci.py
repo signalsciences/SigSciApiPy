@@ -787,26 +787,26 @@ if __name__ == '__main__':
 
     # first get configuration, environment variables (if set) override
     # settings specified at the beginning of this script.
-    sigsci.email      = os.environ.get('SIGSCI_EMAIL')    if None != os.environ.get('SIGSCI_EMAIL') else EMAIL
-    sigsci.pword      = os.environ.get("SIGSCI_PASSWORD") if None != os.environ.get('SIGSCI_PASSWORD') else PASSWORD
-    sigsci.corp       = os.environ.get("SIGSCI_CORP")     if None != os.environ.get('SIGSCI_CORP') else CORP
-    sigsci.site       = os.environ.get("SIGSCI_SITE")     if None != os.environ.get('SIGSCI_SITE') else SITE
-    sigsci.from_time  = os.environ.get("SIGSCI_FROM")     if None != os.environ.get('SIGSCI_FROM') else FROM
-    sigsci.until_time = os.environ.get("SIGSCI_UNTIL")    if None != os.environ.get('SIGSCI_UNTIL') else UNTIL
-    sigsci.tags       = os.environ.get("SIGSCI_TAGS")     if None != os.environ.get('SIGSCI_TAGS') else TAGS
-    sigsci.ctags      = os.environ.get("SIGSCI_CTAGS")    if None != os.environ.get('SIGSCI_CTAGS') else CTAGS
-    sigsci.server     = os.environ.get("SIGSCI_SERVER")   if None != os.environ.get('SIGSCI_SERVER') else SERVER
-    sigsci.ip         = os.environ.get("SIGSCI_IP")       if None != os.environ.get('SIGSCI_IP') else IP
-    sigsci.limit      = os.environ.get("SIGSCI_LIMIT")    if None != os.environ.get('SIGSCI_LIMIT') else LIMIT
-    sigsci.field      = os.environ.get("SIGSCI_FIELD")    if None != os.environ.get('SIGSCI_FIELD') else FIELD
-    sigsci.file       = os.environ.get("SIGSCI_FILE")     if None != os.environ.get('SIGSCI_FILE') else FILE
-    sigsci.format     = os.environ.get("SIGSCI_FORMAT")   if None != os.environ.get('SIGSCI_FORMAT') else FORMAT
-    sigsci.pretty     = os.environ.get("SIGSCI_PRETTY")   if None != os.environ.get('SIGSCI_PRETTY') else PRETTY
-    sigsci.sort       = os.environ.get("SIGSCI_SORT")     if None != os.environ.get('SIGSCI_SORT') else SORT
-    sigsci.agents     = os.environ.get("SIGSCI_AGENTS")   if None != os.environ.get('SIGSCI_AGENTS') else AGENTS
-    sigsci.feed       = os.environ.get("SIGSCI_FEED")     if None != os.environ.get('SIGSCI_FEED') else FEED
-    sigsci.timeseries = os.environ.get("SIGSCI_TIMESERIES")                                   if None != os.environ.get('SIGSCI_TIMESERIES') else TIMESERIES
-    sigsci.rollup     = os.environ.get("SIGSCI_ROLLUP")                                       if None != os.environ.get('SIGSCI_ROLLUP') else ROLLUP
+    sigsci.email                       = os.environ.get('SIGSCI_EMAIL')                       if None != os.environ.get('SIGSCI_EMAIL') else EMAIL
+    sigsci.pword                       = os.environ.get("SIGSCI_PASSWORD")                    if None != os.environ.get('SIGSCI_PASSWORD') else PASSWORD
+    sigsci.corp                        = os.environ.get("SIGSCI_CORP")                        if None != os.environ.get('SIGSCI_CORP') else CORP
+    sigsci.site                        = os.environ.get("SIGSCI_SITE")                        if None != os.environ.get('SIGSCI_SITE') else SITE
+    sigsci.from_time                   = os.environ.get("SIGSCI_FROM")                        if None != os.environ.get('SIGSCI_FROM') else FROM
+    sigsci.until_time                  = os.environ.get("SIGSCI_UNTIL")                       if None != os.environ.get('SIGSCI_UNTIL') else UNTIL
+    sigsci.tags                        = os.environ.get("SIGSCI_TAGS")                        if None != os.environ.get('SIGSCI_TAGS') else TAGS
+    sigsci.ctags                       = os.environ.get("SIGSCI_CTAGS")                       if None != os.environ.get('SIGSCI_CTAGS') else CTAGS
+    sigsci.server                      = os.environ.get("SIGSCI_SERVER")                      if None != os.environ.get('SIGSCI_SERVER') else SERVER
+    sigsci.ip                          = os.environ.get("SIGSCI_IP")                          if None != os.environ.get('SIGSCI_IP') else IP
+    sigsci.limit                       = os.environ.get("SIGSCI_LIMIT")                       if None != os.environ.get('SIGSCI_LIMIT') else LIMIT
+    sigsci.field                       = os.environ.get("SIGSCI_FIELD")                       if None != os.environ.get('SIGSCI_FIELD') else FIELD
+    sigsci.file                        = os.environ.get("SIGSCI_FILE")                        if None != os.environ.get('SIGSCI_FILE') else FILE
+    sigsci.format                      = os.environ.get("SIGSCI_FORMAT")                      if None != os.environ.get('SIGSCI_FORMAT') else FORMAT
+    sigsci.pretty                      = os.environ.get("SIGSCI_PRETTY")                      if None != os.environ.get('SIGSCI_PRETTY') else PRETTY
+    sigsci.sort                        = os.environ.get("SIGSCI_SORT")                        if None != os.environ.get('SIGSCI_SORT') else SORT
+    sigsci.agents                      = os.environ.get("SIGSCI_AGENTS")                      if None != os.environ.get('SIGSCI_AGENTS') else AGENTS
+    sigsci.feed                        = os.environ.get("SIGSCI_FEED")                        if None != os.environ.get('SIGSCI_FEED') else FEED
+    sigsci.timeseries                  = os.environ.get("SIGSCI_TIMESERIES")                  if None != os.environ.get('SIGSCI_TIMESERIES') else TIMESERIES
+    sigsci.rollup                      = os.environ.get("SIGSCI_ROLLUP")                      if None != os.environ.get('SIGSCI_ROLLUP') else ROLLUP
     sigsci.list_events                 = os.environ.get("SIGSCI_LIST_EVENTS")                 if None != os.environ.get('SIGSCI_LIST_EVENTS') else LIST_EVENTS
     sigsci.event_by_id                 = os.environ.get("SIGSCI_EVENT_BY_ID")                 if None != os.environ.get('SIGSCI_EVENT_BY_ID') else EVENT_BY_ID
     sigsci.whitelist_parameters        = os.environ.get("SIGSCI_WHITELIST_PARAMETERS")        if None != os.environ.get('SIGSCI_WHITELIST_PARAMETERS') else WHITELIST_PARAMETERS
@@ -827,22 +827,22 @@ if __name__ == '__main__':
 
     # if command line arguments exist then override any previously set values.
     # note: there is no command line argument for EMAIL, PASSWORD, CORP, or SITE.
-    sigsci.from_time  = arguments.from_time  if None != arguments.from_time else sigsci.from_time
-    sigsci.until_time = arguments.until_time if None != arguments.until_time else sigsci.until_time
-    sigsci.tags       = arguments.tags       if None != arguments.tags else sigsci.tags
-    sigsci.ctags      = arguments.ctags      if None != arguments.ctags else sigsci.ctags
-    sigsci.server     = arguments.server     if None != arguments.server else sigsci.server
-    sigsci.ip         = arguments.ip         if None != arguments.ip else sigsci.ip
-    sigsci.limit      = arguments.limit      if None != arguments.limit else sigsci.limit
-    sigsci.field      = arguments.field      if None != arguments.field else sigsci.field
-    sigsci.file       = arguments.file       if None != arguments.file else sigsci.file
-    sigsci.format     = arguments.format     if None != arguments.format else sigsci.format
-    sigsci.pretty     = arguments.pretty     if None != arguments.pretty else sigsci.pretty
-    sigsci.sort       = arguments.sort       if None != arguments.sort else sigsci.sort
-    sigsci.agents     = arguments.agents     if None != arguments.agents else sigsci.agents
-    sigsci.feed       = arguments.feed       if None != arguments.feed else sigsci.feed
-    sigsci.timeseries = arguments.timeseries if None != arguments.timeseries else sigsci.timeseries
-    sigsci.rollup     = arguments.rollup     if None != arguments.rollup else sigsci.rollup
+    sigsci.from_time                   = arguments.from_time                   if None != arguments.from_time else sigsci.from_time
+    sigsci.until_time                  = arguments.until_time                  if None != arguments.until_time else sigsci.until_time
+    sigsci.tags                        = arguments.tags                        if None != arguments.tags else sigsci.tags
+    sigsci.ctags                       = arguments.ctags                       if None != arguments.ctags else sigsci.ctags
+    sigsci.server                      = arguments.server                      if None != arguments.server else sigsci.server
+    sigsci.ip                          = arguments.ip                          if None != arguments.ip else sigsci.ip
+    sigsci.limit                       = arguments.limit                       if None != arguments.limit else sigsci.limit
+    sigsci.field                       = arguments.field                       if None != arguments.field else sigsci.field
+    sigsci.file                        = arguments.file                        if None != arguments.file else sigsci.file
+    sigsci.format                      = arguments.format                      if None != arguments.format else sigsci.format
+    sigsci.pretty                      = arguments.pretty                      if None != arguments.pretty else sigsci.pretty
+    sigsci.sort                        = arguments.sort                        if None != arguments.sort else sigsci.sort
+    sigsci.agents                      = arguments.agents                      if None != arguments.agents else sigsci.agents
+    sigsci.feed                        = arguments.feed                        if None != arguments.feed else sigsci.feed
+    sigsci.timeseries                  = arguments.timeseries                  if None != arguments.timeseries else sigsci.timeseries
+    sigsci.rollup                      = arguments.rollup                      if None != arguments.rollup else sigsci.rollup
     sigsci.list_events                 = arguments.list_events                 if None != arguments.list_events else sigsci.list_events
     sigsci.event_by_id                 = arguments.event_by_id                 if None != arguments.event_by_id else sigsci.event_by_id
     sigsci.whitelist_parameters        = arguments.whitelist_parameters        if None != arguments.whitelist_parameters else sigsci.whitelist_parameters
