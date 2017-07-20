@@ -37,7 +37,7 @@ PRETTY = None  # PRETTY = true
 SORT   = None  # example: SORT = 'asc'
 ###########################################
 
-# default for retriveing agent metrics
+# default for retrieving agent metrics
 AGENTS     = False
 # default for feed requests
 FEED       = False
