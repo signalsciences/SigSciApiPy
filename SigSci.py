@@ -506,6 +506,48 @@ class SigSciAPI:
             print('Error: %s ' % str(e))
             quit()
 
+    def get_sites(self):
+        try:
+            headers = { 'Content-type': 'application/json', 'User-Agent': self.ua }
+            url     = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP[:-1]
+            r       = requests.get(url, cookies=self.authn.cookies, headers=headers)
+            j       = json.loads(r.text)
+
+            self.json_out(j)
+
+        except Exception as e:
+            print('Error: %s ' % str(e))
+            print('Query: %s ' % url)
+            quit()
+
+    def get_members(self):
+        try:
+            headers = { 'Content-type': 'application/json', 'User-Agent': self.ua }
+            url     = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.MEMBERS_EP
+            r       = requests.get(url, cookies=self.authn.cookies, headers=headers)
+            j       = json.loads(r.text)
+
+            self.json_out(j['data'])
+
+        except Exception as e:
+            print('Error: %s ' % str(e))
+            #print('Query: %s ' % url)
+            quit()
+
+    def get_users(self):
+        try:
+            headers = { 'Content-type': 'application/json', 'User-Agent': self.ua }
+            url     = self.base_url + self.CORPS_EP + self.corp + self.USERS_EP
+            r       = requests.get(url, cookies=self.authn.cookies, headers=headers)
+            j       = json.loads(r.text)
+
+            self.json_out(j)
+
+        except Exception as e:
+            print('Error: %s ' % str(e))
+            #print('Query: %s ' % url)
+            quit()
+
     def get_configuration(self, EP):
         try:
             headers = {'Content-type': 'application/json', 'User-Agent': self.ua, 'Authorization': 'Bearer %s' % self.token}
