@@ -124,6 +124,7 @@ class SigSciAPI:
     format     = 'json'
     pretty     = False
     sort       = 'desc'
+    agent_ver  = None
     ua         = 'Signal Sciences Client API (Python)'
     event_by_id = None
 
@@ -728,7 +729,10 @@ class SigSciAPI:
             print("CSV output not available for this request.")
 
     def __init__(self):
-        self.base_url = self.url + self.version
+        self.base_url  = self.url + self.version
+        if os.path.isfile(os.path.dirname(os.path.abspath(__file__))):
+            self.agent_ver = file(os.path.dirname(os.path.abspath(__file__)) + '/VERSION').read().strip()
+            self.ua.replace(')', '/{})'.format(self.agent_ver))
 
 
 if __name__ == '__main__':
