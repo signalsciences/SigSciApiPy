@@ -730,10 +730,6 @@ class SigSciAPI:
 
     def __init__(self):
         self.base_url  = self.url + self.version
-        if os.path.isfile(os.path.dirname(os.path.abspath(__file__))):
-            self.agent_ver = file(os.path.dirname(os.path.abspath(__file__)) + '/VERSION').read().strip()
-            self.ua        = self.ua.replace(')', '/{})'.format(self.agent_ver))
-
 
 if __name__ == '__main__':
     TAGLIST = ('SQLI', 'XSS', 'CMDEXE', 'TRAVERSAL', 'USERAGENT', 'BACKDOOR', 'SCANNER', 'RESPONSESPLIT', 'CODEINJECTION',
