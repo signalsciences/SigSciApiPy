@@ -128,20 +128,23 @@ class SigSciAPI:
     event_by_id = None
 
     # api end points
-    LOGIN_EP       = '/auth'
-    LOGOUT_EP      = '/auth/logout'
-    CORPS_EP       = '/corps/'
-    SITES_EP       = '/sites/'
-    REQEUSTS_EP    = '/requests'
-    AGENTS_EP      = '/agents'
-    FEED_EP        = '/feed/requests'
-    TIMESERIES_EP  = '/timeseries/requests'
-    EVENTS_EP      = '/events'
-    WLPARAMS_EP    = '/paramwhitelist'
-    WLPATHS_EP     = '/pathwhitelist'
-    WHITELIST_EP   = '/whitelist'
-    BLACKLIST_EP   = '/blacklist'
-    REDACTIONS_EP  = '/redactions'
+    LOGIN_EP        = '/auth'
+    LOGOUT_EP       = '/auth/logout'
+    CORPS_EP        = '/corps/'
+    SITES_EP        = '/sites/'
+    REQEUSTS_EP     = '/requests'
+    AGENTS_EP       = '/agents'
+    FEED_EP         = '/feed/requests'
+    TIMESERIES_EP   = '/timeseries/requests'
+    EVENTS_EP       = '/events'
+    WLPARAMS_EP     = '/paramwhitelist'
+    WLPATHS_EP      = '/pathwhitelist'
+    WHITELIST_EP    = '/whitelist'
+    BLACKLIST_EP    = '/blacklist'
+    REDACTIONS_EP   = '/redactions'
+    INTEGRATIONS_EP = '/integrations'
+    CONFIGURED_TEMPLATES_EP = '/configuredtemplates'
+
 
     def authenticate(self):
         """
