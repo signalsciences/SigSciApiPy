@@ -488,6 +488,22 @@ class SigSciAPI:
             print('Query: %s ' % url)
             quit()
 
+    def get_agent_logs(self, agent_name):
+        # https://docs.signalsciences.net/api/#_corps__corpName__sites__siteName__agents__agentName__logs_get
+        # /corps/{corpName}/sites/{siteName}/agents/{agentName}/logs
+
+        try:
+            headers = { 'Content-type': 'application/json', 'User-Agent': self.ua }
+            url     = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.AGENTS_EP + '/' + agent_name + '/logs'
+            r       = requests.get(url, cookies=self.authn.cookies, headers=headers)
+            j       = json.loads(r.text)
+
+            self.json_out(j)
+
+        except Exception as e:
+            print('Error: %s ' % str(e))
+            quit()
+
     def get_configuration(self, EP):
         try:
             headers = {'Content-type': 'application/json', 'User-Agent': self.ua, 'Authorization': 'Bearer %s' % self.token}
@@ -551,6 +567,25 @@ class SigSciAPI:
             print('Error: %s ' % str(e))
             print('Query: %s ' % url)
             quit()
+
+    def get_custom_rules(self):
+        # https://dashboard.signalsciences.net/documentation/api#_corps__corpName__sites__siteName__rules_get
+        # /corps/{corpName}/sites/{siteName}/rules
+        self.get_configuration(self.RULES_EP)
+
+    def post_custom_rules(self):
+        # https://dashboard.signalsciences.net/documentation/api#_corps__corpName__sites__siteName__rules_post
+        # /corps/{corpName}/sites/{siteName}/rules
+        self.post_configuration(self.RULES_EP)
+
+    def delete_custom_rules(self):
+        # https://dashboard.signalsciences.net/documentation/api#_corps__corpName__sites__siteName__rules__ruleID__delete
+        # /corps/{corpName}/sites/{siteName}/rules/{ruleID}
+        self.delete_configuration(self.RULES_EP)
+
+    def get_configured_templates(self):
+        # WARNING: This is an undocumented endpoint. No support provided, and the endpoint may change.
+        self.get_configuration(self.CONFIGURED_TEMPLATES_EP)
 
     def get_whitelist_parameters(self):
         # https://dashboard.signalsciences.net/documentation/api#_corps__corpName__sites__siteName__paramwhitelist_get
