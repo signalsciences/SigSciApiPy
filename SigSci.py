@@ -145,7 +145,6 @@ class SigSciAPI:
     INTEGRATIONS_EP = '/integrations'
     CONFIGURED_TEMPLATES_EP = '/configuredtemplates'
 
-
     def authenticate(self):
         """
         SigSciAPI.authenticate()
