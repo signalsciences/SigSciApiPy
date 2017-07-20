@@ -124,8 +124,8 @@ class SigSciAPI:
     format     = 'json'
     pretty     = False
     sort       = 'desc'
-    agent_ver  = None
-    ua         = 'Signal Sciences Client API (Python)'
+    agent_ver  = '0.0.1'
+    ua         = 'Signal Sciences Client API (Python{})'.format(agent_ver)
     event_by_id = None
 
     # api end points
