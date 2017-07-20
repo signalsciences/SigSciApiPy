@@ -125,7 +125,7 @@ class SigSciAPI:
     pretty     = False
     sort       = 'desc'
     agent_ver  = '0.0.1'
-    ua         = 'Signal Sciences Client API (Python{})'.format(agent_ver)
+    ua         = 'Signal Sciences Client API (Python/{})'.format(agent_ver)
     event_by_id = None
 
     # api end points
