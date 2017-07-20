@@ -132,6 +132,8 @@ class SigSciAPI:
     LOGOUT_EP       = '/auth/logout'
     CORPS_EP        = '/corps/'
     SITES_EP        = '/sites/'
+    MEMBERS_EP      = '/members'
+    USERS_EP        = '/users'
     REQEUSTS_EP     = '/requests'
     AGENTS_EP       = '/agents'
     FEED_EP         = '/feed/requests'
