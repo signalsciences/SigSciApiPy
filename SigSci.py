@@ -861,162 +861,144 @@ if __name__ == '__main__':
     sigsci.redactions_add              = arguments.redactions_add              if None != arguments.redactions_add else sigsci.redactions_add
     sigsci.redactions_delete           = arguments.redactions_delete           if None != arguments.redactions_delete else sigsci.redactions_delete
 
-    # determine what we are doing.
-    if sigsci.agents:
-        # authenticate and get agent metrics
-        if sigsci.authenticate():
+    # authenticate before doing anything.
+    if sigsci.authenticate():
+        
+        # determine what we are doing.
+        if sigsci.agents:
+            # get agent metrics
             sigsci.get_agent_metrics()
 
-    elif sigsci.feed:
-        # authenticate and get feed
-        if sigsci.authenticate():
+        elif sigsci.feed:
+            # get feed
             sigsci.get_feed_requests()
 
-    elif sigsci.timeseries:
-        # authenticate and get timeseries data
-        if sigsci.authenticate():
+        elif sigsci.timeseries:
+            # get timeseries data
             if None != sigsci.tags:
                 for tag in sigsci.tags:
                     sigsci.get_timeseries(tag, sigsci.rollup)
 
-    elif sigsci.list_events:
-        # authenticate and get event data
-        if sigsci.authenticate():
+        elif sigsci.list_events:
+            # get event data
             if None != sigsci.tags:
                 for tag in sigsci.tags:
                     sigsci.get_list_events(tag.upper())
             else:
                     sigsci.get_list_events()
 
-    elif None != sigsci.event_by_id:
-        # authenticate and get event data
-        if sigsci.authenticate():
+        elif None != sigsci.event_by_id:
+            # get event data
             sigsci.get_event_by_id()
 
-    elif sigsci.whitelist_parameters:
-        # authenticate and get whitelist parameters
-        if sigsci.authenticate():
+        elif sigsci.whitelist_parameters:
+            # get whitelist parameters
             sigsci.get_whitelist_parameters()
 
-    elif sigsci.whitelist_parameters_add:
-        # authenticate and post whitelist parameters
-        if sigsci.authenticate():
+        elif sigsci.whitelist_parameters_add:
+            # post whitelist parameters
             if not sigsci.file:
                 print('File must be provided.')
                 quit()
             else:
                 sigsci.post_whitelist_parameters()
 
-    elif sigsci.whitelist_parameters_delete:
-        # authenticate and delete whitelist parameters
-        if sigsci.authenticate():
+        elif sigsci.whitelist_parameters_delete:
+            # delete whitelist parameters
             if not sigsci.file:
                 print('File must be provided.')
                 quit()
             else:
                 sigsci.delete_whitelist_parameters()
 
-    elif sigsci.whitelist_paths:
-        # authenticate and get whitelist paths
-        if sigsci.authenticate():
+        elif sigsci.whitelist_paths:
+            # get whitelist paths
             sigsci.get_whitelist_paths()
 
-    elif sigsci.whitelist_paths_add:
-        # authenticate and post whitelist paths
-        if sigsci.authenticate():
+        elif sigsci.whitelist_paths_add:
+            # post whitelist paths
             if not sigsci.file:
                 print('File must be provided.')
                 quit()
             else:
                 sigsci.post_whitelist_paths()
 
-    elif sigsci.whitelist_paths_delete:
-        # authenticate and delete whitelist paths
-        if sigsci.authenticate():
+        elif sigsci.whitelist_paths_delete:
+            # delete whitelist paths
             if not sigsci.file:
                 print('File must be provided.')
                 quit()
             else:
                 sigsci.delete_whitelist_paths()
 
-    elif sigsci.whitelist:
-        # authenticate and get ip whitelist
-        if sigsci.authenticate():
+        elif sigsci.whitelist:
+            # get ip whitelist
             sigsci.get_whitelist()
 
-    elif sigsci.whitelist_add:
-        # authenticate and post ip whitelist
-        if sigsci.authenticate():
+        elif sigsci.whitelist_add:
+            # post ip whitelist
             if not sigsci.file:
                 print('File must be provided.')
                 quit()
             else:
                 sigsci.post_whitelist()
 
-    elif sigsci.whitelist_delete:
-        # authenticate and delete ip whitelist
-        if sigsci.authenticate():
+        elif sigsci.whitelist_delete:
+            # delete ip whitelist
             if not sigsci.file:
                 print('File must be provided.')
                 quit()
             else:
                 sigsci.delete_whitelist()
 
-    elif sigsci.blacklist:
-        # authenticate and get ip blacklist
-        if sigsci.authenticate():
+        elif sigsci.blacklist:
+            # get ip blacklist
             sigsci.get_blacklist()
 
-    elif sigsci.blacklist_add:
-        # authenticate and post ip blacklist
-        if sigsci.authenticate():
+        elif sigsci.blacklist_add:
+            # post ip blacklist
             if not sigsci.file:
                 print('File must be provided.')
                 quit()
             else:
                 sigsci.post_blacklist()
 
-    elif sigsci.blacklist_delete:
-        # authenticate and delete ip blacklist
-        if sigsci.authenticate():
+        elif sigsci.blacklist_delete:
+            # delete ip blacklist
             if not sigsci.file:
                 print('File must be provided.')
                 quit()
             else:
                 sigsci.delete_blacklist()
 
-    elif sigsci.redactions:
-        # authenticate and get redactions
-        if sigsci.authenticate():
+        elif sigsci.redactions:
+            # get redactions
             sigsci.get_redactions()
 
-    elif sigsci.redactions_add:
-        # authenticate and post redactions
-        if sigsci.authenticate():
+        elif sigsci.redactions_add:
+            # post redactions
             if not sigsci.file:
                 print('File must be provided.')
                 quit()
             else:
                 sigsci.post_redactions()
 
-    elif sigsci.redactions_delete:
-        # authenticate and delete redactions
-        if sigsci.authenticate():
+        elif sigsci.redactions_delete:
+            # delete redactions
             if not sigsci.file:
                 print('File must be provided.')
                 quit()
             else:
                 sigsci.delete_redactions()
 
-    else:
-        # verify provided tags are supported tags
-        if None != sigsci.tags:
-            for tag in sigsci.tags:
-                if not set([tag.upper()]).issubset(set(TAGLIST)):
-                    print('Invalid tag in tag list: %s' % str(tag))
-                    quit()
+        else:
+            # verify provided tags are supported tags
+            if None != sigsci.tags:
+                for tag in sigsci.tags:
+                    if not set([tag.upper()]).issubset(set(TAGLIST)):
+                        print('Invalid tag in tag list: %s' % str(tag))
+                        quit()
 
-        # authenticate, build the query, and run the query.
-        if sigsci.authenticate():
+            # build the query, and run the query.
             sigsci.build_query()
             sigsci.query_api()
