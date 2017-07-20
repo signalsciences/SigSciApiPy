@@ -137,6 +137,7 @@ class SigSciAPI:
     REQEUSTS_EP     = '/requests'
     AGENTS_EP       = '/agents'
     FEED_EP         = '/feed/requests'
+    RULES_EP        = '/rules'
     TIMESERIES_EP   = '/timeseries/requests'
     EVENTS_EP       = '/events'
     WLPARAMS_EP     = '/paramwhitelist'
@@ -175,6 +176,14 @@ class SigSciAPI:
         else:
             self.token = self.authn.json()['token']
             return True
+
+    def get_headers(self):
+        headers = { 'Content-type': 'application/json', 'User-Agent': self.ua }
+
+        if None != self.token:
+            headers['Authorization'] = 'Bearer %s' % self.token
+
+        return headers
 
     def build_query(self):
         """
@@ -230,9 +239,8 @@ class SigSciAPI:
         """
 
         try:
-            headers = {'Content-type': 'application/json', 'User-Agent': self.ua, 'Authorization': 'Bearer %s' % self.token}
             url     = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.REQEUSTS_EP + '?q=' + str(self.query).strip() + '&limit=' + str(self.limit)
-            r       = requests.get(url, headers=headers)
+            r       = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
             j       = json.loads(r.text)
             f       = None if 'all' == self.field else self.field
 
@@ -328,9 +336,8 @@ class SigSciAPI:
 
                 self.query += ','.join(self.ctags)
 
-            headers = {'Content-type': 'application/json', 'User-Agent': self.ua, 'Authorization': 'Bearer %s' % self.token}
             url     = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.FEED_EP + '?' + str(self.query).strip()
-            r       = requests.get(url, headers=headers)
+            r       = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
             j       = json.loads(r.text)
 
             if 'message' in j:
@@ -389,7 +396,6 @@ class SigSciAPI:
         # /corps/{corpName}/sites/{siteName}/timeseries/requests
 
         try:
-            headers = {'Content-type': 'application/json', 'User-Agent': self.ua, 'Authorization': 'Bearer %s' % self.token}
             self.query = '?tag=%s&rollup=%s' % (str(tag).strip(), str(rollup).strip())
 
             if None != self.from_time:
@@ -399,7 +405,7 @@ class SigSciAPI:
                 self.query += '&until=%s' % str(self.until_time)
 
             url        = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.TIMESERIES_EP + self.query
-            r          = requests.get(url, headers=headers)
+            r          = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
             j          = json.loads(r.text)
 
             self.json_out(j)
@@ -429,14 +435,13 @@ class SigSciAPI:
         # https://dashboard.signalsciences.net/documentation/api#_corps__corpName__sites__siteName__events_get
         # /corps/{corpName}/sites/{siteName}/events
         try:
-            headers = {'Content-type': 'application/json', 'User-Agent': self.ua, 'Authorization': 'Bearer %s' % self.token}
             query_params = '?limit=' + str(self.limit)
 
             if None != tag:
                 query_params += '&tag=%s' % (str(tag).strip())
 
             url     = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.EVENTS_EP + query_params
-            r       = requests.get(url, headers=headers)
+            r       = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
             j       = json.loads(r.text)
 
             self.json_out(j)
@@ -464,9 +469,8 @@ class SigSciAPI:
         # https://dashboard.signalsciences.net/documentation/api#_corps__corpName__sites__siteName__events__eventID__get
         # /corps/{corpName}/sites/{siteName}/events/{eventID}
         try:
-            headers = {'Content-type': 'application/json', 'User-Agent': self.ua, 'Authorization': 'Bearer %s' % self.token}
             url     = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.EVENTS_EP + '/' + self.event_by_id
-            r       = requests.get(url, headers=headers)
+            r       = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
             j       = json.loads(r.text)
 
             self.json_out(j)
@@ -480,9 +484,8 @@ class SigSciAPI:
         # https://dashboard.signalsciences.net/documentation/api#_corps__corpName__sites__siteName__agents_get
         # /corps/{corpName}/sites/{siteName}/agents
         try:
-            headers = {'Content-type': 'application/json', 'User-Agent': self.ua, 'Authorization': 'Bearer %s' % self.token}
             url     = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.AGENTS_EP
-            r       = requests.get(url, headers=headers)
+            r       = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
             j       = json.loads(r.text)
 
             self.json_out(j)
@@ -497,9 +500,8 @@ class SigSciAPI:
         # /corps/{corpName}/sites/{siteName}/agents/{agentName}/logs
 
         try:
-            headers = { 'Content-type': 'application/json', 'User-Agent': self.ua }
             url     = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.AGENTS_EP + '/' + agent_name + '/logs'
-            r       = requests.get(url, cookies=self.authn.cookies, headers=headers)
+            r       = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
             j       = json.loads(r.text)
 
             self.json_out(j)
@@ -510,11 +512,10 @@ class SigSciAPI:
 
     def get_sites(self):
         try:
-            headers = { 'Content-type': 'application/json', 'User-Agent': self.ua }
             url     = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP[:-1]
-            r       = requests.get(url, cookies=self.authn.cookies, headers=headers)
+            r       = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
             j       = json.loads(r.text)
-
+            
             self.json_out(j)
 
         except Exception as e:
@@ -524,9 +525,8 @@ class SigSciAPI:
 
     def get_members(self):
         try:
-            headers = { 'Content-type': 'application/json', 'User-Agent': self.ua }
             url     = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.MEMBERS_EP
-            r       = requests.get(url, cookies=self.authn.cookies, headers=headers)
+            r       = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
             j       = json.loads(r.text)
 
             self.json_out(j['data'])
@@ -538,9 +538,8 @@ class SigSciAPI:
 
     def get_users(self):
         try:
-            headers = { 'Content-type': 'application/json', 'User-Agent': self.ua }
             url     = self.base_url + self.CORPS_EP + self.corp + self.USERS_EP
-            r       = requests.get(url, cookies=self.authn.cookies, headers=headers)
+            r       = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
             j       = json.loads(r.text)
 
             self.json_out(j)
@@ -552,9 +551,8 @@ class SigSciAPI:
 
     def get_configuration(self, EP):
         try:
-            headers = {'Content-type': 'application/json', 'User-Agent': self.ua, 'Authorization': 'Bearer %s' % self.token}
             url     = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + EP
-            r       = requests.get(url, headers=headers)
+            r       = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
             j       = json.loads(r.text)
 
             self.json_out(j)
@@ -566,7 +564,6 @@ class SigSciAPI:
 
     def post_configuration(self, EP):
         try:
-            headers = {'Content-type': 'application/json', 'User-Agent': self.ua, 'Authorization': 'Bearer %s' % self.token}
             url     = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + EP
 
             with open(self.file) as data_file:
@@ -577,7 +574,7 @@ class SigSciAPI:
                 del config['createdBy']
                 del config['id']
 
-                r = requests.post(url, headers=headers, json=config)
+                r = requests.post(url, cookies=self.authn.cookies, headers=self.get_headers(), json=config)
                 j = json.loads(r.text)
 
                 if 'message' in j:
@@ -597,7 +594,6 @@ class SigSciAPI:
 
     def delete_configuration(self, EP):
         try:
-            headers = {'Content-type': 'application/json', 'User-Agent': self.ua, 'Authorization': 'Bearer %s' % self.token}
             url     = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + EP
 
             with open(self.file) as data_file:
@@ -605,7 +601,7 @@ class SigSciAPI:
 
             for config in data['data']:
                 url = url + "/" + config['id']
-                r = requests.delete(url, headers=headers)
+                r = requests.delete(url, cookies=self.authn.cookies, headers=self.get_headers())
 
             print("Delete complete!")
 
