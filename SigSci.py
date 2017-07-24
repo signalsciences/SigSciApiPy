@@ -2,6 +2,14 @@
 # Signal Sciences Python API Client
 # Science all the Signals!
 
+import sys
+import os
+import argparse
+import requests
+import json
+import csv
+import datetime
+
 #### Configuration Section ################
 
 # The email address associated with your
@@ -37,7 +45,7 @@ PRETTY = None  # PRETTY = true
 SORT   = None  # example: SORT = 'asc'
 ###########################################
 
-# default for retriveing agent metrics
+# default for retrieving agent metrics
 AGENTS     = False
 # default for feed requests
 FEED       = False
@@ -69,15 +77,8 @@ REDACTIONS_ADD    = False
 REDACTIONS_DELETE = False
 ###########################################
 
-import sys
-import os
-import argparse
-import requests
-import json
-import csv
-import datetime
-
 sys.dont_write_bytecode = True
+
 
 class SigSciAPI:
     """
@@ -178,7 +179,7 @@ class SigSciAPI:
             return True
 
     def get_headers(self):
-        headers = { 'Content-type': 'application/json', 'User-Agent': self.ua }
+        headers = {'Content-type': 'application/json', 'User-Agent': self.ua}
 
         if None != self.token:
             headers['Authorization'] = 'Bearer %s' % self.token
@@ -515,7 +516,7 @@ class SigSciAPI:
             url     = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP[:-1]
             r       = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
             j       = json.loads(r.text)
-            
+
             self.json_out(j)
 
         except Exception as e:
@@ -533,7 +534,7 @@ class SigSciAPI:
 
         except Exception as e:
             print('Error: %s ' % str(e))
-            #print('Query: %s ' % url)
+            #  print('Query: %s ' % url)
             quit()
 
     def get_users(self):
@@ -546,7 +547,7 @@ class SigSciAPI:
 
         except Exception as e:
             print('Error: %s ' % str(e))
-            #print('Query: %s ' % url)
+            #  print('Query: %s ' % url)
             quit()
 
     def get_configuration(self, EP):
@@ -862,7 +863,7 @@ if __name__ == '__main__':
 
     # authenticate before doing anything.
     if sigsci.authenticate():
-        
+
         # determine what we are doing.
         if sigsci.agents:
             # get agent metrics
