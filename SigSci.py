@@ -172,7 +172,7 @@ class SigSciAPI:
             print(self.authn.json()['message'])
             return False
         elif self.authn.status_code != 200:
-            print('Unexpected status: %s response: %s' % (auth.status_code, auth.text))
+            print('Unexpected status: %s response: %s' % (self.authn.status_code, self.authn.text))
             return False
         else:
             self.token = self.authn.json()['token']
@@ -356,7 +356,7 @@ class SigSciAPI:
             next = j['next']
             while '' != next['uri'].strip():
                 url = self.base + next['uri']
-                r   = requests.get(url, headers=headers)
+                r   = requests.get(url, headers=self.get_headers())
                 j   = json.loads(r.text)
 
                 if 'message' in j:
@@ -589,10 +589,6 @@ class SigSciAPI:
             print('Query: %s ' % url)
             quit()
 
-    def update_configuration(self, EP):
-        headers = {'Content-type': 'application/json', 'User-Agent': self.ua, 'Authorization': 'Bearer %s' % self.token}
-        url     = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + EP
-
     def delete_configuration(self, EP):
         try:
             url     = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + EP
@@ -602,7 +598,7 @@ class SigSciAPI:
 
             for config in data['data']:
                 url = url + "/" + config['id']
-                r = requests.delete(url, cookies=self.authn.cookies, headers=self.get_headers())
+                requests.delete(url, cookies=self.authn.cookies, headers=self.get_headers())
 
             print("Delete complete!")
 
@@ -730,6 +726,7 @@ class SigSciAPI:
 
     def __init__(self):
         self.base_url  = self.url + self.version
+
 
 if __name__ == '__main__':
     TAGLIST = ('SQLI', 'XSS', 'CMDEXE', 'TRAVERSAL', 'USERAGENT', 'BACKDOOR', 'SCANNER', 'RESPONSESPLIT', 'CODEINJECTION',
