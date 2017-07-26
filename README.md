@@ -67,7 +67,7 @@ optional arguments:
   --blacklist-delete    Delete IP blacklist.
   --redactions          Retrieve redactions.
   --redactions-add      Add to redactions.
-  --redactions-delete   Delete redactions..
+  --redactions-delete   Delete redactions.
   ```
 
 ### Authentication
