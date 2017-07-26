@@ -1,4 +1,6 @@
 # SigSciApiPy
+[![Build Status](https://travis-ci.org/signalsciences/SigSciApiPy.svg?branch=master)](https://travis-ci.org/signalsciences/SigSciApiPy)
+
 Sample Signal Sciences Python API Client
 
 ### Usage
