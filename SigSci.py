@@ -9,6 +9,7 @@ import requests
 import json
 import csv
 import datetime
+from builtins import str
 
 # Configuration Section ###################
 
@@ -285,7 +286,7 @@ class SigSciAPI:
                         for t in detector:
                             tag_list = tag_list + t['type'] + '|'
 
-                        csvwritter.writerow([str(row['timestamp']), str(row['id']), str(row['remoteIP']), str(row['remoteCountryCode']), unicode(row['path']).encode('utf8'), str(tag_list[:-1]), str(row['responseCode']), str(row['agentResponseCode'])])
+                        csvwritter.writerow([str(row['timestamp']), str(row['id']), str(row['remoteIP']), str(row['remoteCountryCode']), str(row['path']).encode('utf8'), str(tag_list[:-1]), str(row['responseCode']), str(row['agentResponseCode'])])
                 else:
                     print('%s' % json.dumps(j[f]))
 
