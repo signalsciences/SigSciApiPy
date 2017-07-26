@@ -126,6 +126,7 @@ class SigSciAPI:
     sort       = 'desc'
     agent_ver  = '0.0.1'
     ua         = 'Signal Sciences Client API (Python/{})'.format(agent_ver)
+    xheaders   = {}
     event_by_id = None
 
     # api end points
@@ -184,7 +185,13 @@ class SigSciAPI:
         if None != self.token:
             headers['Authorization'] = 'Bearer %s' % self.token
 
+        if len(self.xheaders):
+            headers.update(self.xheaders)
+
         return headers
+
+    def set_headers(self, headers):
+        self.xheaders.update(headers)
 
     def build_query(self):
         """
