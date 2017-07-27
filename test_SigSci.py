@@ -55,5 +55,6 @@ class TestSigSciAPI(unittest.TestCase):
         sigsci.build_query()
         self.assertEqual(str(sigsci.query).rstrip(), 'from:-1h ip:127.0.0.1 sort:time-desc tag:SQLI tag:XSS')
 
+
 if __name__ == "__main__":
     unittest.main()
