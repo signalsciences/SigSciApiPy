@@ -1,6 +1,6 @@
 install:
 	pip install -r requirements.txt
-	curl -L https://git.io/misspell | bash
+	# curl -L https://git.io/misspell | bash
 lint: 
 	pylint SigSci.py
 	flake8 SigSci.py test_SigSci.py --ignore=E501
