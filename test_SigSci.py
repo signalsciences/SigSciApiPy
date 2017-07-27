@@ -1,4 +1,5 @@
 from __future__ import print_function
+from builtins import str
 import unittest
 import mock
 
@@ -47,6 +48,12 @@ class TestSigSciAPI(unittest.TestCase):
         sigsci.get_feed_requests()
         sigsci.get_list_events()
 
+    def test_build_query(self):
+        sigsci = SigSciAPI()
+        sigsci.tags = ['SQLI', 'XSS']
+        sigsci.ip = '127.0.0.1'
+        sigsci.build_query()
+        self.assertEqual(str(sigsci.query).rstrip(), 'from:-1h ip:127.0.0.1 sort:time-desc tag:SQLI tag:XSS')
 
 if __name__ == "__main__":
     unittest.main()
