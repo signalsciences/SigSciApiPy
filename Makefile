@@ -13,3 +13,8 @@ misspell:
 
 test:
 	nosetests --with-coverage --cover-package=SigSciApiPy
+
+clean:
+	rm -f *.pyc
+	rm -rf cover
+	rm -rf bin
