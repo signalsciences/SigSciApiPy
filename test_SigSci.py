@@ -45,6 +45,7 @@ class TestSigSciAPI(unittest.TestCase):
         sigsci.site = "testsite"
         sigsci.authenticate()
         sigsci.get_feed_requests()
+        sigsci.get_list_events()
 
 
 if __name__ == "__main__":
