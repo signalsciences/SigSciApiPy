@@ -2,14 +2,16 @@
 # Signal Sciences Python API Client
 # Science all the Signals!
 
-import sys
-import os
 import argparse
-import requests
-import json
 import csv
 import datetime
+import json
+import os
+import sys
 from builtins import str
+from __future__ import print_function
+
+import requests
 
 # Configuration Section ###################
 
