@@ -15,7 +15,7 @@ from builtins import str
 
 # The email address associated with your
 # Signal Sciences account, e.g. user@yourdomain.com
-EMAIL    = ''
+EMAIL = ''
 
 # The password associated with your Signal Sciences account.
 PASSWORD = ''
@@ -32,49 +32,49 @@ SITE = ''
 # API Query settings
 # For help with time search syntax see:
 # https://dashboard.signalsciences.net/documentation/knowledge-base/search-syntax#time
-FROM   = None  # example: FROM = '-6h'
-UNTIL  = None  # example: UNTIL = '-4h'
-TAGS   = None  # example: TAGS = 'SQLI XSS TRAVERSAL'
-CTAGS  = None  # example: CTAGS = 'bad-bot failed-login'
+FROM = None  # example: FROM = '-6h'
+UNTIL = None  # example: UNTIL = '-4h'
+TAGS = None  # example: TAGS = 'SQLI XSS TRAVERSAL'
+CTAGS = None  # example: CTAGS = 'bad-bot failed-login'
 SERVER = None  # example: SERVER = 'example.com'
-IP     = None  # example: IP = '66.228.162.36'
-LIMIT  = None  # example: LIMIT = 250
-FIELD  = None  # example: FIELD = 'all'
-FILE   = None  # example: FILE = '/tmp/sigsci.json'
+IP = None  # example: IP = '66.228.162.36'
+LIMIT = None  # example: LIMIT = 250
+FIELD = None  # example: FIELD = 'all'
+FILE = None  # example: FILE = '/tmp/sigsci.json'
 FORMAT = None  # example: FORMAT = 'csv'
 PRETTY = None  # PRETTY = true
-SORT   = None  # example: SORT = 'asc'
+SORT = None  # example: SORT = 'asc'
 ###########################################
 
 # default for retrieving agent metrics
-AGENTS     = False
+AGENTS = False
 # default for feed requests
-FEED       = False
+FEED = False
 # default for timeseries
 TIMESERIES = False
-ROLLUP     = 60
+ROLLUP = 60
 # list events
 LIST_EVENTS = False
 EVENT_BY_ID = None
 # default for whitelist parameters
-WHITELIST_PARAMETERS        = False
-WHITELIST_PARAMETERS_ADD    = False
+WHITELIST_PARAMETERS = False
+WHITELIST_PARAMETERS_ADD = False
 WHITELIST_PARAMETERS_DELETE = False
 # default for whitelist paths
-WHITELIST_PATHS        = False
-WHITELIST_PATHS_ADD    = False
+WHITELIST_PATHS = False
+WHITELIST_PATHS_ADD = False
 WHITELIST_PATHS_DELETE = False
 # default for whitelist
-WHITELIST        = False
-WHITELIST_ADD    = False
+WHITELIST = False
+WHITELIST_ADD = False
 WHITELIST_DELETE = False
 # default for blacklist
-BLACKLIST        = False
-BLACKLIST_ADD    = False
+BLACKLIST = False
+BLACKLIST_ADD = False
 BLACKLIST_DELETE = False
 # default for redactions
-REDACTIONS        = False
-REDACTIONS_ADD    = False
+REDACTIONS = False
+REDACTIONS_ADD = False
 REDACTIONS_DELETE = False
 ###########################################
 
@@ -102,52 +102,52 @@ class SigSciAPI:
             sigsci.build_query(from_time='-6h', until_time='-5h', tags=['SQLI', 'XSS', 'CMDEXE'])
             sigsci.query_api()
     """
-    base       = 'https://dashboard.signalsciences.net'
-    url        = base + '/api/'
-    version    = 'v0'
-    base_url   = None
-    authn      = None
-    token      = None
-    email      = None
-    pword      = None
-    corp       = None
-    site       = None
-    query      = 'from:-6h '
-    from_time  = '-1h'
+    base = 'https://dashboard.signalsciences.net'
+    url = base + '/api/'
+    version = 'v0'
+    base_url = None
+    authn = None
+    token = None
+    email = None
+    pword = None
+    corp = None
+    site = None
+    query = 'from:-6h '
+    from_time = '-1h'
     until_time = None
-    tags       = None
-    ctags      = None
-    server     = None
-    ip         = None
-    limit      = 100
-    field      = 'data'
-    file       = None
-    format     = 'json'
-    pretty     = False
-    sort       = 'desc'
-    agent_ver  = '0.0.1'
-    ua         = 'Signal Sciences Client API (Python/{})'.format(agent_ver)
-    xheaders   = {}
+    tags = None
+    ctags = None
+    server = None
+    ip = None
+    limit = 100
+    field = 'data'
+    file = None
+    format = 'json'
+    pretty = False
+    sort = 'desc'
+    agent_ver = '0.0.1'
+    ua = 'Signal Sciences Client API (Python/{})'.format(agent_ver)
+    xheaders = {}
     event_by_id = None
 
     # api end points
-    LOGIN_EP        = '/auth'
-    LOGOUT_EP       = '/auth/logout'
-    CORPS_EP        = '/corps/'
-    SITES_EP        = '/sites/'
-    MEMBERS_EP      = '/members'
-    USERS_EP        = '/users'
-    REQEUSTS_EP     = '/requests'
-    AGENTS_EP       = '/agents'
-    FEED_EP         = '/feed/requests'
-    RULES_EP        = '/rules'
-    TIMESERIES_EP   = '/timeseries/requests'
-    EVENTS_EP       = '/events'
-    WLPARAMS_EP     = '/paramwhitelist'
-    WLPATHS_EP      = '/pathwhitelist'
-    WHITELIST_EP    = '/whitelist'
-    BLACKLIST_EP    = '/blacklist'
-    REDACTIONS_EP   = '/redactions'
+    LOGIN_EP = '/auth'
+    LOGOUT_EP = '/auth/logout'
+    CORPS_EP = '/corps/'
+    SITES_EP = '/sites/'
+    MEMBERS_EP = '/members'
+    USERS_EP = '/users'
+    REQEUSTS_EP = '/requests'
+    AGENTS_EP = '/agents'
+    FEED_EP = '/feed/requests'
+    RULES_EP = '/rules'
+    TIMESERIES_EP = '/timeseries/requests'
+    EVENTS_EP = '/events'
+    WLPARAMS_EP = '/paramwhitelist'
+    WLPATHS_EP = '/pathwhitelist'
+    WHITELIST_EP = '/whitelist'
+    BLACKLIST_EP = '/blacklist'
+    REDACTIONS_EP = '/redactions'
     INTEGRATIONS_EP = '/integrations'
     CONFIGURED_TEMPLATES_EP = '/configuredtemplates'
 
@@ -248,10 +248,10 @@ class SigSciAPI:
         """
 
         try:
-            url     = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.REQEUSTS_EP + '?q=' + str(self.query).strip() + '&limit=' + str(self.limit)
-            r       = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
-            j       = json.loads(r.text)
-            f       = None if 'all' == self.field else self.field
+            url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.REQEUSTS_EP + '?q=' + str(self.query).strip() + '&limit=' + str(self.limit)
+            r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
+            j = json.loads(r.text)
+            f = None if 'all' == self.field else self.field
 
             if 'message' in j:
                 raise ValueError(j['message'])
@@ -320,18 +320,18 @@ class SigSciAPI:
             now = datetime.datetime.now()
 
             if self.from_time is None:
-                tm             = now - datetime.timedelta(hours=1, minutes=5)
-                stm            = tm.strftime("%Y-%m-%d %H:%M:00")
+                tm = now - datetime.timedelta(hours=1, minutes=5)
+                stm = tm.strftime("%Y-%m-%d %H:%M:00")
                 self.from_time = int(tm.strptime(stm, "%Y-%m-%d %H:%M:00").strftime("%s"))
-                self.query     = 'from=%s' % str(self.from_time)
+                self.query = 'from=%s' % str(self.from_time)
             else:
-                self.query     = 'from=%s' % str(self.from_time)
+                self.query = 'from=%s' % str(self.from_time)
 
             if self.until_time is None:
-                tm              = now - datetime.timedelta(minutes=5)
-                stm             = tm.strftime("%Y-%m-%d %H:%M:00")
+                tm = now - datetime.timedelta(minutes=5)
+                stm = tm.strftime("%Y-%m-%d %H:%M:00")
                 self.until_time = int(tm.strptime(stm, "%Y-%m-%d %H:%M:00").strftime("%s"))
-                self.query      += '&until=%s' % str(self.until_time)
+                self.query += '&until=%s' % str(self.until_time)
             else:
                 self.query += '&until=%s' % str(self.until_time)
 
@@ -345,9 +345,9 @@ class SigSciAPI:
 
                 self.query += ','.join(self.ctags)
 
-            url     = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.FEED_EP + '?' + str(self.query).strip()
-            r       = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
-            j       = json.loads(r.text)
+            url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.FEED_EP + '?' + str(self.query).strip()
+            r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
+            j = json.loads(r.text)
 
             if 'message' in j:
                 raise ValueError(j['message'])
@@ -364,8 +364,8 @@ class SigSciAPI:
             next = j['next']
             while '' != next['uri'].strip():
                 url = self.base + next['uri']
-                r   = requests.get(url, headers=self.get_headers())
-                j   = json.loads(r.text)
+                r = requests.get(url, headers=self.get_headers())
+                j = json.loads(r.text)
 
                 if 'message' in j:
                     raise ValueError(j['message'])
@@ -413,9 +413,9 @@ class SigSciAPI:
             if self.until_time is not None:
                 self.query += '&until=%s' % str(self.until_time)
 
-            url        = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.TIMESERIES_EP + self.query
-            r          = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
-            j          = json.loads(r.text)
+            url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.TIMESERIES_EP + self.query
+            r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
+            j = json.loads(r.text)
 
             self.json_out(j)
 
@@ -449,9 +449,9 @@ class SigSciAPI:
             if tag is not None:
                 query_params += '&tag=%s' % (str(tag).strip())
 
-            url     = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.EVENTS_EP + query_params
-            r       = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
-            j       = json.loads(r.text)
+            url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.EVENTS_EP + query_params
+            r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
+            j = json.loads(r.text)
 
             self.json_out(j)
 
@@ -478,9 +478,9 @@ class SigSciAPI:
         # https://dashboard.signalsciences.net/documentation/api#_corps__corpName__sites__siteName__events__eventID__get
         # /corps/{corpName}/sites/{siteName}/events/{eventID}
         try:
-            url     = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.EVENTS_EP + '/' + self.event_by_id
-            r       = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
-            j       = json.loads(r.text)
+            url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.EVENTS_EP + '/' + self.event_by_id
+            r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
+            j = json.loads(r.text)
 
             self.json_out(j)
 
@@ -493,9 +493,9 @@ class SigSciAPI:
         # https://dashboard.signalsciences.net/documentation/api#_corps__corpName__sites__siteName__agents_get
         # /corps/{corpName}/sites/{siteName}/agents
         try:
-            url     = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.AGENTS_EP
-            r       = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
-            j       = json.loads(r.text)
+            url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.AGENTS_EP
+            r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
+            j = json.loads(r.text)
 
             self.json_out(j)
 
@@ -509,9 +509,9 @@ class SigSciAPI:
         # /corps/{corpName}/sites/{siteName}/agents/{agentName}/logs
 
         try:
-            url     = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.AGENTS_EP + '/' + agent_name + '/logs'
-            r       = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
-            j       = json.loads(r.text)
+            url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.AGENTS_EP + '/' + agent_name + '/logs'
+            r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
+            j = json.loads(r.text)
 
             self.json_out(j)
 
@@ -521,9 +521,9 @@ class SigSciAPI:
 
     def get_sites(self):
         try:
-            url     = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP[:-1]
-            r       = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
-            j       = json.loads(r.text)
+            url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP[:-1]
+            r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
+            j = json.loads(r.text)
 
             self.json_out(j)
 
@@ -534,9 +534,9 @@ class SigSciAPI:
 
     def get_members(self):
         try:
-            url     = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.MEMBERS_EP
-            r       = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
-            j       = json.loads(r.text)
+            url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.MEMBERS_EP
+            r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
+            j = json.loads(r.text)
 
             self.json_out(j['data'])
 
@@ -547,9 +547,9 @@ class SigSciAPI:
 
     def get_users(self):
         try:
-            url     = self.base_url + self.CORPS_EP + self.corp + self.USERS_EP
-            r       = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
-            j       = json.loads(r.text)
+            url = self.base_url + self.CORPS_EP + self.corp + self.USERS_EP
+            r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
+            j = json.loads(r.text)
 
             self.json_out(j)
 
@@ -560,9 +560,9 @@ class SigSciAPI:
 
     def get_configuration(self, EP):
         try:
-            url     = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + EP
-            r       = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
-            j       = json.loads(r.text)
+            url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + EP
+            r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
+            j = json.loads(r.text)
 
             self.json_out(j)
 
@@ -573,7 +573,7 @@ class SigSciAPI:
 
     def post_configuration(self, EP):
         try:
-            url     = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + EP
+            url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + EP
 
             with open(self.file) as data_file:
                 data = json.load(data_file)
@@ -599,10 +599,10 @@ class SigSciAPI:
 
     def delete_configuration(self, EP):
         try:
-            url     = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + EP
+            url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + EP
 
             with open(self.file) as data_file:
-                    data = json.load(data_file)
+                data = json.load(data_file)
 
             for config in data['data']:
                 url = url + "/" + config['id']
@@ -733,7 +733,7 @@ class SigSciAPI:
             print("CSV output not available for this request.")
 
     def __init__(self):
-        self.base_url  = self.url + self.version
+        self.base_url = self.url + self.version
 
 
 if __name__ == '__main__':
@@ -788,83 +788,83 @@ if __name__ == '__main__':
         quit()
 
     # setup and run api query
-    sigsci       = SigSciAPI()
+    sigsci = SigSciAPI()
 
     # first get configuration, environment variables (if set) override
     # settings specified at the beginning of this script.
-    sigsci.email                       = os.environ.get('SIGSCI_EMAIL')                       if os.environ.get('SIGSCI_EMAIL') is not None else EMAIL
-    sigsci.pword                       = os.environ.get("SIGSCI_PASSWORD")                    if os.environ.get('SIGSCI_PASSWORD') is not None else PASSWORD
-    sigsci.corp                        = os.environ.get("SIGSCI_CORP")                        if os.environ.get('SIGSCI_CORP') is not None else CORP
-    sigsci.site                        = os.environ.get("SIGSCI_SITE")                        if os.environ.get('SIGSCI_SITE') is not None else SITE
-    sigsci.from_time                   = os.environ.get("SIGSCI_FROM")                        if os.environ.get('SIGSCI_FROM') is not None else FROM
-    sigsci.until_time                  = os.environ.get("SIGSCI_UNTIL")                       if os.environ.get('SIGSCI_UNTIL') is not None else UNTIL
-    sigsci.tags                        = os.environ.get("SIGSCI_TAGS")                        if os.environ.get('SIGSCI_TAGS') is not None else TAGS
-    sigsci.ctags                       = os.environ.get("SIGSCI_CTAGS")                       if os.environ.get('SIGSCI_CTAGS') is not None else CTAGS
-    sigsci.server                      = os.environ.get("SIGSCI_SERVER")                      if os.environ.get('SIGSCI_SERVER') is not None else SERVER
-    sigsci.ip                          = os.environ.get("SIGSCI_IP")                          if os.environ.get('SIGSCI_IP') is not None else IP
-    sigsci.limit                       = os.environ.get("SIGSCI_LIMIT")                       if os.environ.get('SIGSCI_LIMIT') is not None else LIMIT
-    sigsci.field                       = os.environ.get("SIGSCI_FIELD")                       if os.environ.get('SIGSCI_FIELD') is not None else FIELD
-    sigsci.file                        = os.environ.get("SIGSCI_FILE")                        if os.environ.get('SIGSCI_FILE') is not None else FILE
-    sigsci.format                      = os.environ.get("SIGSCI_FORMAT")                      if os.environ.get('SIGSCI_FORMAT') is not None else FORMAT
-    sigsci.pretty                      = os.environ.get("SIGSCI_PRETTY")                      if os.environ.get('SIGSCI_PRETTY') is not None else PRETTY
-    sigsci.sort                        = os.environ.get("SIGSCI_SORT")                        if os.environ.get('SIGSCI_SORT') is not None else SORT
-    sigsci.agents                      = os.environ.get("SIGSCI_AGENTS")                      if os.environ.get('SIGSCI_AGENTS') is not None else AGENTS
-    sigsci.feed                        = os.environ.get("SIGSCI_FEED")                        if os.environ.get('SIGSCI_FEED') is not None else FEED
-    sigsci.timeseries                  = os.environ.get("SIGSCI_TIMESERIES")                  if os.environ.get('SIGSCI_TIMESERIES') is not None else TIMESERIES
-    sigsci.rollup                      = os.environ.get("SIGSCI_ROLLUP")                      if os.environ.get('SIGSCI_ROLLUP') is not None else ROLLUP
-    sigsci.list_events                 = os.environ.get("SIGSCI_LIST_EVENTS")                 if os.environ.get('SIGSCI_LIST_EVENTS') is not None else LIST_EVENTS
-    sigsci.event_by_id                 = os.environ.get("SIGSCI_EVENT_BY_ID")                 if os.environ.get('SIGSCI_EVENT_BY_ID') is not None else EVENT_BY_ID
-    sigsci.whitelist_parameters        = os.environ.get("SIGSCI_WHITELIST_PARAMETERS")        if os.environ.get('SIGSCI_WHITELIST_PARAMETERS') is not None else WHITELIST_PARAMETERS
-    sigsci.whitelist_parameters_add    = os.environ.get("SIGSCI_WHITELIST_PARAMETERS_ADD")    if os.environ.get('SIGSCI_WHITELIST_PARAMETERS_ADD') is not None else WHITELIST_PARAMETERS_ADD
+    sigsci.email = os.environ.get('SIGSCI_EMAIL') if os.environ.get('SIGSCI_EMAIL') is not None else EMAIL
+    sigsci.pword = os.environ.get("SIGSCI_PASSWORD") if os.environ.get('SIGSCI_PASSWORD') is not None else PASSWORD
+    sigsci.corp = os.environ.get("SIGSCI_CORP") if os.environ.get('SIGSCI_CORP') is not None else CORP
+    sigsci.site = os.environ.get("SIGSCI_SITE") if os.environ.get('SIGSCI_SITE') is not None else SITE
+    sigsci.from_time = os.environ.get("SIGSCI_FROM") if os.environ.get('SIGSCI_FROM') is not None else FROM
+    sigsci.until_time = os.environ.get("SIGSCI_UNTIL") if os.environ.get('SIGSCI_UNTIL') is not None else UNTIL
+    sigsci.tags = os.environ.get("SIGSCI_TAGS") if os.environ.get('SIGSCI_TAGS') is not None else TAGS
+    sigsci.ctags = os.environ.get("SIGSCI_CTAGS") if os.environ.get('SIGSCI_CTAGS') is not None else CTAGS
+    sigsci.server = os.environ.get("SIGSCI_SERVER") if os.environ.get('SIGSCI_SERVER') is not None else SERVER
+    sigsci.ip = os.environ.get("SIGSCI_IP") if os.environ.get('SIGSCI_IP') is not None else IP
+    sigsci.limit = os.environ.get("SIGSCI_LIMIT") if os.environ.get('SIGSCI_LIMIT') is not None else LIMIT
+    sigsci.field = os.environ.get("SIGSCI_FIELD") if os.environ.get('SIGSCI_FIELD') is not None else FIELD
+    sigsci.file = os.environ.get("SIGSCI_FILE") if os.environ.get('SIGSCI_FILE') is not None else FILE
+    sigsci.format = os.environ.get("SIGSCI_FORMAT") if os.environ.get('SIGSCI_FORMAT') is not None else FORMAT
+    sigsci.pretty = os.environ.get("SIGSCI_PRETTY") if os.environ.get('SIGSCI_PRETTY') is not None else PRETTY
+    sigsci.sort = os.environ.get("SIGSCI_SORT") if os.environ.get('SIGSCI_SORT') is not None else SORT
+    sigsci.agents = os.environ.get("SIGSCI_AGENTS") if os.environ.get('SIGSCI_AGENTS') is not None else AGENTS
+    sigsci.feed = os.environ.get("SIGSCI_FEED") if os.environ.get('SIGSCI_FEED') is not None else FEED
+    sigsci.timeseries = os.environ.get("SIGSCI_TIMESERIES") if os.environ.get('SIGSCI_TIMESERIES') is not None else TIMESERIES
+    sigsci.rollup = os.environ.get("SIGSCI_ROLLUP") if os.environ.get('SIGSCI_ROLLUP') is not None else ROLLUP
+    sigsci.list_events = os.environ.get("SIGSCI_LIST_EVENTS") if os.environ.get('SIGSCI_LIST_EVENTS') is not None else LIST_EVENTS
+    sigsci.event_by_id = os.environ.get("SIGSCI_EVENT_BY_ID") if os.environ.get('SIGSCI_EVENT_BY_ID') is not None else EVENT_BY_ID
+    sigsci.whitelist_parameters = os.environ.get("SIGSCI_WHITELIST_PARAMETERS") if os.environ.get('SIGSCI_WHITELIST_PARAMETERS') is not None else WHITELIST_PARAMETERS
+    sigsci.whitelist_parameters_add = os.environ.get("SIGSCI_WHITELIST_PARAMETERS_ADD") if os.environ.get('SIGSCI_WHITELIST_PARAMETERS_ADD') is not None else WHITELIST_PARAMETERS_ADD
     sigsci.whitelist_parameters_delete = os.environ.get("SIGSCI_WHITELIST_PARAMETERS_DELETE") if os.environ.get('SIGSCI_WHITELIST_PARAMETERS_DELETE') is not None else WHITELIST_PARAMETERS_DELETE
-    sigsci.whitelist_paths             = os.environ.get("SIGSCI_WHITELIST_PATHS")             if os.environ.get('SIGSCI_WHITELIST_PATHS') is not None else WHITELIST_PATHS
-    sigsci.whitelist_paths_add         = os.environ.get("SIGSCI_WHITELIST_PATHS_ADD")         if os.environ.get('SIGSCI_WHITELIST_PATHS_ADD') is not None else WHITELIST_PATHS_ADD
-    sigsci.whitelist_paths_delete      = os.environ.get("SIGSCI_WHITELIST_PATHS_DELETE")      if os.environ.get('SIGSCI_WHITELIST_PATHS_DELETE') is not None else WHITELIST_PATHS_DELETE
-    sigsci.whitelist                   = os.environ.get("SIGSCI_WHITELIST")                   if os.environ.get('SIGSCI_WHITELIST') is not None else WHITELIST
-    sigsci.whitelist_add               = os.environ.get("SIGSCI_WHITELIST_ADD")               if os.environ.get('SIGSCI_WHITELIST_ADD') is not None else WHITELIST_ADD
-    sigsci.whitelist_delete            = os.environ.get("SIGSCI_WHITELIST_DELETE")            if os.environ.get('SIGSCI_WHITELIST_DELETE') is not None else WHITELIST_DELETE
-    sigsci.blacklist                   = os.environ.get("SIGSCI_BLACKLIST")                   if os.environ.get('SIGSCI_BLACKLIST') is not None else BLACKLIST
-    sigsci.blacklist_add               = os.environ.get("SIGSCI_BLACKLIST_ADD")               if os.environ.get('SIGSCI_BLACKLIST_ADD') is not None else BLACKLIST_ADD
-    sigsci.blacklist_delete            = os.environ.get("SIGSCI_BLACKLIST_DELETE")            if os.environ.get('SIGSCI_BLACKLIST_DELETE') is not None else BLACKLIST_DELETE
-    sigsci.redactions                  = os.environ.get("SIGSCI_REDACTIONS")                  if os.environ.get('SIGSCI_REDACTIONS') is not None else REDACTIONS
-    sigsci.redactions_add              = os.environ.get("SIGSCI_REDACTIONS_ADD")              if os.environ.get('SIGSCI_REDACTIONS_ADD') is not None else REDACTIONS_ADD
-    sigsci.redactions_delete           = os.environ.get("SIGSCI_REDACTIONS_DELETE")           if os.environ.get('SIGSCI_REDACTIONS_DELETE') is not None else REDACTIONS_DELETE
+    sigsci.whitelist_paths = os.environ.get("SIGSCI_WHITELIST_PATHS") if os.environ.get('SIGSCI_WHITELIST_PATHS') is not None else WHITELIST_PATHS
+    sigsci.whitelist_paths_add = os.environ.get("SIGSCI_WHITELIST_PATHS_ADD") if os.environ.get('SIGSCI_WHITELIST_PATHS_ADD') is not None else WHITELIST_PATHS_ADD
+    sigsci.whitelist_paths_delete = os.environ.get("SIGSCI_WHITELIST_PATHS_DELETE") if os.environ.get('SIGSCI_WHITELIST_PATHS_DELETE') is not None else WHITELIST_PATHS_DELETE
+    sigsci.whitelist = os.environ.get("SIGSCI_WHITELIST") if os.environ.get('SIGSCI_WHITELIST') is not None else WHITELIST
+    sigsci.whitelist_add = os.environ.get("SIGSCI_WHITELIST_ADD") if os.environ.get('SIGSCI_WHITELIST_ADD') is not None else WHITELIST_ADD
+    sigsci.whitelist_delete = os.environ.get("SIGSCI_WHITELIST_DELETE") if os.environ.get('SIGSCI_WHITELIST_DELETE') is not None else WHITELIST_DELETE
+    sigsci.blacklist = os.environ.get("SIGSCI_BLACKLIST") if os.environ.get('SIGSCI_BLACKLIST') is not None else BLACKLIST
+    sigsci.blacklist_add = os.environ.get("SIGSCI_BLACKLIST_ADD") if os.environ.get('SIGSCI_BLACKLIST_ADD') is not None else BLACKLIST_ADD
+    sigsci.blacklist_delete = os.environ.get("SIGSCI_BLACKLIST_DELETE") if os.environ.get('SIGSCI_BLACKLIST_DELETE') is not None else BLACKLIST_DELETE
+    sigsci.redactions = os.environ.get("SIGSCI_REDACTIONS") if os.environ.get('SIGSCI_REDACTIONS') is not None else REDACTIONS
+    sigsci.redactions_add = os.environ.get("SIGSCI_REDACTIONS_ADD") if os.environ.get('SIGSCI_REDACTIONS_ADD') is not None else REDACTIONS_ADD
+    sigsci.redactions_delete = os.environ.get("SIGSCI_REDACTIONS_DELETE") if os.environ.get('SIGSCI_REDACTIONS_DELETE') is not None else REDACTIONS_DELETE
 
     # if command line arguments exist then override any previously set values.
     # note: there is no command line argument for EMAIL, PASSWORD, CORP, or SITE.
-    sigsci.from_time                   = arguments.from_time                   if arguments.from_time is not None else sigsci.from_time
-    sigsci.until_time                  = arguments.until_time                  if arguments.until_time is not None else sigsci.until_time
-    sigsci.tags                        = arguments.tags                        if arguments.tags is not None else sigsci.tags
-    sigsci.ctags                       = arguments.ctags                       if arguments.ctags is not None else sigsci.ctags
-    sigsci.server                      = arguments.server                      if arguments.server is not None else sigsci.server
-    sigsci.ip                          = arguments.ip                          if arguments.ip is not None else sigsci.ip
-    sigsci.limit                       = arguments.limit                       if arguments.limit is not None else sigsci.limit
-    sigsci.field                       = arguments.field                       if arguments.field is not None else sigsci.field
-    sigsci.file                        = arguments.file                        if arguments.file is not None else sigsci.file
-    sigsci.format                      = arguments.format                      if arguments.format is not None else sigsci.format
-    sigsci.pretty                      = arguments.pretty                      if arguments.pretty is not None else sigsci.pretty
-    sigsci.sort                        = arguments.sort                        if arguments.sort is not None else sigsci.sort
-    sigsci.agents                      = arguments.agents                      if arguments.agents is not None else sigsci.agents
-    sigsci.feed                        = arguments.feed                        if arguments.feed is not None else sigsci.feed
-    sigsci.timeseries                  = arguments.timeseries                  if arguments.timeseries is not None else sigsci.timeseries
-    sigsci.rollup                      = arguments.rollup                      if arguments.rollup is not None else sigsci.rollup
-    sigsci.list_events                 = arguments.list_events                 if arguments.list_events is not None else sigsci.list_events
-    sigsci.event_by_id                 = arguments.event_by_id                 if arguments.event_by_id is not None else sigsci.event_by_id
-    sigsci.whitelist_parameters        = arguments.whitelist_parameters        if arguments.whitelist_parameters is not None else sigsci.whitelist_parameters
-    sigsci.whitelist_parameters_add    = arguments.whitelist_parameters_add    if arguments.whitelist_parameters_add is not None else sigsci.whitelist_parameters_add
+    sigsci.from_time = arguments.from_time if arguments.from_time is not None else sigsci.from_time
+    sigsci.until_time = arguments.until_time if arguments.until_time is not None else sigsci.until_time
+    sigsci.tags = arguments.tags if arguments.tags is not None else sigsci.tags
+    sigsci.ctags = arguments.ctags if arguments.ctags is not None else sigsci.ctags
+    sigsci.server = arguments.server if arguments.server is not None else sigsci.server
+    sigsci.ip = arguments.ip if arguments.ip is not None else sigsci.ip
+    sigsci.limit = arguments.limit if arguments.limit is not None else sigsci.limit
+    sigsci.field = arguments.field if arguments.field is not None else sigsci.field
+    sigsci.file = arguments.file if arguments.file is not None else sigsci.file
+    sigsci.format = arguments.format if arguments.format is not None else sigsci.format
+    sigsci.pretty = arguments.pretty if arguments.pretty is not None else sigsci.pretty
+    sigsci.sort = arguments.sort if arguments.sort is not None else sigsci.sort
+    sigsci.agents = arguments.agents if arguments.agents is not None else sigsci.agents
+    sigsci.feed = arguments.feed if arguments.feed is not None else sigsci.feed
+    sigsci.timeseries = arguments.timeseries if arguments.timeseries is not None else sigsci.timeseries
+    sigsci.rollup = arguments.rollup if arguments.rollup is not None else sigsci.rollup
+    sigsci.list_events = arguments.list_events if arguments.list_events is not None else sigsci.list_events
+    sigsci.event_by_id = arguments.event_by_id if arguments.event_by_id is not None else sigsci.event_by_id
+    sigsci.whitelist_parameters = arguments.whitelist_parameters if arguments.whitelist_parameters is not None else sigsci.whitelist_parameters
+    sigsci.whitelist_parameters_add = arguments.whitelist_parameters_add if arguments.whitelist_parameters_add is not None else sigsci.whitelist_parameters_add
     sigsci.whitelist_parameters_delete = arguments.whitelist_parameters_delete if arguments.whitelist_parameters_delete is not None else sigsci.whitelist_parameters_delete
-    sigsci.whitelist_paths             = arguments.whitelist_paths             if arguments.whitelist_paths is not None else sigsci.whitelist_paths
-    sigsci.whitelist_paths_add         = arguments.whitelist_paths_add         if arguments.whitelist_paths_add is not None else sigsci.whitelist_paths_add
-    sigsci.whitelist_paths_delete      = arguments.whitelist_paths_delete      if arguments.whitelist_paths_delete is not None else sigsci.whitelist_paths_delete
-    sigsci.whitelist                   = arguments.whitelist                   if arguments.whitelist is not None else sigsci.whitelist
-    sigsci.whitelist_add               = arguments.whitelist_add               if arguments.whitelist_add is not None else sigsci.whitelist_add
-    sigsci.whitelist_delete            = arguments.whitelist_delete            if arguments.whitelist_delete is not None else sigsci.whitelist_delete
-    sigsci.blacklist                   = arguments.blacklist                   if arguments.blacklist is not None else sigsci.blacklist
-    sigsci.blacklist_add               = arguments.blacklist_add               if arguments.blacklist_add is not None else sigsci.blacklist_add
-    sigsci.blacklist_delete            = arguments.blacklist_delete            if arguments.blacklist_delete is not None else sigsci.blacklist_delete
-    sigsci.redactions                  = arguments.redactions                  if arguments.redactions is not None else sigsci.redactions
-    sigsci.redactions_add              = arguments.redactions_add              if arguments.redactions_add is not None else sigsci.redactions_add
-    sigsci.redactions_delete           = arguments.redactions_delete           if arguments.redactions_delete is not None else sigsci.redactions_delete
+    sigsci.whitelist_paths = arguments.whitelist_paths if arguments.whitelist_paths is not None else sigsci.whitelist_paths
+    sigsci.whitelist_paths_add = arguments.whitelist_paths_add if arguments.whitelist_paths_add is not None else sigsci.whitelist_paths_add
+    sigsci.whitelist_paths_delete = arguments.whitelist_paths_delete if arguments.whitelist_paths_delete is not None else sigsci.whitelist_paths_delete
+    sigsci.whitelist = arguments.whitelist if arguments.whitelist is not None else sigsci.whitelist
+    sigsci.whitelist_add = arguments.whitelist_add if arguments.whitelist_add is not None else sigsci.whitelist_add
+    sigsci.whitelist_delete = arguments.whitelist_delete if arguments.whitelist_delete is not None else sigsci.whitelist_delete
+    sigsci.blacklist = arguments.blacklist if arguments.blacklist is not None else sigsci.blacklist
+    sigsci.blacklist_add = arguments.blacklist_add if arguments.blacklist_add is not None else sigsci.blacklist_add
+    sigsci.blacklist_delete = arguments.blacklist_delete if arguments.blacklist_delete is not None else sigsci.blacklist_delete
+    sigsci.redactions = arguments.redactions if arguments.redactions is not None else sigsci.redactions
+    sigsci.redactions_add = arguments.redactions_add if arguments.redactions_add is not None else sigsci.redactions_add
+    sigsci.redactions_delete = arguments.redactions_delete if arguments.redactions_delete is not None else sigsci.redactions_delete
 
     # authenticate before doing anything.
     if sigsci.authenticate():
@@ -890,7 +890,7 @@ if __name__ == '__main__':
                 for tag in sigsci.tags:
                     sigsci.get_list_events(tag.upper())
             else:
-                    sigsci.get_list_events()
+                sigsci.get_list_events()
 
         elif sigsci.event_by_id is not None:
             # get event data
