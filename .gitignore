@@ -93,3 +93,6 @@ ENV/
 
 # misspell binary
 bin/
+
+# coverage html
+cover/
