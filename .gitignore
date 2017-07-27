@@ -90,3 +90,6 @@ ENV/
 
 # vim swapfiles
 *.swp
+
+# misspell binary
+bin/
