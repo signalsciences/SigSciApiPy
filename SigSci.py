@@ -493,11 +493,8 @@ class SigSciAPI(object):
             print('Query: %s ' % url)
             quit()
 
-    def get_agent_metrics(self):
-        # https://dashboard.signalsciences.net/documentation/api#_corps__corpName__sites__siteName__agents_get
-        # /corps/{corpName}/sites/{siteName}/agents
+    def get_list(self, url):
         try:
-            url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.AGENTS_EP
             r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
             j = json.loads(r.text)
 
@@ -507,6 +504,12 @@ class SigSciAPI(object):
             print('Error: %s ' % str(e))
             print('Query: %s ' % url)
             quit()
+
+    def get_agent_metrics(self):
+        # https://dashboard.signalsciences.net/documentation/api#_corps__corpName__sites__siteName__agents_get
+        # /corps/{corpName}/sites/{siteName}/agents
+        url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.AGENTS_EP
+        return self.get_list(url)
 
     def get_agent_logs(self, agent_name):
         # https://docs.signalsciences.net/api/#_corps__corpName__sites__siteName__agents__agentName__logs_get
@@ -524,43 +527,16 @@ class SigSciAPI(object):
             quit()
 
     def get_sites(self):
-        try:
-            url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP[:-1]
-            r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
-            j = json.loads(r.text)
-
-            self.json_out(j)
-
-        except Exception as e:
-            print('Error: %s ' % str(e))
-            print('Query: %s ' % url)
-            quit()
+        url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP[:-1]
+        return self.get_list(url)
 
     def get_members(self):
-        try:
-            url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.MEMBERS_EP
-            r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
-            j = json.loads(r.text)
-
-            self.json_out(j['data'])
-
-        except Exception as e:
-            print('Error: %s ' % str(e))
-            #  print('Query: %s ' % url)
-            quit()
+        url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.MEMBERS_EP
+        return self.get_list(url)
 
     def get_users(self):
-        try:
-            url = self.base_url + self.CORPS_EP + self.corp + self.USERS_EP
-            r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
-            j = json.loads(r.text)
-
-            self.json_out(j)
-
-        except Exception as e:
-            print('Error: %s ' % str(e))
-            #  print('Query: %s ' % url)
-            quit()
+        url = self.base_url + self.CORPS_EP + self.corp + self.USERS_EP
+        return self.get_list(url)
 
     def get_configuration(self, EP):
         try:
