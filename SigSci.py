@@ -2,6 +2,7 @@
 # Signal Sciences Python API Client
 # Science all the Signals!
 
+from __future__ import print_function
 import argparse
 import csv
 import datetime
@@ -9,7 +10,6 @@ import json
 import os
 import sys
 from builtins import str
-from __future__ import print_function
 
 import requests
 
@@ -253,12 +253,12 @@ class SigSciAPI:
             url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.REQEUSTS_EP + '?q=' + str(self.query).strip() + '&limit=' + str(self.limit)
             r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
             j = json.loads(r.text)
-            f = None if 'all' == self.field else self.field
+            f = None if self.field == 'all' else self.field
 
             if 'message' in j:
                 raise ValueError(j['message'])
 
-            if 'json' == self.format:
+            if self.format == 'json':
                 if not self.file:
                     if f is None:
                         print('%s' % json.dumps(j))
@@ -272,7 +272,7 @@ class SigSciAPI:
                         else:
                             outfile.write('%s' % json.dumps(j[f]))
 
-            elif 'csv' == self.format:
+            elif self.format == 'csv':
                 if not self.file:
                     csvwritter = csv.writer(sys.stdout)
                 else:
@@ -354,7 +354,7 @@ class SigSciAPI:
             if 'message' in j:
                 raise ValueError(j['message'])
 
-            if 'json' == self.format:
+            if self.format == 'json':
                 if not self.file:
                     print('%s' % json.dumps(j['data']))
 
@@ -364,7 +364,7 @@ class SigSciAPI:
 
             # get all next
             next = j['next']
-            while '' != next['uri'].strip():
+            while next['uri'].strip() != '':
                 url = self.base + next['uri']
                 r = requests.get(url, headers=self.get_headers())
                 j = json.loads(r.text)
@@ -372,7 +372,7 @@ class SigSciAPI:
                 if 'message' in j:
                     raise ValueError(j['message'])
 
-                if 'json' == self.format:
+                if self.format == 'json':
                     if not self.file:
                         print('%s' % json.dumps(j['data']))
 
@@ -720,7 +720,7 @@ class SigSciAPI:
         if 'message' in j:
             raise ValueError(j['message'])
 
-        if 'json' == self.format:
+        if self.format == 'json':
             if not self.file:
                 if self.pretty:
                     print('%s' % json.dumps(j, sort_keys=True, indent=4, separators=(',', ': ')))
@@ -731,7 +731,7 @@ class SigSciAPI:
                 with open(self.file, 'a') as outfile:
                     outfile.write('%s' % json.dumps(j))
 
-        elif 'csv' == self.format:
+        elif self.format == 'csv':
             print("CSV output not available for this request.")
 
     def __init__(self):
