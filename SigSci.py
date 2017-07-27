@@ -1,6 +1,7 @@
+"""
+Signal Sciences Python API Client
+"""
 #!/usr/bin/env python
-# Signal Sciences Python API Client
-# Science all the Signals!
 
 from __future__ import print_function
 import argparse
@@ -83,7 +84,7 @@ REDACTIONS_DELETE = False
 sys.dont_write_bytecode = True
 
 
-class SigSciAPI:
+class SigSciAPI(object):
     """
     SigSciAPI()
     Methods:
@@ -178,9 +179,9 @@ class SigSciAPI:
         elif self.authn.status_code != 200:
             print('Unexpected status: %s response: %s' % (self.authn.status_code, self.authn.text))
             return False
-        else:
-            self.token = self.authn.json()['token']
-            return True
+
+        self.token = self.authn.json()['token']
+        return True
 
     def get_headers(self):
         headers = {'Content-type': 'application/json', 'User-Agent': self.ua}
@@ -188,7 +189,7 @@ class SigSciAPI:
         if self.token is not None:
             headers['Authorization'] = 'Bearer %s' % self.token
 
-        if len(self.xheaders):
+        if self.xheaders:
             headers.update(self.xheaders)
 
         return headers
@@ -363,9 +364,9 @@ class SigSciAPI:
                         outfile.write('%s' % json.dumps(j['data']))
 
             # get all next
-            next = j['next']
-            while next['uri'].strip() != '':
-                url = self.base + next['uri']
+            next_ref = j['next']
+            while next_ref['uri'].strip() != '':
+                url = self.base + next_ref['uri']
                 r = requests.get(url, headers=self.get_headers())
                 j = json.loads(r.text)
 
@@ -380,7 +381,7 @@ class SigSciAPI:
                         with open(self.file, 'a') as outfile:
                             outfile.write('%s' % json.dumps(j['data']))
 
-                next = j['next']
+                next_ref = j['next']
 
         except Exception as e:
             print('Error: %s ' % str(e))
