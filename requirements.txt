@@ -1,6 +1,7 @@
-requests
+autopep8
+coverage
 flake8
 future
-autopep8
-pylint
 mock
+pylint
+requests
