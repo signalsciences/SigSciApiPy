@@ -527,7 +527,11 @@ class SigSciAPI(object):
             quit()
 
     def get_corps(self):
-        url = self.base_url + self.CORPS_EP[:-1]
+        if self.corp is None:
+            url = self.base_url + self.CORPS_EP[:-1]
+        else:
+            url = self.base_url + self.CORPS_EP + self.corp
+
         return self.get_list(url)
 
     def get_sites(self):
