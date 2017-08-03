@@ -526,6 +526,10 @@ class SigSciAPI(object):
             print('Error: %s ' % str(e))
             quit()
 
+    def get_corps(self):
+        url = self.base_url + self.CORPS_EP[:-1]
+        return self.get_list(url)
+
     def get_sites(self):
         url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP[:-1]
         return self.get_list(url)
