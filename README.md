@@ -12,7 +12,8 @@ usage: SigSci.py [-h] [--from  =<value>] [--until =<value>]
                  [--field {all,totalCount,next,data}] [--file FILE] [--list]
                  [--format {json,csv}] [--pretty] [--sort {desc,asc}]
                  [--agents] [--feed] [--timeseries] [--rollup ROLLUP]
-                 [--list-events] [--event-by-id =<value>]
+                 [--list-events] [--event-by-id =<value>] [--custom-alerts]
+                 [--custom-alerts-add] [--custom-alerts-delete]
                  [--whitelist-parameters] [--whitelist-parameters-add]
                  [--whitelist-parameters-delete] [--whitelist-paths]
                  [--whitelist-paths-add] [--whitelist-paths-delete]
@@ -48,6 +49,10 @@ optional arguments:
   --list-events         List events (flagged IPs).
   --event-by-id =<value>
                         Get an event by event ID.
+  --custom-alerts       Retrieve custom alerts.
+  --custom-alerts-add   Add custom alerts.
+  --custom-alerts-delete
+                        Delete custom alerts.
   --whitelist-parameters
                         Retrieve whitelist parameters.
   --whitelist-parameters-add
