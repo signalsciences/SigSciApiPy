@@ -60,6 +60,10 @@ ROLLUP = 60
 # list events
 LIST_EVENTS = False
 EVENT_BY_ID = None
+# default for custom alerts
+CUSTOM_ALERTS = False
+CUSTOM_ALERTS_ADD = False
+CUSTOM_ALERTS_DELETE = False
 # default for whitelist parameters
 WHITELIST_PARAMETERS = False
 WHITELIST_PARAMETERS_ADD = False
@@ -144,6 +148,7 @@ class SigSciAPI(object):
     REQEUSTS_EP = '/requests'
     AGENTS_EP = '/agents'
     FEED_EP = '/feed/requests'
+    ALERTS_EP = '/alerts'
     RULES_EP = '/rules'
     TIMESERIES_EP = '/timeseries/requests'
     EVENTS_EP = '/events'
@@ -603,6 +608,21 @@ class SigSciAPI(object):
             print('Query: %s ' % url)
             quit()
 
+    def get_custom_alerts(self):
+        # https://docs.signalsciences.net/api/#_corps__corpName__sites__siteName__alerts_get
+        # /corps/{corpName}/sites/{siteName}/alerts
+        self.get_configuration(self.ALERTS_EP)
+
+    def post_custom_alerts(self):
+        # https://dashboard.signalsciences.net/documentation/api#_corps__corpName__sites__siteName__rules_post
+        # /corps/{corpName}/sites/{siteName}/alerts
+        self.post_configuration(self.ALERTS_EP)
+
+    def delete_custom_alerts(self):
+        # https://docs.signalsciences.net/api/#_corps__corpName__sites__siteName__alerts__alertID__delete
+        # /corps/{corpName}/sites/{siteName}/alerts/{alertID}
+        self.delete_configuration(self.ALERTS_EP)
+
     def get_custom_rules(self):
         # https://dashboard.signalsciences.net/documentation/api#_corps__corpName__sites__siteName__rules_get
         # /corps/{corpName}/sites/{siteName}/rules
@@ -749,6 +769,9 @@ if __name__ == '__main__':
     parser.add_argument('--rollup', help='Rollup interval in seconds for timeseries requests.', default=60)
     parser.add_argument('--list-events', help='List events (flagged IPs).', default=False, action='store_true')
     parser.add_argument('--event-by-id', help='Get an event by event ID.', type=str, default=None, dest='event_by_id', metavar='=<value>')
+    parser.add_argument('--custom-alerts', help='Retrieve custom alerts.', default=False, action='store_true')
+    parser.add_argument('--custom-alerts-add', help='Add custom alerts.', default=False, action='store_true')
+    parser.add_argument('--custom-alerts-delete', help='Delete custom alerts.', default=False, action='store_true')
     parser.add_argument('--whitelist-parameters', help='Retrieve whitelist parameters.', default=False, action='store_true')
     parser.add_argument('--whitelist-parameters-add', help='Add whitelist parameters.', default=False, action='store_true')
     parser.add_argument('--whitelist-parameters-delete', help='Delete whitelist parameters.', default=False, action='store_true')
@@ -802,6 +825,9 @@ if __name__ == '__main__':
     sigsci.rollup = os.environ.get("SIGSCI_ROLLUP") if os.environ.get('SIGSCI_ROLLUP') is not None else ROLLUP
     sigsci.list_events = os.environ.get("SIGSCI_LIST_EVENTS") if os.environ.get('SIGSCI_LIST_EVENTS') is not None else LIST_EVENTS
     sigsci.event_by_id = os.environ.get("SIGSCI_EVENT_BY_ID") if os.environ.get('SIGSCI_EVENT_BY_ID') is not None else EVENT_BY_ID
+    sigsci.custom_alerts = os.environ.get("SIGSCI_CUSTOM_ALERTS") if os.environ.get('SIGSCI_CUSTOM_ALERTS') is not None else CUSTOM_ALERTS
+    sigsci.custom_alerts_add = os.environ.get("SIGSCI_CUSTOM_ALERTS_ADD") if os.environ.get('SIGSCI_CUSTOM_ALERTS_ADD') is not None else CUSTOM_ALERTS_ADD
+    sigsci.custom_alerts_delete = os.environ.get("SIGSCI_CUSTOM_ALERTS_DELETE") if os.environ.get('SIGSCI_CUSTOM_ALERTS_DELETE') is not None else CUSTOM_ALERTS_DELETE
     sigsci.whitelist_parameters = os.environ.get("SIGSCI_WHITELIST_PARAMETERS") if os.environ.get('SIGSCI_WHITELIST_PARAMETERS') is not None else WHITELIST_PARAMETERS
     sigsci.whitelist_parameters_add = os.environ.get("SIGSCI_WHITELIST_PARAMETERS_ADD") if os.environ.get('SIGSCI_WHITELIST_PARAMETERS_ADD') is not None else WHITELIST_PARAMETERS_ADD
     sigsci.whitelist_parameters_delete = os.environ.get("SIGSCI_WHITELIST_PARAMETERS_DELETE") if os.environ.get('SIGSCI_WHITELIST_PARAMETERS_DELETE') is not None else WHITELIST_PARAMETERS_DELETE
@@ -838,6 +864,9 @@ if __name__ == '__main__':
     sigsci.rollup = arguments.rollup if arguments.rollup is not None else sigsci.rollup
     sigsci.list_events = arguments.list_events if arguments.list_events is not None else sigsci.list_events
     sigsci.event_by_id = arguments.event_by_id if arguments.event_by_id is not None else sigsci.event_by_id
+    sigsci.custom_alerts = arguments.custom_alerts if arguments.custom_alerts is not None else sigsci.custom_alerts
+    sigsci.custom_alerts_add = arguments.custom_alerts_add if arguments.custom_alerts_add is not None else sigsci.custom_alerts_add
+    sigsci.custom_alerts_delete = arguments.custom_alerts_delete if arguments.custom_alerts_delete is not None else sigsci.custom_alerts_delete
     sigsci.whitelist_parameters = arguments.whitelist_parameters if arguments.whitelist_parameters is not None else sigsci.whitelist_parameters
     sigsci.whitelist_parameters_add = arguments.whitelist_parameters_add if arguments.whitelist_parameters_add is not None else sigsci.whitelist_parameters_add
     sigsci.whitelist_parameters_delete = arguments.whitelist_parameters_delete if arguments.whitelist_parameters_delete is not None else sigsci.whitelist_parameters_delete
@@ -883,6 +912,26 @@ if __name__ == '__main__':
         elif sigsci.event_by_id is not None:
             # get event data
             sigsci.get_event_by_id()
+
+        elif sigsci.custom_alerts:
+            # get custom alerts
+            sigsci.get_custom_alerts()
+
+        elif sigsci.custom_alerts_add:
+            # post whitelist parameters
+            if not sigsci.file:
+                print('File must be provided.')
+                quit()
+            else:
+                sigsci.post_custom_alerts()
+
+        elif sigsci.custom_alerts_delete:
+            # delete whitelist parameters
+            if not sigsci.file:
+                print('File must be provided.')
+                quit()
+            else:
+                sigsci.delete_custom_alerts()
 
         elif sigsci.whitelist_parameters:
             # get whitelist parameters
