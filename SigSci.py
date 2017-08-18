@@ -150,6 +150,7 @@ class SigSciAPI(object):
     FEED_EP = '/feed/requests'
     ALERTS_EP = '/alerts'
     RULES_EP = '/rules'
+    TAGS_EP = '/tags'
     TIMESERIES_EP = '/timeseries/requests'
     EVENTS_EP = '/events'
     WLPARAMS_EP = '/paramwhitelist'
@@ -637,6 +638,21 @@ class SigSciAPI(object):
         # https://dashboard.signalsciences.net/documentation/api#_corps__corpName__sites__siteName__rules__ruleID__delete
         # /corps/{corpName}/sites/{siteName}/rules/{ruleID}
         self.delete_configuration(self.RULES_EP)
+    
+    def get_custom_tags(self):
+        # WARNING: This is an undocumented endpoint. No support provided, and the endpoint may change.
+        # /corps/{corpName}/sites/{siteName}/tags
+        self.get_configuration(self.TAGS_EP)
+
+    def post_custom_tags(self):
+        # WARNING: This is an undocumented endpoint. No support provided, and the endpoint may change.
+        # /corps/{corpName}/sites/{siteName}/tags
+        self.post_configuration(self.TAGS_EP)
+
+    def delete_custom_tags(self):
+        # WARNING: This is an undocumented endpoint. No support provided, and the endpoint may change.
+        # /corps/{corpName}/sites/{siteName}/tags/{tagID}
+        self.delete_configuration(self.TAGS_EP)
 
     def get_configured_templates(self):
         # WARNING: This is an undocumented endpoint. No support provided, and the endpoint may change.
