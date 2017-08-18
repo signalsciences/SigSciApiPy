@@ -573,9 +573,17 @@ class SigSciAPI(object):
                 data = json.load(data_file)
 
             for config in data['data']:
-                del config['created']
-                del config['createdBy']
-                del config['id']
+                if 'created' in config:
+                    del config['created']
+
+                if 'createdBy' in config:
+                    del config['createdBy']
+
+                if 'id' in config:
+                    del config['id']
+
+                if 'tagName' in config:
+                    del config['tagName']
 
                 r = requests.post(url, cookies=self.authn.cookies, headers=self.get_headers(), json=config)
                 j = json.loads(r.text)
