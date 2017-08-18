@@ -582,7 +582,7 @@ class SigSciAPI(object):
                 if 'id' in config:
                     del config['id']
 
-                if 'tagName' in config:
+                if EP == self.TAGS_EP and 'tagName' in config:
                     del config['tagName']
 
                 r = requests.post(url, cookies=self.authn.cookies, headers=self.get_headers(), json=config)
