@@ -370,6 +370,23 @@ class SigSciAPI(object):
                     with open(self.file, 'a') as outfile:
                         outfile.write('%s' % json.dumps(j['data']))
 
+            elif self.format == 'csv':
+                if not self.file:
+                    csvwritter = csv.writer(sys.stdout)
+                else:
+                    csvwritter = csv.writer(open(self.file, "wb+"))
+
+                f = None
+                if f is None:
+                    for row in j['data']:
+                        tag_list = ''
+                        detector = row['tags']
+
+                        for t in detector:
+                            tag_list = tag_list + t['type'] + '|'
+
+                        csvwritter.writerow([str(row['timestamp']), str(row['id']), str(row['remoteIP']), str(row['remoteCountryCode']), str(row['path']).encode('utf8'), str(tag_list[:-1]), str(row['responseCode']), str(row['agentResponseCode'])])
+
             # get all next
             next_ref = j['next']
             while next_ref['uri'].strip() != '':
@@ -387,6 +404,23 @@ class SigSciAPI(object):
                     else:
                         with open(self.file, 'a') as outfile:
                             outfile.write('%s' % json.dumps(j['data']))
+
+                elif self.format == 'csv':
+                    if not self.file:
+                        csvwritter = csv.writer(sys.stdout)
+                    else:
+                        csvwritter = csv.writer(open(self.file, "wb+"))
+
+                    f = None
+                    if f is None:
+                        for row in j['data']:
+                            tag_list = ''
+                            detector = row['tags']
+
+                            for t in detector:
+                                tag_list = tag_list + t['type'] + '|'
+
+                            csvwritter.writerow([str(row['timestamp']), str(row['id']), str(row['remoteIP']), str(row['remoteCountryCode']), str(row['path']).encode('utf8'), str(tag_list[:-1]), str(row['responseCode']), str(row['agentResponseCode'])])
 
                 next_ref = j['next']
 
