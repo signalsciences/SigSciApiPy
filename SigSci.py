@@ -330,6 +330,7 @@ class SigSciAPI(object):
             now = datetime.datetime.now()
 
             if self.from_time is None:
+                # if no from_time specified then default to hour from now (accounting for 5 minute delay)
                 tm = now - datetime.timedelta(hours=1, minutes=5)
                 stm = tm.strftime("%Y-%m-%d %H:%M:00")
                 self.from_time = int(tm.strptime(stm, "%Y-%m-%d %H:%M:00").strftime("%s"))
@@ -943,6 +944,39 @@ if __name__ == '__main__':
 
     # authenticate before doing anything.
     if sigsci.authenticate():
+
+        # parse from/until time
+        now = datetime.datetime.now()
+
+        if sigsci.from_time is not None:
+            if sigsci.from_time.startswith('-'):
+                delta_value = int(sigsci.from_time[1:-1])
+
+                if sigsci.from_time[-1:].lower() == 'd':
+                    tm = now - datetime.timedelta(days=delta_value, minutes=5)
+                elif sigsci.from_time[-1].lower() == 'h':
+                    tm = now - datetime.timedelta(hours=delta_value, minutes=5)
+                elif sigsci.from_time[-1].lower() == 'm':
+                    delta_value += 5
+                    tm = now - datetime.timedelta(minutes=delta_value)
+
+                stm = tm.strftime("%Y-%m-%d %H:%M:00")
+                sigsci.from_time = int(tm.strptime(stm, "%Y-%m-%d %H:%M:00").strftime("%s"))
+        
+        if sigsci.until_time is not None:
+            if sigsci.until_time.startswith('-'):
+                delta_value = int(sigsci.until_time[1:-1])
+
+                if sigsci.until_time[-1:].lower() == 'd':
+                    tm = now - datetime.timedelta(days=delta_value, minutes=5)
+                elif sigsci.until_time[-1].lower() == 'h':
+                    tm = now - datetime.timedelta(hours=delta_value, minutes=5)
+                elif sigsci.until_time[-1].lower() == 'm':
+                    delta_value += 5
+                    tm = now - datetime.timedelta(minutes=delta_value)
+
+                stm = tm.strftime("%Y-%m-%d %H:%M:00")
+                sigsci.until_time = int(tm.strptime(stm, "%Y-%m-%d %H:%M:00").strftime("%s"))
 
         # determine what we are doing.
         if sigsci.agents:
