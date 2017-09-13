@@ -282,9 +282,9 @@ class SigSciAPI(object):
 
             elif self.format == 'csv':
                 if not self.file:
-                    csvwritter = csv.writer(sys.stdout)
+                    csvwriter = csv.writer(sys.stdout)
                 else:
-                    csvwritter = csv.writer(open(self.file, "wb+"))
+                    csvwriter = csv.writer(open(self.file, "wb+"))
 
                 # for now only output data "j['data']"
                 f = None
@@ -296,7 +296,7 @@ class SigSciAPI(object):
                         for t in detector:
                             tag_list = tag_list + t['type'] + '|'
 
-                        csvwritter.writerow([str(row['timestamp']), str(row['id']), str(row['remoteIP']), str(row['remoteCountryCode']), str(row['path']).encode('utf8'), str(tag_list[:-1]), str(row['responseCode']), str(row['agentResponseCode'])])
+                        csvwriter.writerow([str(row['timestamp']), str(row['id']), str(row['remoteIP']), str(row['remoteCountryCode']), str(row['path']).encode('utf8'), str(tag_list[:-1]), str(row['responseCode']), str(row['agentResponseCode'])])
                 else:
                     print('%s' % json.dumps(j[f]))
 
@@ -373,9 +373,9 @@ class SigSciAPI(object):
 
             elif self.format == 'csv':
                 if not self.file:
-                    csvwritter = csv.writer(sys.stdout)
+                    csvwriter = csv.writer(sys.stdout)
                 else:
-                    csvwritter = csv.writer(open(self.file, "wb+"))
+                    csvwriter = csv.writer(open(self.file, "wb+"))
 
                 f = None
                 if f is None:
@@ -386,7 +386,7 @@ class SigSciAPI(object):
                         for t in detector:
                             tag_list = tag_list + t['type'] + '|'
 
-                        csvwritter.writerow([str(row['timestamp']), str(row['id']), str(row['remoteIP']), str(row['remoteCountryCode']), str(row['path']).encode('utf8'), str(tag_list[:-1]), str(row['responseCode']), str(row['agentResponseCode'])])
+                        csvwriter.writerow([str(row['timestamp']), str(row['id']), str(row['remoteIP']), str(row['remoteCountryCode']), str(row['path']).encode('utf8'), str(tag_list[:-1]), str(row['responseCode']), str(row['agentResponseCode'])])
 
             # get all next
             next_ref = j['next']
@@ -408,9 +408,9 @@ class SigSciAPI(object):
 
                 elif self.format == 'csv':
                     if not self.file:
-                        csvwritter = csv.writer(sys.stdout)
+                        csvwriter = csv.writer(sys.stdout)
                     else:
-                        csvwritter = csv.writer(open(self.file, "wb+"))
+                        csvwriter = csv.writer(open(self.file, "wb+"))
 
                     f = None
                     if f is None:
@@ -421,7 +421,7 @@ class SigSciAPI(object):
                             for t in detector:
                                 tag_list = tag_list + t['type'] + '|'
 
-                            csvwritter.writerow([str(row['timestamp']), str(row['id']), str(row['remoteIP']), str(row['remoteCountryCode']), str(row['path']).encode('utf8'), str(tag_list[:-1]), str(row['responseCode']), str(row['agentResponseCode'])])
+                            csvwriter.writerow([str(row['timestamp']), str(row['id']), str(row['remoteIP']), str(row['remoteCountryCode']), str(row['path']).encode('utf8'), str(tag_list[:-1]), str(row['responseCode']), str(row['agentResponseCode'])])
 
                 next_ref = j['next']
 
