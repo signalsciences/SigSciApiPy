@@ -681,7 +681,7 @@ class SigSciAPI(object):
         # https://dashboard.signalsciences.net/documentation/api#_corps__corpName__sites__siteName__rules__ruleID__delete
         # /corps/{corpName}/sites/{siteName}/rules/{ruleID}
         self.delete_configuration(self.RULES_EP)
-    
+
     def get_custom_tags(self):
         # WARNING: This is an undocumented endpoint. No support provided, and the endpoint may change.
         # /corps/{corpName}/sites/{siteName}/tags
@@ -962,7 +962,7 @@ if __name__ == '__main__':
 
                 stm = tm.strftime("%Y-%m-%d %H:%M:00")
                 sigsci.from_time = int(tm.strptime(stm, "%Y-%m-%d %H:%M:00").strftime("%s"))
-        
+
         if sigsci.until_time is not None:
             if sigsci.until_time.startswith('-'):
                 delta_value = int(sigsci.until_time[1:-1])
