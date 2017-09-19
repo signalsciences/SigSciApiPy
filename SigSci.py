@@ -159,6 +159,7 @@ class SigSciAPI(object):
     BLACKLIST_EP = '/blacklist'
     REDACTIONS_EP = '/redactions'
     INTEGRATIONS_EP = '/integrations'
+    HEADERLINKS_EP = '/headerLinks'
     CONFIGURED_TEMPLATES_EP = '/configuredtemplates'
 
     def authenticate(self):
@@ -780,6 +781,11 @@ class SigSciAPI(object):
         # https://dashboard.signalsciences-stage.net/documentation/api#_corps__corpName__sites__siteName__redactions_get
         # /corps/{corpName}/sites/{siteName}/redactions
         self.get_configuration(self.INTEGRATIONS_EP)
+
+    def get_headerlinks(self):
+        # https://docs.signalsciences.net/api/#_corps__corpName__sites__siteName__headerLinks_get
+        # /corps/{corpName}/sites/{siteName}/headerLinks
+        self.get_configuration(self.HEADERLINKS_EP)
 
     def json_out(self, j):
         if 'message' in j:
