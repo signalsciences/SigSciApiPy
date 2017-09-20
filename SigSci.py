@@ -491,24 +491,11 @@ class SigSciAPI(object):
         # /corps/{corpName}/sites/{siteName}/events
         try:
             query_params = '?limit=' + str(self.limit)
-
-            now = datetime.datetime.now()
-
-            if self.from_time is None:
-                # if no from_time specified then default to hour from now (accounting for 5 minute delay)
-                tm = now - datetime.timedelta(hours=1, minutes=5)
-                stm = tm.strftime("%Y-%m-%d %H:%M:00")
-                self.from_time = int(tm.strptime(stm, "%Y-%m-%d %H:%M:00").strftime("%s"))
-                query_params += '&from=%s' % str(self.from_time)
-            else:
+            
+            if self.from_time is not None:
                 query_params += '&from=%s' % str(self.from_time)
 
-            if self.until_time is None:
-                tm = now - datetime.timedelta(minutes=5)
-                stm = tm.strftime("%Y-%m-%d %H:%M:00")
-                self.until_time = int(tm.strptime(stm, "%Y-%m-%d %H:%M:00").strftime("%s"))
-                query_params += '&until=%s' % str(self.until_time)
-            else:
+            if self.until_time is not None:
                 query_params += '&until=%s' % str(self.until_time)
 
             if tag is not None:
