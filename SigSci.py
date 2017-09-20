@@ -499,7 +499,25 @@ class SigSciAPI(object):
             r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
             j = json.loads(r.text)
 
-            self.json_out(j)
+            if self.format == 'json':
+                if not self.file:
+                    print('%s' % json.dumps(j['data']))
+
+                else:
+                    with open(self.file, 'a') as outfile:
+                        outfile.write('%s' % json.dumps(j['data']))
+
+            elif self.format == 'csv':
+                if not self.file:
+                    csvwriter = csv.writer(sys.stdout)
+                else:
+                    csvwriter = csv.writer(open(self.file, "wb+"))
+
+                f = None
+                if f is None:
+                    for row in j['data']:
+                        csvwriter.writerow([str(row['timestamp']), str(row['id']), str(row['source']), str(row['remoteCountryCode']), str(row['requestCount']), str(row['type'])])
+
 
         except Exception as e:
             print('Error: %s ' % str(e))
