@@ -491,7 +491,7 @@ class SigSciAPI(object):
         # /corps/{corpName}/sites/{siteName}/events
         try:
             query_params = '?limit=' + str(self.limit)
-            
+
             if self.from_time is not None:
                 query_params += '&from=%s' % str(self.from_time)
 
@@ -523,7 +523,6 @@ class SigSciAPI(object):
                 if f is None:
                     for row in j['data']:
                         csvwriter.writerow([str(row['timestamp']), str(row['id']), str(row['source']), str(row['remoteCountryCode']), str(row['action']), str(row['type']), str(row['requestCount']), str(row['window'])])
-
 
         except Exception as e:
             print('Error: %s ' % str(e))
