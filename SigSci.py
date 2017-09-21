@@ -834,7 +834,9 @@ class SigSciAPI(object):
 
 if __name__ == '__main__':
     TAGLIST = ('SQLI', 'XSS', 'CMDEXE', 'TRAVERSAL', 'USERAGENT', 'BACKDOOR', 'SCANNER', 'RESPONSESPLIT', 'CODEINJECTION',
-               'HTTP4XX', 'HTTP403', 'HTTP404', 'HTTP5XX', 'HTTP500', 'HTTP503', 'SANS', 'DATACENTER', 'TORNODE', 'NOUA', 'NOTUTF8', 'BLOCKED', 'PRIVATEFILES', 'FORCEFULBROWSING', 'WEAKTLS')
+               'HTTP4XX', 'HTTP403', 'HTTP404', 'HTTP5XX', 'HTTP500', 'HTTP503', 'SANS', 'DATACENTER', 'TORNODE', 'NOUA',
+               'NOTUTF8', 'BLOCKED', 'PRIVATEFILES', 'FORCEFULBROWSING', 'WEAKTLS', 'LOGINATTEMPT', 'LOGINSUCCESS', 'LOGINFAILURE',
+               'REGATTEMPT', 'REGSUCCESS', 'REGFAILUE')
 
     parser = argparse.ArgumentParser(description='Signal Sciences API Client.', prefix_chars='--')
 
