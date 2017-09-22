@@ -287,7 +287,6 @@ class SigSciAPI(object):
                 else:
                     csvwriter = csv.writer(open(self.file, "wb+"))
 
-                # for now only output data "j['data']"
                 f = None
                 if f is None:
                     for row in j['data']:
