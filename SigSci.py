@@ -304,6 +304,43 @@ class SigSciAPI(object):
             else:
                 print('Error: Invalid output format!')
 
+            next_ref = j['next']
+            while 'next' in j:
+                url = self.base + next_ref['uri']
+                r = requests.get(url, headers=self.get_headers())
+                j = json.loads(r.text)
+
+                if 'message' in j:
+                    raise ValueError(j['message'])
+
+                if self.format == 'json':
+                    if not self.file:
+                        print('%s' % json.dumps(j['data']))
+
+                    else:
+                        with open(self.file, 'a') as outfile:
+                            outfile.write('%s' % json.dumps(j['data']))
+
+                elif self.format == 'csv':
+                    if not self.file:
+                        csvwriter = csv.writer(sys.stdout)
+                    else:
+                        csvwriter = csv.writer(open(self.file, "wb+"))
+
+                    f = None
+                    if f is None:
+                        for row in j['data']:
+                            tag_list = ''
+                            detector = row['tags']
+
+                            for t in detector:
+                                tag_list = tag_list + t['type'] + '|'
+
+                            csvwriter.writerow([str(row['timestamp']), str(row['id']), str(row['remoteIP']), str(row['remoteCountryCode']), str(row['path']).encode('utf8'), str(tag_list[:-1]), str(row['responseCode']), str(row['agentResponseCode'])])
+
+                if 'next' in j:
+                    next_ref = j['next']
+
         except Exception as e:
             print('Error: %s ' % str(e))
             print('Query: %s ' % url)
