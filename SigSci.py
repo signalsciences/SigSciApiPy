@@ -242,6 +242,9 @@ class SigSciAPI(object):
             self.query += 'tag:'
             self.query += ' tag:'.join(self.ctags)
 
+    def get_requests(self):
+        self.query_api()
+
     def query_api(self):
         """
         SigSciAPI.query_api()
@@ -1210,4 +1213,5 @@ if __name__ == '__main__':
                         quit()
 
             # and run the query.
-            sigsci.query_api()
+            #sigsci.query_api()
+            sigsci.get_requests()
