@@ -1017,14 +1017,22 @@ if __name__ == '__main__':
         # parse from/until time
         now = datetime.datetime.now()
 
+        # if requests feed, take delay into account
+        if sigsci.feed:
+            delay = 5
+        else:
+            delay = 0
+
+        # from time
         if sigsci.from_time is not None:
+            # if using human readable notation (not epoch)
             if sigsci.from_time.startswith('-'):
                 delta_value = int(sigsci.from_time[1:-1])
 
                 if sigsci.from_time[-1:].lower() == 'd':
-                    tm = now - datetime.timedelta(days=delta_value, minutes=5)
+                    tm = now - datetime.timedelta(days=delta_value, minutes=delay)
                 elif sigsci.from_time[-1].lower() == 'h':
-                    tm = now - datetime.timedelta(hours=delta_value, minutes=5)
+                    tm = now - datetime.timedelta(hours=delta_value, minutes=delay)
                 elif sigsci.from_time[-1].lower() == 'm':
                     delta_value += 5
                     tm = now - datetime.timedelta(minutes=delta_value)
@@ -1032,14 +1040,16 @@ if __name__ == '__main__':
                 stm = tm.strftime("%Y-%m-%d %H:%M:00")
                 sigsci.from_time = int(tm.strptime(stm, "%Y-%m-%d %H:%M:00").strftime("%s"))
 
+        # until time
         if sigsci.until_time is not None:
+            # if using human readable notation (not epoch)
             if sigsci.until_time.startswith('-'):
                 delta_value = int(sigsci.until_time[1:-1])
 
                 if sigsci.until_time[-1:].lower() == 'd':
-                    tm = now - datetime.timedelta(days=delta_value, minutes=5)
+                    tm = now - datetime.timedelta(days=delta_value, minutes=delay)
                 elif sigsci.until_time[-1].lower() == 'h':
-                    tm = now - datetime.timedelta(hours=delta_value, minutes=5)
+                    tm = now - datetime.timedelta(hours=delta_value, minutes=delay)
                 elif sigsci.until_time[-1].lower() == 'm':
                     delta_value += 5
                     tm = now - datetime.timedelta(minutes=delta_value)
