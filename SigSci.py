@@ -94,7 +94,7 @@ class SigSciAPI(object):
     SigSciAPI()
     Methods:
         authenticate()
-        build_query(from_time=<string>, until_time=<string>, tags=<list>)
+        build_search_query(from_time=<string>, until_time=<string>, tags=<list>)
         query_api()
 
     Example:
@@ -107,7 +107,6 @@ class SigSciAPI(object):
         sigsci.file  = '/tmp/foo.json'
 
         if sigsci.authenticate():
-            sigsci.build_query(from_time='-6h', until_time='-5h', tags=['SQLI', 'XSS', 'CMDEXE'])
             sigsci.query_api()
     """
     base = 'https://dashboard.signalsciences.net'
@@ -206,9 +205,9 @@ class SigSciAPI(object):
     def set_headers(self, headers):
         self.xheaders.update(headers)
 
-    def build_query(self):
+    def build_search_query(self):
         """
-        SigSciAPI.build_query()
+        SigSciAPI.build_search_query()
 
         For from_time and until_time syntax see:
         https://dashboard.signalsciences.net/documentation/knowledge-base/search-syntax#time
@@ -261,6 +260,7 @@ class SigSciAPI(object):
         # https://docs.signalsciences.net/api/#_corps__corpName__sites__siteName__requests_get
         # /corps/{corpName}/sites/{siteName}/requests
         try:
+            self.build_search_query()
             url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.REQEUSTS_EP + '?q=' + str(self.query).strip() + '&limit=' + str(self.limit)
             r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
             j = json.loads(r.text)
@@ -1209,6 +1209,5 @@ if __name__ == '__main__':
                         print('Invalid tag in tag list: %s' % str(tag))
                         quit()
 
-            # build the query, and run the query.
-            sigsci.build_query()
+            # and run the query.
             sigsci.query_api()
