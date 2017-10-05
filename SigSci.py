@@ -121,6 +121,7 @@ class SigSciAPI(object):
     corp = None
     site = None
     query = 'from:-6h '
+    query_params = None
     from_time = '-1h'
     until_time = None
     tags = None
@@ -366,36 +367,20 @@ class SigSciAPI(object):
         # https://dashboard.signalsciences.net/documentation/api#_corps__corpName__sites__siteName__feed_requests_get
         # /corps/{corpName}/sites/{siteName}/feed/requests
         try:
-            now = datetime.datetime.now()
-
-            if self.from_time is None:
-                # if no from_time specified then default to hour from now (accounting for 5 minute delay)
-                tm = now - datetime.timedelta(hours=1, minutes=5)
-                stm = tm.strftime("%Y-%m-%d %H:%M:00")
-                self.from_time = int(tm.strptime(stm, "%Y-%m-%d %H:%M:00").strftime("%s"))
-                self.query = 'from=%s' % str(self.from_time)
-            else:
-                self.query = 'from=%s' % str(self.from_time)
-
-            if self.until_time is None:
-                tm = now - datetime.timedelta(minutes=5)
-                stm = tm.strftime("%Y-%m-%d %H:%M:00")
-                self.until_time = int(tm.strptime(stm, "%Y-%m-%d %H:%M:00").strftime("%s"))
-                self.query += '&until=%s' % str(self.until_time)
-            else:
-                self.query += '&until=%s' % str(self.until_time)
+            self.query_params = 'from=%s' % str(self.from_time)
+            self.query_params += '&until=%s' % str(self.until_time)
 
             if self.tags is not None:
-                self.query += '&tags='
-                self.query += ','.join(self.tags)
+                self.query_params += '&tags='
+                self.query_params += ','.join(self.tags)
 
             if self.ctags is not None:
                 if self.tags is None:
-                    self.query += '&tags='
+                    self.query_params += '&tags='
 
-                self.query += ','.join(self.ctags)
-
-            url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.FEED_EP + '?' + str(self.query).strip()
+                self.query_params += ','.join(self.ctags)
+            
+            url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.FEED_EP + '?' + str(self.query_params).strip()
             r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
             j = json.loads(r.text)
 
@@ -1039,6 +1024,12 @@ if __name__ == '__main__':
 
                 stm = tm.strftime("%Y-%m-%d %H:%M:00")
                 sigsci.from_time = int(tm.strptime(stm, "%Y-%m-%d %H:%M:00").strftime("%s"))
+        else:
+            # if from is not specified for requests feed, set default to 30 minutes w/delay
+            if sigsci.feed:
+                tm = now - datetime.timedelta(minutes=30 + delay)
+                stm = tm.strftime("%Y-%m-%d %H:%M:00")
+                sigsci.from_time = int(tm.strptime(stm, "%Y-%m-%d %H:%M:00").strftime("%s"))
 
         # until time
         if sigsci.until_time is not None:
@@ -1054,6 +1045,12 @@ if __name__ == '__main__':
                     delta_value += 5
                     tm = now - datetime.timedelta(minutes=delta_value)
 
+                stm = tm.strftime("%Y-%m-%d %H:%M:00")
+                sigsci.until_time = int(tm.strptime(stm, "%Y-%m-%d %H:%M:00").strftime("%s"))
+        else:
+            # if until is not specified for requests feed, set default to now w/delay
+            if sigsci.feed:
+                tm = now - datetime.timedelta(minutes=5)
                 stm = tm.strftime("%Y-%m-%d %H:%M:00")
                 sigsci.until_time = int(tm.strptime(stm, "%Y-%m-%d %H:%M:00").strftime("%s"))
 
@@ -1215,3 +1212,5 @@ if __name__ == '__main__':
             # build the query, and run the query.
             sigsci.build_query()
             sigsci.query_api()
+        
+        print(sigsci.from_time)
