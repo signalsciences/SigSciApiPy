@@ -1212,5 +1212,3 @@ if __name__ == '__main__':
             # build the query, and run the query.
             sigsci.build_query()
             sigsci.query_api()
-        
-        print(sigsci.from_time)
