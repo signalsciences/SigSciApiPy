@@ -243,6 +243,8 @@ class SigSciAPI(object):
             self.query += ' tag:'.join(self.ctags)
 
     def get_requests(self):
+        # https://docs.signalsciences.net/api/#_corps__corpName__sites__siteName__requests_get
+        # /corps/{corpName}/sites/{siteName}/requests
         self.query_api()
 
     def query_api(self):
