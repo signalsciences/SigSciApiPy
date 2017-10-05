@@ -1214,6 +1214,5 @@ if __name__ == '__main__':
                         print('Invalid tag in tag list: %s' % str(tag))
                         quit()
 
-            # and run the query.
-            #sigsci.query_api()
+            # get requests
             sigsci.get_requests()
