@@ -241,6 +241,9 @@ class SigSciAPI(object):
         if self.ctags is not None:
             self.query += 'tag:'
             self.query += ' tag:'.join(self.ctags)
+        
+        # force sort time-asc so we can properly capture last_epoch
+        self.query += ' sort:time-asc'
 
     def get_requests(self):
         # https://docs.signalsciences.net/api/#_corps__corpName__sites__siteName__requests_get
@@ -265,88 +268,71 @@ class SigSciAPI(object):
         # https://docs.signalsciences.net/api/#_corps__corpName__sites__siteName__requests_get
         # /corps/{corpName}/sites/{siteName}/requests
         try:
-            self.build_search_query()
-            url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.REQEUSTS_EP + '?q=' + str(self.query).strip() + '&limit=' + str(self.limit)
-            r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
-            j = json.loads(r.text)
-            f = None if self.field == 'all' else self.field
+            last_epoch = 0
+            got_all = False
 
-            if 'message' in j:
-                raise ValueError(j['message'])
+            while last_epoch <= self.until_time and not got_all:
+                self.build_search_query()
+                url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.REQEUSTS_EP + '?q=' + str(self.query).strip() + '&limit=' + str(self.limit)
+                r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
+                j = json.loads(r.text)
+                f = None if self.field == 'all' else self.field
 
-            if self.format == 'json':
-                if not self.file:
+                if 'message' in j:
+                    raise ValueError(j['message'])
+
+                # get timestamp of last record
+                record_count = 0
+                for record in j['data']:
+                    record_count += 1
+                    last_timestamp = datetime.datetime.strptime(record['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
+                    stm = last_timestamp.strftime("%Y-%m-%d %H:%M:%S")
+                    last_epoch = int(last_timestamp.strptime(stm, "%Y-%m-%d %H:%M:%S").strftime("%s"))
+
+                if record_count < self.limit:
+                    got_all = True
+                
+                # set from_time for next iteration
+                self.from_time = last_epoch
+
+                if self.format == 'json':
+                    if not self.file:
+                        if f is None:
+                            print('%s' % json.dumps(j))
+                            self.json_out(j)
+                        else:
+                            print('%s' % json.dumps(j[f]))
+                    else:
+                        with open(self.file, 'a') as outfile:
+                            if f is None:
+                                outfile.write('%s' % json.dumps(j))
+                            else:
+                                outfile.write('%s' % json.dumps(j[f]))
+
+                elif self.format == 'csv':
+                    if not self.file:
+                        csvwriter = csv.writer(sys.stdout)
+                    else:
+                        csvwriter = csv.writer(open(self.file, "wb+"))
+
+                    f = None
                     if f is None:
-                        print('%s' % json.dumps(j))
-                        self.json_out(j)
+                        for row in j['data']:
+                            tag_list = ''
+                            detector = row['tags']
+
+                            for t in detector:
+                                tag_list = tag_list + t['type'] + '|'
+
+                            csvwriter.writerow([str(row['timestamp']), str(row['id']), str(row['remoteIP']), str(row['remoteCountryCode']), str(row['path']).encode('utf8'), str(tag_list[:-1]), str(row['responseCode']), str(row['agentResponseCode'])])
                     else:
                         print('%s' % json.dumps(j[f]))
+
                 else:
-                    with open(self.file, 'a') as outfile:
-                        if f is None:
-                            outfile.write('%s' % json.dumps(j))
-                        else:
-                            outfile.write('%s' % json.dumps(j[f]))
-
-            elif self.format == 'csv':
-                if not self.file:
-                    csvwriter = csv.writer(sys.stdout)
-                else:
-                    csvwriter = csv.writer(open(self.file, "wb+"))
-
-                f = None
-                if f is None:
-                    for row in j['data']:
-                        tag_list = ''
-                        detector = row['tags']
-
-                        for t in detector:
-                            tag_list = tag_list + t['type'] + '|'
-
-                        csvwriter.writerow([str(row['timestamp']), str(row['id']), str(row['remoteIP']), str(row['remoteCountryCode']), str(row['path']).encode('utf8'), str(tag_list[:-1]), str(row['responseCode']), str(row['agentResponseCode'])])
-                else:
-                    print('%s' % json.dumps(j[f]))
-
-            else:
-                print('Error: Invalid output format!')
-
-            if 'next' in j:
-                next_ref = j['next']
-                while 'next' in j:
-                    url = self.base + next_ref['uri']
-                    r = requests.get(url, headers=self.get_headers())
-                    j = json.loads(r.text)
-
-                    if 'message' in j:
-                        raise ValueError(j['message'])
-
-                    if self.format == 'json':
-                        if not self.file:
-                            print('%s' % json.dumps(j['data']))
-
-                        else:
-                            with open(self.file, 'a') as outfile:
-                                outfile.write('%s' % json.dumps(j['data']))
-
-                    elif self.format == 'csv':
-                        if not self.file:
-                            csvwriter = csv.writer(sys.stdout)
-                        else:
-                            csvwriter = csv.writer(open(self.file, "wb+"))
-
-                        f = None
-                        if f is None:
-                            for row in j['data']:
-                                tag_list = ''
-                                detector = row['tags']
-
-                                for t in detector:
-                                    tag_list = tag_list + t['type'] + '|'
-
-                                csvwriter.writerow([str(row['timestamp']), str(row['id']), str(row['remoteIP']), str(row['remoteCountryCode']), str(row['path']).encode('utf8'), str(tag_list[:-1]), str(row['responseCode']), str(row['agentResponseCode'])])
-
-                    if 'next' in j:
-                        next_ref = j['next']
+                    print('Error: Invalid output format!')
+                
+                # force limit to 1000 on subsequent iterations to reduce the number of api calls
+                self.limit = 1000
 
         except Exception as e:
             print('Error: %s ' % str(e))
@@ -856,6 +842,70 @@ class SigSciAPI(object):
         elif self.format == 'csv':
             print("CSV output not available for this request.")
 
+    def parse_init_time(self):
+        # parse from/until time
+        now = datetime.datetime.now()
+        ftm = None
+        utm = None
+
+        # if requests feed, take delay into account
+        if sigsci.feed:
+            delay = 5
+        else:
+            delay = 0
+
+        # from time
+        if sigsci.from_time is not None:
+            # if using human readable notation (not epoch)
+            if sigsci.from_time.startswith('-'):
+                delta_value = int(sigsci.from_time[1:-1])
+
+                if sigsci.from_time[-1:].lower() == 'd':
+                    ftm = now - datetime.timedelta(days=delta_value, minutes=delay)
+                elif sigsci.from_time[-1].lower() == 'h':
+                    ftm = now - datetime.timedelta(hours=delta_value, minutes=delay)
+                elif sigsci.from_time[-1].lower() == 'm':
+                    delta_value += 5
+                    ftm = now - datetime.timedelta(minutes=delta_value)
+
+                stm = ftm.strftime("%Y-%m-%d %H:%M:00")
+                sigsci.from_time = int(ftm.strptime(stm, "%Y-%m-%d %H:%M:00").strftime("%s"))
+        else:
+            # if from is not specified for requests feed, set default to 30 minutes w/delay
+            if sigsci.feed:
+                ftm = now - datetime.timedelta(minutes=30 + delay)
+                stm = ftm.strftime("%Y-%m-%d %H:%M:00")
+                sigsci.from_time = int(ftm.strptime(stm, "%Y-%m-%d %H:%M:00").strftime("%s"))
+
+        # until time
+        if sigsci.until_time is not None:
+            # if using human readable notation (not epoch)
+            if sigsci.until_time.startswith('-'):
+                delta_value = int(sigsci.until_time[1:-1])
+
+                if sigsci.until_time[-1:].lower() == 'd':
+                    tm = now - datetime.timedelta(days=delta_value, minutes=delay)
+                elif sigsci.until_time[-1].lower() == 'h':
+                    tm = now - datetime.timedelta(hours=delta_value, minutes=delay)
+                elif sigsci.until_time[-1].lower() == 'm':
+                    delta_value += 5
+                    tm = now - datetime.timedelta(minutes=delta_value)
+
+                stm = tm.strftime("%Y-%m-%d %H:%M:00")
+                sigsci.until_time = int(tm.strptime(stm, "%Y-%m-%d %H:%M:00").strftime("%s"))
+        else:
+            # if until is not specified for requests feed, set default to now w/delay
+            if sigsci.feed:
+                tm = now - datetime.timedelta(minutes=delay)
+                stm = tm.strftime("%Y-%m-%d %H:%M:00")
+                sigsci.until_time = int(tm.strptime(stm, "%Y-%m-%d %H:%M:00").strftime("%s"))
+
+        if not sigsci.feed:
+            if ftm is None:
+                sigsci.until_time = int(sigsci.from_time) + int(86400 * 5)
+            else:
+                sigsci.until_time = int(sigsci.from_time) + int(86400 * 5)
+
     def __init__(self):
         self.base_url = self.url + self.version
 
@@ -1003,62 +1053,8 @@ if __name__ == '__main__':
 
     # authenticate before doing anything.
     if sigsci.authenticate():
-
-        # parse from/until time
-        now = datetime.datetime.now()
-
-        # if requests feed, take delay into account
-        if sigsci.feed:
-            delay = 5
-        else:
-            delay = 0
-
-        # from time
-        if sigsci.from_time is not None:
-            # if using human readable notation (not epoch)
-            if sigsci.from_time.startswith('-'):
-                delta_value = int(sigsci.from_time[1:-1])
-
-                if sigsci.from_time[-1:].lower() == 'd':
-                    tm = now - datetime.timedelta(days=delta_value, minutes=delay)
-                elif sigsci.from_time[-1].lower() == 'h':
-                    tm = now - datetime.timedelta(hours=delta_value, minutes=delay)
-                elif sigsci.from_time[-1].lower() == 'm':
-                    delta_value += 5
-                    tm = now - datetime.timedelta(minutes=delta_value)
-
-                stm = tm.strftime("%Y-%m-%d %H:%M:00")
-                sigsci.from_time = int(tm.strptime(stm, "%Y-%m-%d %H:%M:00").strftime("%s"))
-        else:
-            # if from is not specified for requests feed, set default to 30 minutes w/delay
-            if sigsci.feed:
-                tm = now - datetime.timedelta(minutes=30 + delay)
-                stm = tm.strftime("%Y-%m-%d %H:%M:00")
-                sigsci.from_time = int(tm.strptime(stm, "%Y-%m-%d %H:%M:00").strftime("%s"))
-
-        # until time
-        if sigsci.until_time is not None:
-            # if using human readable notation (not epoch)
-            if sigsci.until_time.startswith('-'):
-                delta_value = int(sigsci.until_time[1:-1])
-
-                if sigsci.until_time[-1:].lower() == 'd':
-                    tm = now - datetime.timedelta(days=delta_value, minutes=delay)
-                elif sigsci.until_time[-1].lower() == 'h':
-                    tm = now - datetime.timedelta(hours=delta_value, minutes=delay)
-                elif sigsci.until_time[-1].lower() == 'm':
-                    delta_value += 5
-                    tm = now - datetime.timedelta(minutes=delta_value)
-
-                stm = tm.strftime("%Y-%m-%d %H:%M:00")
-                sigsci.until_time = int(tm.strptime(stm, "%Y-%m-%d %H:%M:00").strftime("%s"))
-        else:
-            # if until is not specified for requests feed, set default to now w/delay
-            if sigsci.feed:
-                tm = now - datetime.timedelta(minutes=5)
-                stm = tm.strftime("%Y-%m-%d %H:%M:00")
-                sigsci.until_time = int(tm.strptime(stm, "%Y-%m-%d %H:%M:00").strftime("%s"))
-
+        sigsci.parse_init_time()
+        
         # determine what we are doing.
         if sigsci.agents:
             # get agent metrics
