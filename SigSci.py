@@ -1079,7 +1079,7 @@ if __name__ == '__main__':
             # get timeseries data
             if sigsci.tags is not None:
                 for tag in sigsci.tags:
-                    sigsci.get_timeseries(tag, sigsci.rollup)
+                    sigsci.get_timeseries(tag.upper(), sigsci.rollup)
 
         elif sigsci.list_events:
             # get event data
