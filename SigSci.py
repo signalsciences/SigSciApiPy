@@ -8,6 +8,7 @@ from __future__ import print_function
 import argparse
 import csv
 import datetime
+import calendar
 import json
 import os
 import sys
@@ -127,7 +128,7 @@ class SigSciAPI(object):
     ctags = None
     server = None
     ip = None
-    limit = 100
+    limit = None
     field = 'data'
     file = None
     format = 'json'
@@ -243,7 +244,7 @@ class SigSciAPI(object):
             self.query += ' tag:'.join(self.ctags)
         
         # force sort time-asc so we can properly capture last_epoch
-        self.query += ' sort:time-asc'
+        self.query += 'sort:time-asc'
 
     def get_requests(self):
         # https://docs.signalsciences.net/api/#_corps__corpName__sites__siteName__requests_get
@@ -271,7 +272,7 @@ class SigSciAPI(object):
             last_epoch = 0
             got_all = False
 
-            while last_epoch <= self.until_time and not got_all:
+            while (last_epoch <= self.until_time or self.until_time is None) and not got_all:
                 self.build_search_query()
                 url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.REQEUSTS_EP + '?q=' + str(self.query).strip() + '&limit=' + str(self.limit)
                 r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
@@ -286,12 +287,11 @@ class SigSciAPI(object):
                 for record in j['data']:
                     record_count += 1
                     last_timestamp = datetime.datetime.strptime(record['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
-                    stm = last_timestamp.strftime("%Y-%m-%d %H:%M:%S")
-                    last_epoch = int(last_timestamp.strptime(stm, "%Y-%m-%d %H:%M:%S").strftime("%s"))
+                    last_epoch = calendar.timegm(last_timestamp.utctimetuple())
 
                 if record_count < self.limit:
                     got_all = True
-                
+
                 # set from_time for next iteration
                 self.from_time = last_epoch
 
@@ -330,7 +330,7 @@ class SigSciAPI(object):
 
                 else:
                     print('Error: Invalid output format!')
-                
+
                 # force limit to 1000 on subsequent iterations to reduce the number of api calls
                 self.limit = 1000
 
@@ -844,67 +844,75 @@ class SigSciAPI(object):
 
     def parse_init_time(self):
         # parse from/until time
-        now = datetime.datetime.now()
+        now = datetime.datetime.utcnow().replace(second=0, microsecond=0)
         ftm = None
         utm = None
 
-        # if requests feed, take delay into account
-        if sigsci.feed:
-            delay = 5
-        else:
-            delay = 0
+        if sigsci.feed or sigsci.timeseries:
+            # if requests feed, take delay into account
+            if sigsci.feed:
+                delay = 5
+            else:
+                delay = 0
 
-        # from time
-        if sigsci.from_time is not None:
-            # if using human readable notation (not epoch)
-            if sigsci.from_time.startswith('-'):
+            # determine from time
+            if sigsci.from_time is None:
+                # if from is not specified for requests feed, set default to 30 minutes w/delay
+                ftm = now - datetime.timedelta(minutes=30 + delay)
+
+            elif sigsci.from_time.startswith('-'):
                 delta_value = int(sigsci.from_time[1:-1])
 
                 if sigsci.from_time[-1:].lower() == 'd':
-                    ftm = now - datetime.timedelta(days=delta_value, minutes=delay)
+                    minutes = delay
+
+                    if sigsci.feed:
+                        # minus 1 minute to ensure from timestamp cannot be older than 24 hours 5 minutes ago
+                        minutes = delay - 1
+
+                    ftm = now - datetime.timedelta(days=delta_value, minutes=minutes)
                 elif sigsci.from_time[-1].lower() == 'h':
-                    ftm = now - datetime.timedelta(hours=delta_value, minutes=delay)
+                    minutes = delay
+                    if delta_value == 24 and sigsci.feed:
+                        # minus 1 minute to ensure from timestamp cannot be older than 24 hours 5 minutes ago
+                        minutes = delay - 1
+
+                    ftm = now - datetime.timedelta(hours=delta_value, minutes=minutes)
                 elif sigsci.from_time[-1].lower() == 'm':
-                    delta_value += 5
+                    delta_value += delay
                     ftm = now - datetime.timedelta(minutes=delta_value)
 
-                stm = ftm.strftime("%Y-%m-%d %H:%M:00")
-                sigsci.from_time = int(ftm.strptime(stm, "%Y-%m-%d %H:%M:00").strftime("%s"))
-        else:
-            # if from is not specified for requests feed, set default to 30 minutes w/delay
-            if sigsci.feed:
-                ftm = now - datetime.timedelta(minutes=30 + delay)
-                stm = ftm.strftime("%Y-%m-%d %H:%M:00")
-                sigsci.from_time = int(ftm.strptime(stm, "%Y-%m-%d %H:%M:00").strftime("%s"))
+            # set from_time.
+            # if utm is not None, then no UTC timestamp was specified on the cli for from.
+            # if utm is None, then from a UTC timestamp was specified on the cli.
+            if ftm is not None:
+                sigsci.from_time = calendar.timegm(ftm.utctimetuple())
 
-        # until time
-        if sigsci.until_time is not None:
-            # if using human readable notation (not epoch)
-            if sigsci.until_time.startswith('-'):
+            # determine until time
+            if sigsci.until_time is None:
+                # if until is not specified for requests feed, set default to now w/delay
+                utm = now - datetime.timedelta(minutes=delay)
+
+            elif sigsci.until_time.startswith('-'):
                 delta_value = int(sigsci.until_time[1:-1])
 
                 if sigsci.until_time[-1:].lower() == 'd':
-                    tm = now - datetime.timedelta(days=delta_value, minutes=delay)
+                    utm = now - datetime.timedelta(days=delta_value, minutes=0)
                 elif sigsci.until_time[-1].lower() == 'h':
-                    tm = now - datetime.timedelta(hours=delta_value, minutes=delay)
+                    utm = now - datetime.timedelta(hours=delta_value, minutes=delay)
                 elif sigsci.until_time[-1].lower() == 'm':
-                    delta_value += 5
-                    tm = now - datetime.timedelta(minutes=delta_value)
+                    delta_value += delay
+                    utm = now - datetime.timedelta(minutes=delta_value)
 
-                stm = tm.strftime("%Y-%m-%d %H:%M:00")
-                sigsci.until_time = int(tm.strptime(stm, "%Y-%m-%d %H:%M:00").strftime("%s"))
+            # set until_time.
+            # if utm is not None, then no UTC timestamp was specified on the cli for until.
+            # if utm is None, then until a UTC timestamp was specified on the cli.
+            if utm is not None:
+                sigsci.until_time = calendar.timegm(utm.utctimetuple())
+
         else:
-            # if until is not specified for requests feed, set default to now w/delay
-            if sigsci.feed:
-                tm = now - datetime.timedelta(minutes=delay)
-                stm = tm.strftime("%Y-%m-%d %H:%M:00")
-                sigsci.until_time = int(tm.strptime(stm, "%Y-%m-%d %H:%M:00").strftime("%s"))
-
-        if not sigsci.feed:
-            if ftm is None:
-                sigsci.until_time = int(sigsci.from_time) + int(86400 * 5)
-            else:
-                sigsci.until_time = int(sigsci.from_time) + int(86400 * 5)
+            if sigsci.from_time is None:
+                sigsci.from_time = '-6h'
 
     def __init__(self):
         self.base_url = self.url + self.version
@@ -924,7 +932,7 @@ if __name__ == '__main__':
     parser.add_argument('--ctags', help='Filter results on one or more custom tags.', nargs='*')
     parser.add_argument('--server', help='Filter results by server name.', default=None)
     parser.add_argument('--ip', help='Filter results by remote ip.', default=None)
-    parser.add_argument('--limit', help='Limit the number of results returned from the server (default: 100).', type=int, default=100)
+    parser.add_argument('--limit', help='Limit the number of results returned from the server (default: 1000).', type=int, default=1000)
     parser.add_argument('--field', help='Specify fields to return (default: data).', type=str, default=None, choices=['all', 'totalCount', 'next', 'data'])
     parser.add_argument('--file', help='Output results to the specified file.', type=str, default=None)
     parser.add_argument('--list', help='List all supported tags', default=False, action='store_true')
