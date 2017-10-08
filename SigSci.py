@@ -134,8 +134,8 @@ class SigSciAPI(object):
     format = 'json'
     pretty = False
     sort = 'desc'
-    agent_ver = '0.0.1'
-    ua = 'Signal Sciences Client API (Python/{})'.format(agent_ver)
+    agent_version = None
+    ua = None
     xheaders = {}
     event_by_id = None
 
@@ -516,6 +516,7 @@ class SigSciAPI(object):
                 query_params += '&tag=%s' % (str(tag).strip())
 
             url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.EVENTS_EP + query_params
+            print(self.get_headers())
             r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
             j = json.loads(r.text)
 
@@ -916,6 +917,8 @@ class SigSciAPI(object):
 
     def __init__(self):
         self.base_url = self.url + self.version
+        self.agent_version = file(os.path.dirname(os.path.abspath(__file__)) + '/VERSION').read().strip()
+        self.ua = 'Signal Sciences API Client (Python/{})'.format(self.agent_version)
 
 
 if __name__ == '__main__':
