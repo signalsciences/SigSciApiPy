@@ -399,7 +399,7 @@ class SigSciAPI(object):
             r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
             j = json.loads(r.text)
 
-            self.output_results(j)
+            self.json_out(j)
 
         except Exception as e:
             print('Error: %s ' % str(e))
@@ -736,7 +736,6 @@ class SigSciAPI(object):
             if not self.file:
                 if f is None:
                     print('%s' % json.dumps(j))
-                    self.json_out(j)
                 else:
                     print('%s' % json.dumps(j[f]))
             else:
@@ -799,37 +798,37 @@ class SigSciAPI(object):
         ftm = None
         utm = None
 
-        if sigsci.feed or sigsci.timeseries:
+        if self.feed or self.timeseries:
             # if requests feed, take delay into account
-            if sigsci.feed:
+            if self.feed:
                 delay = 5
             else:
                 delay = 0
 
             # determine from time
-            if sigsci.from_time is None:
+            if self.from_time is None:
                 # if from is not specified for requests feed, set default to 30 minutes w/delay
                 ftm = now - datetime.timedelta(minutes=30 + delay)
 
-            elif sigsci.from_time.startswith('-'):
-                delta_value = int(sigsci.from_time[1:-1])
+            elif self.from_time.startswith('-'):
+                delta_value = int(self.from_time[1:-1])
 
-                if sigsci.from_time[-1:].lower() == 'd':
+                if self.from_time[-1:].lower() == 'd':
                     minutes = delay
 
-                    if sigsci.feed:
+                    if self.feed:
                         # minus 1 minute to ensure from timestamp cannot be older than 24 hours 5 minutes ago
                         minutes = delay - 1
 
                     ftm = now - datetime.timedelta(days=delta_value, minutes=minutes)
-                elif sigsci.from_time[-1].lower() == 'h':
+                elif self.from_time[-1].lower() == 'h':
                     minutes = delay
-                    if delta_value == 24 and sigsci.feed:
+                    if delta_value == 24 and self.feed:
                         # minus 1 minute to ensure from timestamp cannot be older than 24 hours 5 minutes ago
                         minutes = delay - 1
 
                     ftm = now - datetime.timedelta(hours=delta_value, minutes=minutes)
-                elif sigsci.from_time[-1].lower() == 'm':
+                elif self.from_time[-1].lower() == 'm':
                     delta_value += delay
                     ftm = now - datetime.timedelta(minutes=delta_value)
 
@@ -837,21 +836,21 @@ class SigSciAPI(object):
             # if utm is not None, then no UTC timestamp was specified on the cli for from.
             # if utm is None, then from a UTC timestamp was specified on the cli.
             if ftm is not None:
-                sigsci.from_time = calendar.timegm(ftm.utctimetuple())
+                self.from_time = calendar.timegm(ftm.utctimetuple())
 
             # determine until time
-            if sigsci.until_time is None:
+            if self.until_time is None:
                 # if until is not specified for requests feed, set default to now w/delay
                 utm = now - datetime.timedelta(minutes=delay)
 
-            elif sigsci.until_time.startswith('-'):
-                delta_value = int(sigsci.until_time[1:-1])
+            elif self.until_time.startswith('-'):
+                delta_value = int(self.until_time[1:-1])
 
-                if sigsci.until_time[-1:].lower() == 'd':
+                if self.until_time[-1:].lower() == 'd':
                     utm = now - datetime.timedelta(days=delta_value, minutes=0)
-                elif sigsci.until_time[-1].lower() == 'h':
+                elif self.until_time[-1].lower() == 'h':
                     utm = now - datetime.timedelta(hours=delta_value, minutes=delay)
-                elif sigsci.until_time[-1].lower() == 'm':
+                elif self.until_time[-1].lower() == 'm':
                     delta_value += delay
                     utm = now - datetime.timedelta(minutes=delta_value)
 
@@ -859,11 +858,11 @@ class SigSciAPI(object):
             # if utm is not None, then no UTC timestamp was specified on the cli for until.
             # if utm is None, then until a UTC timestamp was specified on the cli.
             if utm is not None:
-                sigsci.until_time = calendar.timegm(utm.utctimetuple())
+                self.until_time = calendar.timegm(utm.utctimetuple())
 
         else:
-            if sigsci.from_time is None:
-                sigsci.from_time = '-6h'
+            if self.from_time is None:
+                self.from_time = '-6h'
 
     def __init__(self):
         self.base_url = self.url + self.version
