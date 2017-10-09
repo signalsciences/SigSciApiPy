@@ -279,6 +279,7 @@ class SigSciAPI(object):
                 j = json.loads(r.text)
                 f = None if self.field == 'all' else self.field
 
+                # check for API call error
                 if 'message' in j:
                     raise ValueError(j['message'])
 
@@ -295,42 +296,9 @@ class SigSciAPI(object):
                 # set from_time for next iteration
                 self.from_time = last_epoch
 
-                if self.format == 'json':
-                    if not self.file:
-                        if f is None:
-                            print('%s' % json.dumps(j))
-                            self.json_out(j)
-                        else:
-                            print('%s' % json.dumps(j[f]))
-                    else:
-                        with open(self.file, 'a') as outfile:
-                            if f is None:
-                                outfile.write('%s' % json.dumps(j))
-                            else:
-                                outfile.write('%s' % json.dumps(j[f]))
-
-                elif self.format == 'csv':
-                    if not self.file:
-                        csvwriter = csv.writer(sys.stdout)
-                    else:
-                        csvwriter = csv.writer(open(self.file, "wb+"))
-
-                    f = None
-                    if f is None:
-                        for row in j['data']:
-                            tag_list = ''
-                            detector = row['tags']
-
-                            for t in detector:
-                                tag_list = tag_list + t['type'] + '|'
-
-                            csvwriter.writerow([str(row['timestamp']), str(row['id']), str(row['remoteIP']), str(row['remoteCountryCode']), str(row['path']).encode('utf8'), str(tag_list[:-1]), str(row['responseCode']), str(row['agentResponseCode'])])
-                    else:
-                        print('%s' % json.dumps(j[f]))
-
-                else:
-                    print('Error: Invalid output format!')
-
+                # output the results
+                self.output_results(j)
+                
                 # force limit to 1000 on subsequent iterations to reduce the number of api calls
                 self.limit = 1000
 
@@ -377,31 +345,8 @@ class SigSciAPI(object):
 
             if 'message' in j:
                 raise ValueError(j['message'])
-
-            if self.format == 'json':
-                if not self.file:
-                    print('%s' % json.dumps(j['data']))
-
-                else:
-                    with open(self.file, 'a') as outfile:
-                        outfile.write('%s' % json.dumps(j['data']))
-
-            elif self.format == 'csv':
-                if not self.file:
-                    csvwriter = csv.writer(sys.stdout)
-                else:
-                    csvwriter = csv.writer(open(self.file, "wb+"))
-
-                f = None
-                if f is None:
-                    for row in j['data']:
-                        tag_list = ''
-                        detector = row['tags']
-
-                        for t in detector:
-                            tag_list = tag_list + t['type'] + '|'
-
-                        csvwriter.writerow([str(row['timestamp']), str(row['id']), str(row['remoteIP']), str(row['remoteCountryCode']), str(row['path']).encode('utf8'), str(tag_list[:-1]), str(row['responseCode']), str(row['agentResponseCode'])])
+            
+            self.output_results(j)
 
             # get all next
             next_ref = j['next']
@@ -413,30 +358,7 @@ class SigSciAPI(object):
                 if 'message' in j:
                     raise ValueError(j['message'])
 
-                if self.format == 'json':
-                    if not self.file:
-                        print('%s' % json.dumps(j['data']))
-
-                    else:
-                        with open(self.file, 'a') as outfile:
-                            outfile.write('%s' % json.dumps(j['data']))
-
-                elif self.format == 'csv':
-                    if not self.file:
-                        csvwriter = csv.writer(sys.stdout)
-                    else:
-                        csvwriter = csv.writer(open(self.file, "wb+"))
-
-                    f = None
-                    if f is None:
-                        for row in j['data']:
-                            tag_list = ''
-                            detector = row['tags']
-
-                            for t in detector:
-                                tag_list = tag_list + t['type'] + '|'
-
-                            csvwriter.writerow([str(row['timestamp']), str(row['id']), str(row['remoteIP']), str(row['remoteCountryCode']), str(row['path']).encode('utf8'), str(tag_list[:-1]), str(row['responseCode']), str(row['agentResponseCode'])])
+                self.output_results(j)
 
                 next_ref = j['next']
 
@@ -477,7 +399,7 @@ class SigSciAPI(object):
             r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
             j = json.loads(r.text)
 
-            self.json_out(j)
+            self.output_results(j)
 
         except Exception as e:
             print('Error: %s ' % str(e))
@@ -516,28 +438,10 @@ class SigSciAPI(object):
                 query_params += '&tag=%s' % (str(tag).strip())
 
             url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.EVENTS_EP + query_params
-            print(self.get_headers())
             r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
             j = json.loads(r.text)
 
-            if self.format == 'json':
-                if not self.file:
-                    print('%s' % json.dumps(j['data']))
-
-                else:
-                    with open(self.file, 'a') as outfile:
-                        outfile.write('%s' % json.dumps(j['data']))
-
-            elif self.format == 'csv':
-                if not self.file:
-                    csvwriter = csv.writer(sys.stdout)
-                else:
-                    csvwriter = csv.writer(open(self.file, "wb+"))
-
-                f = None
-                if f is None:
-                    for row in j['data']:
-                        csvwriter.writerow([str(row['timestamp']), str(row['id']), str(row['source']), str(row['remoteCountryCode']), str(row['action']), str(row['type']), str(row['requestCount']), str(row['window'])])
+            self.output_results(j)
 
         except Exception as e:
             print('Error: %s ' % str(e))
@@ -825,6 +729,52 @@ class SigSciAPI(object):
         # /corps/{corpName}/sites/{siteName}/headerLinks
         self.get_configuration(self.HEADERLINKS_EP)
 
+    def output_results(self, j):
+        f = None if self.field == 'all' else self.field
+
+        if self.format == 'json':
+            if not self.file:
+                if f is None:
+                    print('%s' % json.dumps(j))
+                    self.json_out(j)
+                else:
+                    print('%s' % json.dumps(j[f]))
+            else:
+                with open(self.file, 'a') as outfile:
+                    if f is None:
+                        outfile.write('%s' % json.dumps(j))
+                    else:
+                        outfile.write('%s' % json.dumps(j[f]))
+
+        elif self.format == 'csv':
+            if not self.file:
+                csvwriter = csv.writer(sys.stdout)
+            else:
+                csvwriter = csv.writer(open(self.file, "wb+"))
+
+            if f is None:
+                for row in j['data']:
+                    if sigsci.list_events:
+                        reason_list = ''
+                        for reason in row['reasons']:
+                            reason_list = reason_list + reason + '|'
+                        # output fields for list events
+                        csvwriter.writerow([str(row['timestamp']), str(row['id']), str(row['source']), str(row['remoteHostname']), str(row['remoteCountryCode']), str(row['action']), str(row['type']), str(reason_list[:-1]), str(row['tagCount']), str(row['window']), str(row['detectedTimestamp']), str(row['expires'])])
+                    else:
+                        tag_list = ''
+                        detector = row['tags']
+
+                        for t in detector:
+                            tag_list = tag_list + t['type'] + '|'
+
+                        # default, output fields for requests
+                        csvwriter.writerow([str(row['timestamp']), str(row['id']), str(row['remoteIP']), str(row['remoteCountryCode']), str(row['path']).encode('utf8'), str(tag_list[:-1]), str(row['responseCode']), str(row['agentResponseCode'])])
+            else:
+                print('%s' % json.dumps(j[f]))
+
+        else:
+            print('Error: Invalid output format!')
+   
     def json_out(self, j):
         if 'message' in j:
             raise ValueError(j['message'])
