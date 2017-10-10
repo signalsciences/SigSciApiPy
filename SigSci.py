@@ -128,7 +128,7 @@ class SigSciAPI(object):
     ctags = None
     server = None
     ip = None
-    limit = None
+    limit = 1000
     field = 'data'
     file = None
     format = 'json'
@@ -271,6 +271,10 @@ class SigSciAPI(object):
         try:
             last_epoch = 0
             got_all = False
+            until_specified = False
+
+            if self.until_time is not None:
+                until_specified = True
 
             while (last_epoch <= self.until_time or self.until_time is None) and not got_all:
                 self.build_search_query()
@@ -298,7 +302,11 @@ class SigSciAPI(object):
 
                 # output the results
                 self.output_results(j)
-                
+
+                if not until_specified:
+                    # set until to the max window of 7 days from from time
+                    self.until_time = int(self.from_time) + (86400 * 7)
+
                 # force limit to 1000 on subsequent iterations to reduce the number of api calls
                 self.limit = 1000
 
@@ -863,6 +871,16 @@ class SigSciAPI(object):
         else:
             if self.from_time is None:
                 self.from_time = '-6h'
+
+        if self.until_time is None:
+            # set until time to 7 days after from time
+            if self.from_time.startswith('-'):
+                if self.from_time[-1:].lower() == 'd':
+                    days = int(self.from_time[1:-1])
+                    if days > 7:
+                        self.until_time = '-{}d'.format(days - 7)
+            else:
+                self.until_time = int(self.from_time) + (86400 * 7)
 
     def __init__(self):
         self.base_url = self.url + self.version
