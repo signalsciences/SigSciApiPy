@@ -135,7 +135,7 @@ class SigSciAPI(object):
     file = None
     format = 'json'
     pretty = False
-    sort = 'desc'
+    sort = 'asc'
     agent_version = None
     ua = None
     xheaders = {}
