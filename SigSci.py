@@ -122,6 +122,8 @@ class SigSciAPI(object):
     site = None
     query = 'from:-6h '
     query_params = None
+    feed = None
+    timeseries = None
     from_time = '-1h'
     until_time = None
     tags = None
@@ -234,10 +236,12 @@ class SigSciAPI(object):
         if self.sort is not None:
             self.query += 'sort:time-%s ' % str(self.sort)
 
-        if self.tags is not None:
-            self.query += 'tag:'
-            self.query += ' tag:'.join(self.tags)
-            self.query += ' '  # extra space required for appending ctags
+        if self.tags is not None:            
+            for tag in self.tags:
+                if tag.startswith('-'):
+                    self.query += '-tag:{} '.format(tag.replace('-', ''))
+                else:
+                    self.query += 'tag:{} '.format(tag)
 
         if self.ctags is not None:
             self.query += 'tag:'
@@ -908,7 +912,7 @@ if __name__ == '__main__':
     parser.add_argument('--list', help='List all supported tags', default=False, action='store_true')
     parser.add_argument('--format', help='Specify output format (default: json).', type=str, default='json', choices=['json', 'csv'])
     parser.add_argument('--pretty', help='Pretty print the JSON ourput.', default=False, action='store_true')
-    parser.add_argument('--sort', help='Specify sort order (default: desc).', type=str, default=None, choices=['desc', 'asc'])
+    parser.add_argument('--sort', help='Specify sort order (default: asc).', type=str, default='asc', choices=['desc', 'asc'])
     parser.add_argument('--agents', help='Retrieve agent metrics.', default=False, action='store_true')
     parser.add_argument('--feed', help='Retrieve data feed.', default=False, action='store_true')
     parser.add_argument('--timeseries', help='Retrieve timeseries data.', default=False, action='store_true')
