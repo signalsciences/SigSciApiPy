@@ -325,6 +325,7 @@ class SigSciAPI(object):
         except Exception as e:
             print('Error: %s ' % str(e))
             print('Query: %s ' % url)
+            quit()
 
     def get_feed_requests(self):
         """
@@ -750,8 +751,6 @@ class SigSciAPI(object):
         self.get_configuration(self.HEADERLINKS_EP)
 
     def output_results(self, j):
-        f = None if self.field == 'all' else self.field
-
         if self.format == 'json':
             if not self.file:
                 print('%s' % json.dumps(j))
