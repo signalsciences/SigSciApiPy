@@ -126,6 +126,7 @@ class SigSciAPI(object):
     timeseries = None
     from_time = '-1h'
     until_time = None
+    until_specified = False
     tags = None
     ctags = None
     server = None
@@ -277,10 +278,6 @@ class SigSciAPI(object):
                 last_epoch = 0
                 got_all = False
                 all_records = []
-                until_specified = False
-
-                if self.until_time is not None:
-                    until_specified = True
 
                 while (last_epoch <= self.until_time or self.until_time is None) and not got_all:
                     self.build_search_query()
@@ -307,13 +304,13 @@ class SigSciAPI(object):
                     # set from_time for next iteration
                     self.from_time = last_epoch
 
-                    if not until_specified:
+                    if not self.until_specified:
                         # set until to the max window of 7 days from from time
                         self.until_time = int(self.from_time) + (86400 * 7)
 
                     # force limit to 1000 on subsequent iterations to reduce the number of api calls
                     self.limit = 1000
-
+    
                 j = all_records
 
             else:
@@ -814,6 +811,7 @@ class SigSciAPI(object):
         now = datetime.datetime.utcnow().replace(second=0, microsecond=0)
         ftm = None
         utm = None
+        self.until_specified = False
 
         if self.feed or self.timeseries:
             # if requests feed, take delay into account
@@ -880,7 +878,7 @@ class SigSciAPI(object):
         else:
             if self.from_time is None:
                 self.from_time = '-6h'
-
+        print('{} {}'.format(self.until_time, self.until_specified))
         if self.until_time is None:
             # set until time to 7 days after from time
             if self.from_time.startswith('-'):
@@ -890,6 +888,8 @@ class SigSciAPI(object):
                         self.until_time = '-{}d'.format(days - 7)
             else:
                 self.until_time = int(self.from_time) + (86400 * 7)
+        else:
+            self.until_specified = True
 
     def __init__(self):
         self.base_url = self.url + self.version
