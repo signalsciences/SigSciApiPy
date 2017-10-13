@@ -273,46 +273,57 @@ class SigSciAPI(object):
         # https://docs.signalsciences.net/api/#_corps__corpName__sites__siteName__requests_get
         # /corps/{corpName}/sites/{siteName}/requests
         try:
-            last_epoch = 0
-            got_all = False
-            until_specified = False
+            if self.field == 'data':
+                last_epoch = 0
+                got_all = False
+                all_records = []
+                until_specified = False
 
-            if self.until_time is not None:
-                until_specified = True
+                if self.until_time is not None:
+                    until_specified = True
 
-            while (last_epoch <= self.until_time or self.until_time is None) and not got_all:
+                while (last_epoch <= self.until_time or self.until_time is None) and not got_all:
+                    self.build_search_query()
+                    url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.REQEUSTS_EP + '?q=' + str(self.query).strip() + '&limit=' + str(self.limit)
+                    r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
+                    j = json.loads(r.text)
+
+                    # check for API call error
+                    if 'message' in j:
+                        raise ValueError(j['message'])
+
+                    # get timestamp of last record
+                    record_count = 0
+
+                    for record in j['data']:
+                        record_count += 1
+                        last_timestamp = datetime.datetime.strptime(record['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
+                        last_epoch = calendar.timegm(last_timestamp.utctimetuple())
+                        all_records.append(record)
+
+                    if record_count < self.limit:
+                        got_all = True
+
+                    # set from_time for next iteration
+                    self.from_time = last_epoch
+
+                    if not until_specified:
+                        # set until to the max window of 7 days from from time
+                        self.until_time = int(self.from_time) + (86400 * 7)
+
+                    # force limit to 1000 on subsequent iterations to reduce the number of api calls
+                    self.limit = 1000
+
+                j = all_records
+
+            else:
                 self.build_search_query()
                 url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.REQEUSTS_EP + '?q=' + str(self.query).strip() + '&limit=' + str(self.limit)
                 r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
                 j = json.loads(r.text)
-                f = None if self.field == 'all' else self.field
 
-                # check for API call error
-                if 'message' in j:
-                    raise ValueError(j['message'])
-
-                # get timestamp of last record
-                record_count = 0
-                for record in j['data']:
-                    record_count += 1
-                    last_timestamp = datetime.datetime.strptime(record['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
-                    last_epoch = calendar.timegm(last_timestamp.utctimetuple())
-
-                if record_count < self.limit:
-                    got_all = True
-
-                # set from_time for next iteration
-                self.from_time = last_epoch
-
-                # output the results
-                self.output_results(j)
-
-                if not until_specified:
-                    # set until to the max window of 7 days from from time
-                    self.until_time = int(self.from_time) + (86400 * 7)
-
-                # force limit to 1000 on subsequent iterations to reduce the number of api calls
-                self.limit = 1000
+            # output the results
+            self.output_results(j)
 
         except Exception as e:
             print('Error: %s ' % str(e))
@@ -746,16 +757,10 @@ class SigSciAPI(object):
 
         if self.format == 'json':
             if not self.file:
-                if f is None:
-                    print('%s' % json.dumps(j))
-                else:
-                    print('%s' % json.dumps(j[f]))
+                print('%s' % json.dumps(j))
             else:
                 with open(self.file, 'a') as outfile:
-                    if f is None:
-                        outfile.write('%s' % json.dumps(j))
-                    else:
-                        outfile.write('%s' % json.dumps(j[f]))
+                    outfile.write('%s' % json.dumps(j))
 
         elif self.format == 'csv':
             if not self.file:
@@ -907,7 +912,7 @@ if __name__ == '__main__':
     parser.add_argument('--server', help='Filter results by server name.', default=None)
     parser.add_argument('--ip', help='Filter results by remote ip.', default=None)
     parser.add_argument('--limit', help='Limit the number of results returned from the server (default: 1000).', type=int, default=1000)
-    parser.add_argument('--field', help='Specify fields to return (default: data).', type=str, default=None, choices=['all', 'totalCount', 'next', 'data'])
+    parser.add_argument('--field', help='Specify fields to return (default: data).', type=str, default='data', choices=['all', 'totalCount', 'next', 'data'])
     parser.add_argument('--file', help='Output results to the specified file.', type=str, default=None)
     parser.add_argument('--list', help='List all supported tags', default=False, action='store_true')
     parser.add_argument('--format', help='Specify output format (default: json).', type=str, default='json', choices=['json', 'csv'])
