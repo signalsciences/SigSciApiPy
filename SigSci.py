@@ -387,7 +387,7 @@ class SigSciAPI(object):
             print('Error: %s ' % str(e))
             print('Query: %s ' % url)
 
-    def get_timeseries(self, tag, rollup=60):
+    def get_timeseries(self, tags, rollup=60):
         """
         SigSciAPI.get_timeseries(tag, rollup)
 
@@ -408,15 +408,18 @@ class SigSciAPI(object):
         # /corps/{corpName}/sites/{siteName}/timeseries/requests
 
         try:
-            self.query = '?tag=%s&rollup=%s' % (str(tag).strip(), str(rollup).strip())
+            self.query_params = '?rollup={}'.format(str(rollup).strip())
 
             if self.from_time is not None:
-                self.query += '&from=%s' % str(self.from_time)
+                self.query_params += '&from={}'.format(str(self.from_time))
 
             if self.until_time is not None:
-                self.query += '&until=%s' % str(self.until_time)
+                self.query_params += '&until={}'.format(str(self.until_time))
 
-            url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.TIMESERIES_EP + self.query
+            for tag in tags:
+                self.query_params += '&tag={}'.format(tag)
+
+            url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.TIMESERIES_EP + self.query_params
             r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
             j = json.loads(r.text)
 
@@ -1058,8 +1061,9 @@ if __name__ == '__main__':
         elif sigsci.timeseries:
             # get timeseries data
             if sigsci.tags is not None:
-                for tag in sigsci.tags:
-                    sigsci.get_timeseries(tag.upper(), sigsci.rollup)
+                sigsci.tags = [x.upper() for x in sigsci.tags]
+                sigsci.get_timeseries(sigsci.tags, sigsci.rollup)
+
             else:
                 print('The timeseries option requires at least one tag, use the --tags option.')
 
