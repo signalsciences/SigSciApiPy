@@ -366,7 +366,7 @@ class SigSciAPI(object):
 
             if 'message' in j:
                 raise ValueError(j['message'])
-            
+
             self.output_results(j)
 
             # get all next
@@ -420,6 +420,9 @@ class SigSciAPI(object):
             r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
             j = json.loads(r.text)
 
+            if 'message' in j:
+                raise ValueError(j['message'])
+
             self.json_out(j)
 
         except Exception as e:
@@ -461,6 +464,9 @@ class SigSciAPI(object):
             url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.EVENTS_EP + query_params
             r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
             j = json.loads(r.text)
+
+            if 'message' in j:
+                raise ValueError(j['message'])
 
             self.output_results(j)
 
@@ -764,25 +770,24 @@ class SigSciAPI(object):
             else:
                 csvwriter = csv.writer(open(self.file, "wb+"))
 
-            if f is None:
-                for row in j['data']:
-                    if sigsci.list_events:
-                        reason_list = ''
-                        for reason in row['reasons']:
-                            reason_list = reason_list + reason + '|'
-                        # output fields for list events
-                        csvwriter.writerow([str(row['timestamp']), str(row['id']), str(row['source']), str(row['remoteHostname']), str(row['remoteCountryCode']), str(row['action']), str(row['type']), str(reason_list[:-1]), str(row['tagCount']), str(row['window']), str(row['detectedTimestamp']), str(row['expires'])])
-                    else:
-                        tag_list = ''
-                        detector = row['tags']
+            for row in j[self.field]:
+                if sigsci.list_events:
+                    reason_list = ''
+                    for reason in row['reasons']:
+                        reason_list = reason_list + reason + '|'
 
-                        for t in detector:
-                            tag_list = tag_list + t['type'] + '|'
+                    # output fields for list events
+                    csvwriter.writerow([str(row['timestamp']), str(row['id']), str(row['source']), str(row['remoteHostname']), str(row['remoteCountryCode']), str(row['action']), str(row['type']), str(reason_list[:-1]), str(row['tagCount']), str(row['window']), str(row['detectedTimestamp']), str(row['expires'])])
 
-                        # default, output fields for requests
-                        csvwriter.writerow([str(row['timestamp']), str(row['id']), str(row['remoteIP']), str(row['remoteCountryCode']), str(row['path']).encode('utf8'), str(tag_list[:-1]), str(row['responseCode']), str(row['agentResponseCode'])])
-            else:
-                print('%s' % json.dumps(j[f]))
+                else:
+                    tag_list = ''
+                    detector = row['tags']
+
+                    for t in detector:
+                        tag_list = tag_list + t['type'] + '|'
+
+                    # default, output fields for requests
+                    csvwriter.writerow([str(row['timestamp']), str(row['id']), str(row['remoteIP']), str(row['remoteCountryCode']), str(row['path']).encode('utf8'), str(tag_list[:-1]), str(row['responseCode']), str(row['agentResponseCode'])])
 
         else:
             print('Error: Invalid output format!')
@@ -1055,6 +1060,8 @@ if __name__ == '__main__':
             if sigsci.tags is not None:
                 for tag in sigsci.tags:
                     sigsci.get_timeseries(tag.upper(), sigsci.rollup)
+            else:
+                print('The timeseries option requires at least one tag, use the --tags option.')
 
         elif sigsci.list_events:
             # get event data
