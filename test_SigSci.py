@@ -53,7 +53,7 @@ class TestSigSciAPI(unittest.TestCase):
         sigsci.tags = ['SQLI', 'XSS']
         sigsci.ip = '127.0.0.1'
         sigsci.build_search_query()
-        self.assertEqual(str(sigsci.query).rstrip(), 'from:-1h ip:127.0.0.1 sort:time-asc tag:SQLI tag:XSS')
+        self.assertEqual(str(sigsci.query).rstrip(), 'from:-1h ip:127.0.0.1 tag:SQLI tag:XSS sort:time-asc')
 
 
 if __name__ == "__main__":
