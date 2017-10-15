@@ -234,9 +234,6 @@ class SigSciAPI(object):
         if self.ip is not None:
             self.query += 'ip:%s ' % str(self.ip)
 
-        if self.sort is not None:
-            self.query += 'sort:time-%s ' % str(self.sort)
-
         if self.tags is not None:
             for tag in self.tags:
                 if tag.startswith('-'):
