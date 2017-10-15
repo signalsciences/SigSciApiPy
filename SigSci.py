@@ -897,7 +897,9 @@ class SigSciAPI(object):
 
     def __init__(self):
         self.base_url = self.url + self.version
-        self.agent_version = file(os.path.dirname(os.path.abspath(__file__)) + '/VERSION').read().strip()
+        vfile = open(os.path.dirname(os.path.abspath(__file__)) + '/VERSION', 'r')
+        self.agent_version = vfile.read().strip()
+        vfile.close()
         self.ua = 'Signal Sciences API Client (Python/{})'.format(self.agent_version)
 
 
