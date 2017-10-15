@@ -20,6 +20,7 @@ usage: SigSci.py [-h] [--from  =<value>] [--until =<value>]
                  [--whitelist] [--whitelist-add] [--whitelist-delete]
                  [--blacklist] [--blacklist-add] [--blacklist-delete]
                  [--redactions] [--redactions-add] [--redactions-delete]
+                 [--version]
 
 Signal Sciences API Client.
 
@@ -34,14 +35,14 @@ optional arguments:
   --server SERVER       Filter results by server name.
   --ip IP               Filter results by remote ip.
   --limit LIMIT         Limit the number of results returned from the server
-                        (default: 100).
+                        (default: 1000).
   --field {all,totalCount,next,data}
                         Specify fields to return (default: data).
   --file FILE           Output results to the specified file.
   --list                List all supported tags
   --format {json,csv}   Specify output format (default: json).
   --pretty              Pretty print the JSON ourput.
-  --sort {desc,asc}     Specify sort order (default: desc).
+  --sort {desc,asc}     Specify sort order (default: asc).
   --agents              Retrieve agent metrics.
   --feed                Retrieve data feed.
   --timeseries          Retrieve timeseries data.
@@ -73,6 +74,7 @@ optional arguments:
   --redactions          Retrieve redactions.
   --redactions-add      Add to redactions.
   --redactions-delete   Delete redactions.
+  --version             Display version.
   ```
 
 ### Authentication
