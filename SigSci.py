@@ -948,6 +948,7 @@ if __name__ == '__main__':
     parser.add_argument('--redactions', help='Retrieve redactions.', default=False, action='store_true')
     parser.add_argument('--redactions-add', help='Add to redactions.', default=False, action='store_true')
     parser.add_argument('--redactions-delete', help='Delete redactions.', default=False, action='store_true')
+    parser.add_argument('--version', help='Display version.', default=False, action='store_true')
 
     arguments = parser.parse_args()
 
@@ -959,8 +960,12 @@ if __name__ == '__main__':
 
         quit()
 
-    # setup and run api query
+    # create SigSciAPI object
     sigsci = SigSciAPI()
+
+    if arguments.version:
+        print('v{}'.format(sigsci.agent_version))
+        quit()
 
     # first get configuration, environment variables (if set) override
     # settings specified at the beginning of this script.
