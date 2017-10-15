@@ -364,7 +364,7 @@ class SigSciAPI(object):
             if 'message' in j:
                 raise ValueError(j['message'])
 
-            self.output_results(j)
+            self.output_results(j['data'])
 
             # get all next
             next_ref = j['next']
@@ -770,7 +770,7 @@ class SigSciAPI(object):
             else:
                 csvwriter = csv.writer(open(self.file, "wb+"))
 
-            for row in j[self.field]:
+            for row in j:
                 if sigsci.list_events:
                     reason_list = ''
                     for reason in row['reasons']:
