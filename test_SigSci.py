@@ -48,11 +48,11 @@ class TestSigSciAPI(unittest.TestCase):
         sigsci.get_feed_requests()
         sigsci.get_list_events()
 
-    def test_build_query(self):
+    def test_build_search_query(self):
         sigsci = SigSciAPI()
         sigsci.tags = ['SQLI', 'XSS']
         sigsci.ip = '127.0.0.1'
-        sigsci.build_query()
+        sigsci.build_search_query()
         self.assertEqual(str(sigsci.query).rstrip(), 'from:-1h ip:127.0.0.1 sort:time-desc tag:SQLI tag:XSS')
 
 
