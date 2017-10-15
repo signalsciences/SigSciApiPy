@@ -237,7 +237,7 @@ class SigSciAPI(object):
         if self.sort is not None:
             self.query += 'sort:time-%s ' % str(self.sort)
 
-        if self.tags is not None:            
+        if self.tags is not None:
             for tag in self.tags:
                 if tag.startswith('-'):
                     self.query += '-tag:{} '.format(tag.replace('-', ''))
@@ -247,7 +247,7 @@ class SigSciAPI(object):
         if self.ctags is not None:
             self.query += 'tag:'
             self.query += ' tag:'.join(self.ctags)
-        
+
         # force sort time-asc so we can properly capture last_epoch
         self.query += 'sort:time-asc'
 
@@ -310,7 +310,7 @@ class SigSciAPI(object):
 
                     # force limit to 1000 on subsequent iterations to reduce the number of api calls
                     self.limit = 1000
-    
+
                 j = all_records
 
             else:
@@ -359,7 +359,7 @@ class SigSciAPI(object):
                     self.query_params += '&tags='
 
                 self.query_params += ','.join(self.ctags)
-            
+
             url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.FEED_EP + '?' + str(self.query_params).strip()
             r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
             j = json.loads(r.text)
@@ -794,7 +794,7 @@ class SigSciAPI(object):
 
         else:
             print('Error: Invalid output format!')
-   
+
     def json_out(self, j):
         if 'message' in j:
             raise ValueError(j['message'])
@@ -1048,7 +1048,7 @@ if __name__ == '__main__':
     # authenticate before doing anything.
     if sigsci.authenticate():
         sigsci.parse_init_time()
-        
+
         # determine what we are doing.
         if sigsci.agents:
             # get agent metrics
