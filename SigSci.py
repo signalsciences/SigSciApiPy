@@ -281,7 +281,7 @@ class SigSciAPI(object):
 
                     if self.format == 'json':
                         outfile.write('[')
-    
+
                 while (last_epoch <= self.until_time or self.until_time is None) and not got_all:
                     self.build_search_query()
                     url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.REQEUSTS_EP + '?q=' + str(self.query).strip() + '&limit=' + str(self.limit)
