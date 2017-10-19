@@ -275,10 +275,12 @@ class SigSciAPI(object):
                 last_epoch = 0
                 loop_count = 0
                 got_all = False
-                all_records = []
 
                 if self.file is not None:
                     outfile = open(self.file, 'w')
+
+                    if self.format == 'json':
+                        outfile.write('[')
     
                 while (last_epoch <= self.until_time or self.until_time is None) and not got_all:
                     self.build_search_query()
@@ -343,9 +345,10 @@ class SigSciAPI(object):
                     # force limit to 1000 on subsequent iterations to reduce the number of api calls
                     self.limit = 1000
 
-
-                #j = all_records
                 if self.file is not None:
+                    if self.format == 'json':
+                        outfile.write(']')
+
                     outfile.close()
 
             else:
