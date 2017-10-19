@@ -273,9 +273,13 @@ class SigSciAPI(object):
         try:
             if self.field == 'data':
                 last_epoch = 0
+                loop_count = 0
                 got_all = False
                 all_records = []
 
+                if self.file is not None:
+                    outfile = open(self.file, 'w')
+    
                 while (last_epoch <= self.until_time or self.until_time is None) and not got_all:
                     self.build_search_query()
                     url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.REQEUSTS_EP + '?q=' + str(self.query).strip() + '&limit=' + str(self.limit)
@@ -293,7 +297,38 @@ class SigSciAPI(object):
                         record_count += 1
                         last_timestamp = datetime.datetime.strptime(record['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
                         last_epoch = calendar.timegm(last_timestamp.utctimetuple())
-                        all_records.append(record)
+
+                        # output to file or stdout
+                        if self.format == 'json':
+                            if loop_count == 0:
+                                if self.file is not None:
+                                    outfile.write('{}'.format(json.dumps(record)))
+                                else:
+                                    print('{}'.format(json.dumps(record)))
+                            else:
+                                if self.file is not None:
+                                    outfile.write(',{}'.format(json.dumps(record)))
+                                else:
+                                    print(',{}'.format(json.dumps(record)))
+                        elif self.format == 'csv':
+                            if self.file is not None:
+                                csvwriter = csv.writer(outfile)
+                            else:
+                                csvwriter = csv.writer(sys.stdout)
+
+                            tag_list = ''
+                            detector = record['tags']
+
+                            for t in detector:
+                                tag_list = tag_list + t['type'] + '|'
+
+                            # default, output fields for requests
+                            csvwriter.writerow([str(record['timestamp']), str(record['id']), str(record['remoteIP']), str(record['remoteCountryCode']), str(record['path']).encode('utf8'), str(tag_list[:-1]), str(record['responseCode']), str(record['agentResponseCode'])])
+
+                        else:
+                            print('Error: Invalid output format!')
+
+                        loop_count += 1
 
                     if record_count < self.limit:
                         got_all = True
@@ -308,7 +343,10 @@ class SigSciAPI(object):
                     # force limit to 1000 on subsequent iterations to reduce the number of api calls
                     self.limit = 1000
 
-                j = all_records
+
+                #j = all_records
+                if self.file is not None:
+                    outfile.close()
 
             else:
                 self.build_search_query()
@@ -316,8 +354,8 @@ class SigSciAPI(object):
                 r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
                 j = json.loads(r.text)
 
-            # output the results
-            self.output_results(j)
+                # output the results
+                self.output_results(j[self.field])
 
         except Exception as e:
             print('Error: %s ' % str(e))
