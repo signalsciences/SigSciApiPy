@@ -14,13 +14,12 @@ usage: SigSci.py [-h] [--from  =<value>] [--until =<value>]
                  [--agents] [--feed] [--timeseries] [--rollup ROLLUP]
                  [--list-events] [--event-by-id =<value>] [--custom-alerts]
                  [--custom-alerts-add] [--custom-alerts-delete]
-                 [--whitelist-parameters] [--whitelist-parameters-add]
-                 [--whitelist-parameters-delete] [--whitelist-paths]
+                 [--whitelist-parameters] [--whitelist-parameters-add]                 [--whitelist-parameters-delete] [--whitelist-paths]
                  [--whitelist-paths-add] [--whitelist-paths-delete]
                  [--whitelist] [--whitelist-add] [--whitelist-delete]
                  [--blacklist] [--blacklist-add] [--blacklist-delete]
                  [--redactions] [--redactions-add] [--redactions-delete]
-                 [--version]
+                 [--integrations] [--headerlinks] [--version]
 
 Signal Sciences API Client.
 
@@ -74,6 +73,8 @@ optional arguments:
   --redactions          Retrieve redactions.
   --redactions-add      Add to redactions.
   --redactions-delete   Delete redactions.
+  --integrations        Retrieve integrations.
+  --headerlinks         Retrieve headerlinks.
   --version             Display version.
   ```
 
