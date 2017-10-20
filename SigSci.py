@@ -85,6 +85,10 @@ BLACKLIST_DELETE = False
 REDACTIONS = False
 REDACTIONS_ADD = False
 REDACTIONS_DELETE = False
+# default for integrations
+INTEGRATIONS = False
+# default for headerlinks
+HEADERLINKS = False
 ###########################################
 
 sys.dont_write_bytecode = True
@@ -989,6 +993,8 @@ if __name__ == '__main__':
     parser.add_argument('--redactions', help='Retrieve redactions.', default=False, action='store_true')
     parser.add_argument('--redactions-add', help='Add to redactions.', default=False, action='store_true')
     parser.add_argument('--redactions-delete', help='Delete redactions.', default=False, action='store_true')
+    parser.add_argument('--integrations', help='Retrieve integrations.', default=False, action='store_true')
+    parser.add_argument('--headerlinks', help='Retrieve headerlinks.', default=False, action='store_true')
     parser.add_argument('--version', help='Display version.', default=False, action='store_true')
 
     arguments = parser.parse_args()
@@ -1050,6 +1056,8 @@ if __name__ == '__main__':
     sigsci.redactions = os.environ.get("SIGSCI_REDACTIONS") if os.environ.get('SIGSCI_REDACTIONS') is not None else REDACTIONS
     sigsci.redactions_add = os.environ.get("SIGSCI_REDACTIONS_ADD") if os.environ.get('SIGSCI_REDACTIONS_ADD') is not None else REDACTIONS_ADD
     sigsci.redactions_delete = os.environ.get("SIGSCI_REDACTIONS_DELETE") if os.environ.get('SIGSCI_REDACTIONS_DELETE') is not None else REDACTIONS_DELETE
+    sigsci.integrations = os.environ.get("SIGSCI_INTEGRATIONS") if os.environ.get('SIGSCI_INTEGRATIONS') is not None else INTEGRATIONS
+    sigsci.headerlinks = os.environ.get("SIGSCI_HEADERLINKS") if os.environ.get('SIGSCI_HEADERLINKS') is not None else HEADERLINKS
 
     # if command line arguments exist then override any previously set values.
     # note: there is no command line argument for EMAIL, PASSWORD, CORP, or SITE.
@@ -1089,6 +1097,8 @@ if __name__ == '__main__':
     sigsci.redactions = arguments.redactions if arguments.redactions is not None else sigsci.redactions
     sigsci.redactions_add = arguments.redactions_add if arguments.redactions_add is not None else sigsci.redactions_add
     sigsci.redactions_delete = arguments.redactions_delete if arguments.redactions_delete is not None else sigsci.redactions_delete
+    sigsci.integrations = arguments.integrations if arguments.integrations is not None else sigsci.integrations
+    sigsci.headerlinks = arguments.headerlinks if arguments.headerlinks is not None else sigsci.headerlinks
 
     # authenticate before doing anything.
     if sigsci.authenticate():
@@ -1243,6 +1253,14 @@ if __name__ == '__main__':
                 quit()
             else:
                 sigsci.delete_redactions()
+
+        elif sigsci.integrations:
+            # get integrations
+            sigsci.get_integrations()
+
+        elif sigsci.headerlinks:
+            # get headerlinks
+            sigsci.get_headerlinks()
 
         else:
             # verify provided tags are supported tags
