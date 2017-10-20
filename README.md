@@ -3,7 +3,9 @@
 
 Sample Signal Sciences Python API Client
 
-### Usage
+This script can be used on the command line to query the Signal Sciences API, or it can be included as a module to query the API in your own Python script.
+
+### Command Line Options
 
 ```
 usage: SigSci.py [-h] [--from  =<value>] [--until =<value>]
@@ -14,7 +16,8 @@ usage: SigSci.py [-h] [--from  =<value>] [--until =<value>]
                  [--agents] [--feed] [--timeseries] [--rollup ROLLUP]
                  [--list-events] [--event-by-id =<value>] [--custom-alerts]
                  [--custom-alerts-add] [--custom-alerts-delete]
-                 [--whitelist-parameters] [--whitelist-parameters-add]                 [--whitelist-parameters-delete] [--whitelist-paths]
+                 [--whitelist-parameters] [--whitelist-parameters-add]
+                 [--whitelist-parameters-delete] [--whitelist-paths]
                  [--whitelist-paths-add] [--whitelist-paths-delete]
                  [--whitelist] [--whitelist-add] [--whitelist-delete]
                  [--blacklist] [--blacklist-add] [--blacklist-delete]
@@ -80,9 +83,9 @@ optional arguments:
 
 ### Authentication
 
-There are two options for authentication:
+There are two options for specifying your credentials for authentication:
 
-__Environment Variables__
+#### Authenticate Using Environment Variables
 
 ```
 export SIGSCI_EMAIL=<API User Email>
@@ -91,7 +94,7 @@ export SIGSCI_CORP=<Corp Name>
 export SIGSCI_SITE=<Site Name>
 ```
 
-__Set Variables in Script__
+#### Authenticate Using Script Variables
 
 Edit SigSci.py by setting the following variables in the configuration section of the script:
 
@@ -114,27 +117,27 @@ SITE = ''
 ...
 ```
 
-### Example Usage
+### Example Command Line Usage
 
 Display help.
 
 `./SigSci.py -h`
 
-Return the most recent 100 rows for all tags.
+Return all requests that have been tagged in the last 6 hours.
 
 `./SigSci.py`
 
-Return the most recent 1000 rows within the last hour for all tags.
+Return all requests that have been tagged in the last 6 hours in CSV format.
 
-`./SigSci.py --limit 1000 --from =-1h`
+`./SigSci.py --format csv`
 
-Return the most recent 100 rows for specific tags.
+Return all requests that have been tagged in the last hour in CSV format.
 
-`./SigSci.py --tags SQLI XSS TRAVERSAL`
+`./SigSci.py --format csv --from=-1h`
 
-List all valid tags.
+Return all requests that have been tagged with SQLI, XSS, or TRAVERSAL starting at 4 hours ago until 2 hours ago.
 
-`./SigSci.py --list`
+`./SigSci.py --from=-4h --until=-2h --tags SQLI XSS TRAVERSAL`
 
 Retrieve agent metrics.
 
@@ -145,6 +148,7 @@ Requests feed (bulk download).
 `./SigSci.py --feed`
 
 Retrieve list of events.
+
 `./SigSci.py --list-events`
 
 ### Example Module Usage
