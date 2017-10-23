@@ -276,7 +276,7 @@ class SigSciAPI(object):
         # /corps/{corpName}/sites/{siteName}/requests
         try:
             if self.field == 'data':
-                last_epoch = 0
+                last_epoch = "0"
                 loop_count = 0
                 got_all = False
 
