@@ -928,13 +928,17 @@ class SigSciAPI(object):
             if self.from_time is None:
                 self.from_time = '-6h'
 
-        if self.until_time is None:
+                if self.until_time is None:
             # set until time to 7 days after from time
             if self.from_time.startswith('-'):
                 if self.from_time[-1:].lower() == 'd':
                     days = int(self.from_time[1:-1])
                     if days > 7:
-                        self.until_time = '-{}d'.format(days - 7)
+                        days -= 7
+                        utm = now - datetime.timedelta(days=days, minutes=0)
+
+                        self.until_time = calendar.timegm(utm.utctimetuple())
+
             else:
                 self.until_time = int(self.from_time) + (86400 * 7)
         else:
