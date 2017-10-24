@@ -928,7 +928,7 @@ class SigSciAPI(object):
             if self.from_time is None:
                 self.from_time = '-6h'
 
-                if self.until_time is None:
+        if self.until_time is None:
             # set until time to 7 days after from time
             if self.from_time.startswith('-'):
                 if self.from_time[-1:].lower() == 'd':
