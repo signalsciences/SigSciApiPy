@@ -335,7 +335,7 @@ class SigSciAPI(object):
                             print('Error: Invalid output format!')
 
                         loop_count += 1
-                    
+
                     if record_count <= self.limit and self.limit != 1000:
                         got_all = True
 
