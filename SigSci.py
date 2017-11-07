@@ -335,8 +335,8 @@ class SigSciAPI(object):
                             print('Error: Invalid output format!')
 
                         loop_count += 1
-
-                    if record_count < self.limit:
+                    
+                    if record_count <= self.limit and self.limit != 1000:
                         got_all = True
 
                     # set from_time for next iteration
@@ -966,7 +966,7 @@ if __name__ == '__main__':
     parser.add_argument('--ctags', help='Filter results on one or more custom tags.', nargs='*')
     parser.add_argument('--server', help='Filter results by server name.', default=None)
     parser.add_argument('--ip', help='Filter results by remote ip.', default=None)
-    parser.add_argument('--limit', help='Limit the number of results returned from the server (default: 1000).', type=int, default=1000)
+    parser.add_argument('--limit', help='Limit the number of results returned from the server (max: 999).', type=int, default=1000)
     parser.add_argument('--field', help='Specify fields to return (default: data).', type=str, default='data', choices=['all', 'totalCount', 'next', 'data'])
     parser.add_argument('--file', help='Output results to the specified file.', type=str, default=None)
     parser.add_argument('--list', help='List all supported tags', default=False, action='store_true')
