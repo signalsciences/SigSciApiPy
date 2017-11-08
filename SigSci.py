@@ -39,7 +39,7 @@ SITE = ''
 # https://dashboard.signalsciences.net/documentation/knowledge-base/search-syntax#time
 FROM = None  # example: FROM = '-6h'
 UNTIL = None  # example: UNTIL = '-4h'
-TAGS = None  # example: TAGS = 'SQLI XSS TRAVERSAL'
+TAGS = None  # example <array>: TAGS = ['SQLI', 'XSS', 'TRAVERSAL']
 CTAGS = None  # example: CTAGS = 'bad-bot failed-login'
 SERVER = None  # example: SERVER = 'example.com'
 IP = None  # example: IP = '66.228.162.36'
