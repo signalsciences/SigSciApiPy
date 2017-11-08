@@ -275,6 +275,7 @@ class SigSciAPI(object):
         # https://docs.signalsciences.net/api/#_corps__corpName__sites__siteName__requests_get
         # /corps/{corpName}/sites/{siteName}/requests
         try:
+            url = None
             if self.field == 'data':
                 last_epoch = 0
                 loop_count = 0
