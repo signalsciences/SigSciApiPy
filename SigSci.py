@@ -971,7 +971,7 @@ if __name__ == '__main__':
     parser.add_argument('--field', help='Specify fields to return (default: data).', type=str, default='data', choices=['all', 'totalCount', 'next', 'data'])
     parser.add_argument('--file', help='Output results to the specified file.', type=str, default=None)
     parser.add_argument('--list', help='List all supported tags', default=False, action='store_true')
-    parser.add_argument('--format', help='Specify output format (default: json).', type=str, default='json', choices=['json', 'csv'])
+    parser.add_argument('--format', help='Specify output format (default: json).', type=str, default=None, choices=['json', 'csv'])
     parser.add_argument('--pretty', help='Pretty print the JSON ourput.', default=False, action='store_true')
     parser.add_argument('--sort', help='Specify sort order (default: asc).', type=str, default='asc', choices=['desc', 'asc'])
     parser.add_argument('--agents', help='Retrieve agent metrics.', default=False, action='store_true')
