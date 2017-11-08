@@ -47,7 +47,7 @@ LIMIT = None  # example: LIMIT = 250
 FIELD = None  # example: FIELD = 'all'
 FILE = None  # example: FILE = '/tmp/sigsci.json'
 FORMAT = None  # example: FORMAT = 'csv'
-PRETTY = None  # PRETTY = true
+PRETTY = None  # PRETTY = True
 SORT = None  # example: SORT = 'asc'
 ###########################################
 
