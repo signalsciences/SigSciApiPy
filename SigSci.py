@@ -289,7 +289,11 @@ class SigSciAPI(object):
 
                 while (last_epoch <= self.until_time or self.until_time is None) and not got_all:
                     self.build_search_query()
-                    url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.REQEUSTS_EP + '?q=' + str(self.query).strip() + '&limit=' + str(self.limit)
+                    url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.REQEUSTS_EP + '?q=' + str(self.query).strip()
+
+                    if self.limit is not None:
+                        url += '&limit=' + str(self.limit)
+
                     r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
                     j = json.loads(r.text)
 
@@ -358,7 +362,11 @@ class SigSciAPI(object):
 
             else:
                 self.build_search_query()
-                url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.REQEUSTS_EP + '?q=' + str(self.query).strip() + '&limit=' + str(self.limit)
+                url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.REQEUSTS_EP + '?q=' + str(self.query).strip()
+
+                if self.limit is not None:
+                    url += '&limit=' + str(self.limit)
+
                 r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
                 j = json.loads(r.text)
 
