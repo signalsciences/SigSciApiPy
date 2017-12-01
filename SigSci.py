@@ -666,8 +666,7 @@ class SigSciAPI(object):
                 data = json.load(data_file)
 
             for config in data['data']:
-                url = url + "/" + config['id']
-                requests.delete(url, cookies=self.authn.cookies, headers=self.get_headers())
+                requests.delete(url + "/" + config['id'], cookies=self.authn.cookies, headers=self.get_headers())
 
             print("Delete complete!")
 
