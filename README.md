@@ -151,6 +151,26 @@ Retrieve list of events.
 
 `./SigSci.py --list-events`
 
+Copying configurations from one site to another.
+
+```
+export SIGSCI_EMAIL=<API User Email>
+export SIGSCI_PASSWORD=<API User Password>
+export SIGSCI_CORP=<Corp Name>
+
+# Site name that has the config you wish to copy:
+export SIGSCI_SITE=<Source Site Name>
+
+./SigSci.py —-custom-alerts —-file source-config.json
+
+# Change site variable to the site you wish to copy config to:
+export SIGSCI_SITE=<Target Site Name>
+
+./SigSci.py —-custom-alerts-add —-file source-config.json
+
+rm source-config.json
+```
+
 ### Example Module Usage
 
 ```
