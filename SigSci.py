@@ -135,7 +135,7 @@ class SigSciAPI(object):
     ctags = None
     server = None
     ip = None
-    limit = 1000
+    limit = 999
     field = 'data'
     file = None
     format = 'json'
