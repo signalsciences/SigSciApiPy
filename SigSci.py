@@ -295,7 +295,6 @@ class SigSciAPI(object):
                     if self.format == 'json':
                         outfile.write('[')
 
-                #while (last_epoch <= self.until_time or self.until_time is None) and not got_all:
                 while last_epoch <= self.until_time and get_next:
                     self.build_search_query()
                     url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.REQEUSTS_EP + '?q=' + str(self.query).strip()
@@ -357,7 +356,6 @@ class SigSciAPI(object):
                         self.until_time = int(self.from_time) + (86400 * 7)
                     else:
                         self.from_time = last_epoch
-
 
                     if self.from_time > self.until_time or self.from_time > now_epoch:
                         get_next = False
@@ -955,7 +953,7 @@ class SigSciAPI(object):
         else:
             self.until_specified = True
             self.until_time = self.to_epoch(now, self.until_time)
-        
+
         # if until time is beyond now, set it to now.
         if self.until_time > calendar.timegm(now.utctimetuple()):
             self.until_time = calendar.timegm(now.utctimetuple())
@@ -977,7 +975,7 @@ class SigSciAPI(object):
                 epoch = calendar.timegm(time_value.utctimetuple())
         else:
             epoch = value
-        
+
         return epoch
 
     def diff_days_epochs(self, until_time, from_time):
