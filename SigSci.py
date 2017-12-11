@@ -12,6 +12,7 @@ import calendar
 import json
 import os
 import sys
+import math
 from builtins import str
 
 import requests
@@ -246,8 +247,11 @@ class SigSciAPI(object):
                     self.query += 'tag:{} '.format(tag)
 
         if self.ctags is not None:
-            self.query += 'tag:'
-            self.query += ' tag:'.join(self.ctags)
+            for tag in self.ctags:
+                if tag.startswith('-'):
+                    self.query += '-tag:{} '.format(tag.replace('-', ''))
+                else:
+                    self.query += 'tag:{} '.format(tag)
 
         # force sort time-asc so we can properly capture last_epoch
         self.query += 'sort:time-asc'
@@ -277,9 +281,13 @@ class SigSciAPI(object):
         try:
             url = None
             if self.field == 'data':
+                self.limit = 1000
                 last_epoch = 0
                 loop_count = 0
+                get_next = True
                 got_all = False
+                now = datetime.datetime.utcnow().replace(second=0, microsecond=0)
+                now_epoch = calendar.timegm(now.utctimetuple())
 
                 if self.file is not None:
                     outfile = open(self.file, 'w')
@@ -287,7 +295,8 @@ class SigSciAPI(object):
                     if self.format == 'json':
                         outfile.write('[')
 
-                while (last_epoch <= self.until_time or self.until_time is None) and not got_all:
+                #while (last_epoch <= self.until_time or self.until_time is None) and not got_all:
+                while last_epoch <= self.until_time and get_next:
                     self.build_search_query()
                     url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.REQEUSTS_EP + '?q=' + str(self.query).strip()
 
@@ -341,15 +350,17 @@ class SigSciAPI(object):
 
                         loop_count += 1
 
-                    if record_count <= self.limit and self.limit != 1000:
-                        got_all = True
-
                     # set from_time for next iteration
-                    self.from_time = last_epoch
-
-                    if not self.until_specified:
-                        # set until to the max window of 7 days from from time
+                    if record_count < 1000:
+                        # shift to next window
+                        self.from_time = int(self.from_time) + (86400 * 7)
                         self.until_time = int(self.from_time) + (86400 * 7)
+                    else:
+                        self.from_time = last_epoch
+
+
+                    if self.from_time > self.until_time or self.from_time > now_epoch:
+                        get_next = False
 
                     # force limit to 1000 on subsequent iterations to reduce the number of api calls
                     self.limit = 1000
@@ -936,21 +947,44 @@ class SigSciAPI(object):
             if self.from_time is None:
                 self.from_time = '-6h'
 
+            self.from_time = self.to_epoch(now, self.from_time)
+
         if self.until_time is None:
             # set until time to 7 days after from time
-            if self.from_time.startswith('-'):
-                if self.from_time[-1:].lower() == 'd':
-                    days = int(self.from_time[1:-1])
-                    if days > 7:
-                        days -= 7
-                        utm = now - datetime.timedelta(days=days, minutes=0)
-
-                        self.until_time = calendar.timegm(utm.utctimetuple())
-
-            else:
-                self.until_time = int(self.from_time) + (86400 * 7)
+            self.until_time = int(self.from_time) + (86400 * 7)
         else:
             self.until_specified = True
+            self.until_time = self.to_epoch(now, self.until_time)
+        
+        # if until time is beyond now, set it to now.
+        if self.until_time > calendar.timegm(now.utctimetuple()):
+            self.until_time = calendar.timegm(now.utctimetuple())
+
+    def to_epoch(self, now, value):
+        epoch = None
+
+        if value.startswith('-'):
+            delta_value = int(value[1:-1])
+
+            if value[-1:].lower() == 'd':
+                time_value = now - datetime.timedelta(days=delta_value)
+                epoch = calendar.timegm(time_value.utctimetuple())
+            elif value[-1].lower() == 'h':
+                time_value = now - datetime.timedelta(hours=delta_value)
+                epoch = calendar.timegm(time_value.utctimetuple())
+            elif value[-1].lower() == 'm':
+                time_value = now - datetime.timedelta(minutes=delta_value)
+                epoch = calendar.timegm(time_value.utctimetuple())
+        else:
+            epoch = value
+        
+        return epoch
+
+    def diff_days_epochs(self, until_time, from_time):
+        return (until_time - from_time) / 86400
+
+    def get_num_time_windows(self):
+        return int(math.ceil(self.diff_days_epochs(self.until_time, self.from_time) / float(7)))
 
     def __init__(self):
         self.base_url = self.url + self.version
