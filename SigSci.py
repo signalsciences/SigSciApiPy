@@ -978,7 +978,8 @@ class SigSciAPI(object):
 
         return epoch
 
-    def diff_days_epochs(self, until_time, from_time):
+    @staticmethod
+    def diff_days_epochs(until_time, from_time):
         return (until_time - from_time) / 86400
 
     def get_num_time_windows(self):
