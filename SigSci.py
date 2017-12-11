@@ -285,7 +285,6 @@ class SigSciAPI(object):
                 last_epoch = 0
                 loop_count = 0
                 get_next = True
-                got_all = False
                 now = datetime.datetime.utcnow().replace(second=0, microsecond=0)
                 now_epoch = calendar.timegm(now.utctimetuple())
 
