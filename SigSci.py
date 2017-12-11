@@ -957,7 +957,8 @@ class SigSciAPI(object):
         if self.until_time > calendar.timegm(now.utctimetuple()):
             self.until_time = calendar.timegm(now.utctimetuple())
 
-    def to_epoch(self, now, value):
+    @staticmethod
+    def to_epoch(now, value):
         epoch = None
 
         if value.startswith('-'):
