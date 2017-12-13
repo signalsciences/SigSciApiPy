@@ -100,8 +100,9 @@ class SigSciAPI(object):
     SigSciAPI()
     Methods:
         authenticate()
-        build_search_query(from_time=<string>, until_time=<string>, tags=<list>)
-        query_api()
+        sigsci.parse_init_time()        
+        build_search_query()
+        get_requests()
 
     Example:
         sigsci       = SigSciAPI()
@@ -113,7 +114,11 @@ class SigSciAPI(object):
         sigsci.file  = '/tmp/foo.json'
 
         if sigsci.authenticate():
-            sigsci.query_api()
+            sigsci.from='-4h'
+            sigsci.until='-2h'
+            sigsci.tags=['SQLI', 'XSS']
+            sigsci.parse_init_time()
+            sigsci.get_requests()
     """
     base = 'https://dashboard.signalsciences.net'
     url = base + '/api/'
