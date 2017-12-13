@@ -100,7 +100,7 @@ class SigSciAPI(object):
     SigSciAPI()
     Methods:
         authenticate()
-        sigsci.parse_init_time()        
+        sigsci.parse_init_time()
         build_search_query()
         get_requests()
 
