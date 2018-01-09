@@ -13,10 +13,10 @@ import json
 import os
 import sys
 import math
-import pandas as pd
 from builtins import str
 
 import requests
+import pandas as pd
 
 # Configuration Section ###################
 
@@ -62,6 +62,7 @@ FEED = False
 # default for timeseries
 TIMESERIES = False
 TIMESERIES_AGENTS = False
+AGENT_METRICS = None
 ROLLUP = 60
 # list events
 LIST_EVENTS = False
@@ -1161,7 +1162,7 @@ if __name__ == '__main__':
     sigsci.feed = os.environ.get("SIGSCI_FEED") if os.environ.get('SIGSCI_FEED') is not None else FEED
     sigsci.timeseries = os.environ.get("SIGSCI_TIMESERIES") if os.environ.get('SIGSCI_TIMESERIES') is not None else TIMESERIES
     sigsci.timeseries_agents = os.environ.get("SIGSCI_TIMESERIES_AGENTS") if os.environ.get('SIGSCI_TIMESERIES_AGENTS') is not None else TIMESERIES_AGENTS
-    sigsci.agent_metrics = os.environ.get("SIGSCI_AGENT_METRICS") if os.envrion.get('SIGSCI_AGENT_METRICS') is not None else SIGSCI_AGENT_METRICS
+    sigsci.agent_metrics = os.environ.get("SIGSCI_AGENT_METRICS") if os.environ.get('SIGSCI_AGENT_METRICS') is not None else AGENT_METRICS
     sigsci.rollup = os.environ.get("SIGSCI_ROLLUP") if os.environ.get('SIGSCI_ROLLUP') is not None else ROLLUP
     sigsci.list_events = os.environ.get("SIGSCI_LIST_EVENTS") if os.environ.get('SIGSCI_LIST_EVENTS') is not None else LIST_EVENTS
     sigsci.event_by_id = os.environ.get("SIGSCI_EVENT_BY_ID") if os.environ.get('SIGSCI_EVENT_BY_ID') is not None else EVENT_BY_ID
