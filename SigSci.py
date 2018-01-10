@@ -16,7 +16,6 @@ import math
 from builtins import str
 
 import requests
-import pandas as pd
 
 # Configuration Section ###################
 
@@ -535,7 +534,7 @@ class SigSciAPI(object):
                     'agent.latency_time_95th', 'agent.latency_time_99th', 'requests.total',
                     'agent.connections_open', 'runtime.mem_size']
         try:
-            self.query_params = 'metric={}'.format('&metric='.join([metric for metric in metrics]))
+            self.query_params = '?metric={}'.format('&metric='.join([metric for metric in metrics]))
             self.query_params += '&agent={}'.format(agent_name)
             # TODO: Add dynamic transform and format options here
             self.query_params += '&transform=per_hour&format=csv'
@@ -548,11 +547,13 @@ class SigSciAPI(object):
 
             url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.TIMESERIES_AGENTS_EP + self.query_params
             r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
-
-            if json.loads(r.text):
+                
+            try:
                 j = json.loads(r.text)
-                raise ValueError(j['message'])
-
+                print('API response error: {}'.format(j['message']))
+                quit()
+            except:
+                pass
             self.csv_out(r.text)
 
         except Exception as e:
@@ -947,9 +948,13 @@ class SigSciAPI(object):
             if not self.file:
                 print(j)
             else:
-                j.to_csv(self.file)
+                csvwriter = csv.writer(open(self.file, "a"))
+                c = csv.reader(j.splitlines())
+                csvwriter.writerows(c)
+                
         elif self.format == 'json':
             print("JSON output is not supported for this request, please use CSV.")
+
     def parse_init_time(self):
         # parse from/until time
         now = datetime.datetime.utcnow().replace(second=0, microsecond=0)
