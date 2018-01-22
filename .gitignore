@@ -96,3 +96,4 @@ bin/
 
 # coverage html
 cover/
+.vscode/settings.json
