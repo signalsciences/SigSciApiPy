@@ -394,7 +394,7 @@ class SigSciAPI(object):
         except Exception as e:
             print('Error: %s ' % str(e))
             print('Query: %s ' % url)
-            quit()
+            exit()
 
     def get_feed_requests(self):
         """
@@ -500,7 +500,7 @@ class SigSciAPI(object):
         except Exception as e:
             print('Error: %s ' % str(e))
             print('Query: %s ' % url)
-            quit()
+            exit()
 
     def get_list_events(self, tag=None):
         """
@@ -545,7 +545,7 @@ class SigSciAPI(object):
         except Exception as e:
             print('Error: %s ' % str(e))
             print('Query: %s ' % url)
-            quit()
+            exit()
 
     def get_event_by_id(self):
         """
@@ -574,7 +574,7 @@ class SigSciAPI(object):
         except Exception as e:
             print('Error: %s ' % str(e))
             print('Query: %s ' % url)
-            quit()
+            exit()
 
     def get_list(self, url):
         try:
@@ -586,7 +586,7 @@ class SigSciAPI(object):
         except Exception as e:
             print('Error: %s ' % str(e))
             print('Query: %s ' % url)
-            quit()
+            exit()
 
     def get_agent_metrics(self):
         # https://dashboard.signalsciences.net/documentation/api#_corps__corpName__sites__siteName__agents_get
@@ -607,7 +607,7 @@ class SigSciAPI(object):
 
         except Exception as e:
             print('Error: %s ' % str(e))
-            quit()
+            exit()
 
     def get_corps(self):
         if self.corp is None:
@@ -640,7 +640,7 @@ class SigSciAPI(object):
         except Exception as e:
             print('Error: %s ' % str(e))
             print('Query: %s ' % url)
-            quit()
+            exit()
 
     def post_configuration(self, EP):
         try:
@@ -674,7 +674,7 @@ class SigSciAPI(object):
         except Exception as e:
             print('Error: %s ' % str(e))
             print('Query: %s ' % url)
-            quit()
+            exit()
 
     def delete_configuration(self, EP):
         try:
@@ -691,7 +691,7 @@ class SigSciAPI(object):
         except Exception as e:
             print('Error: %s ' % str(e))
             print('Query: %s ' % url)
-            quit()
+            exit()
 
     def get_custom_alerts(self):
         # https://docs.signalsciences.net/api/#_corps__corpName__sites__siteName__alerts_get
@@ -1078,14 +1078,14 @@ if __name__ == '__main__':
         for tag in TAGLIST:
             print('\t%s' % str(tag))
 
-        quit()
+        exit()
 
     # create SigSciAPI object
     sigsci = SigSciAPI()
 
     if arguments.version:
         print('v{}'.format(sigsci.agent_version))
-        quit()
+        exit()
 
     # first get configuration, environment variables (if set) override
     # settings specified at the beginning of this script.
@@ -1221,7 +1221,7 @@ if __name__ == '__main__':
             # post whitelist parameters
             if not sigsci.file:
                 print('File must be provided.')
-                quit()
+                exit()
             else:
                 sigsci.post_custom_alerts()
 
@@ -1229,7 +1229,7 @@ if __name__ == '__main__':
             # delete whitelist parameters
             if not sigsci.file:
                 print('File must be provided.')
-                quit()
+                exit()
             else:
                 sigsci.delete_custom_alerts()
 
@@ -1241,7 +1241,7 @@ if __name__ == '__main__':
             # post whitelist parameters
             if not sigsci.file:
                 print('File must be provided.')
-                quit()
+                exit()
             else:
                 sigsci.post_whitelist_parameters()
 
@@ -1249,7 +1249,7 @@ if __name__ == '__main__':
             # delete whitelist parameters
             if not sigsci.file:
                 print('File must be provided.')
-                quit()
+                exit()
             else:
                 sigsci.delete_whitelist_parameters()
 
@@ -1261,7 +1261,7 @@ if __name__ == '__main__':
             # post whitelist paths
             if not sigsci.file:
                 print('File must be provided.')
-                quit()
+                exit()
             else:
                 sigsci.post_whitelist_paths()
 
@@ -1269,7 +1269,7 @@ if __name__ == '__main__':
             # delete whitelist paths
             if not sigsci.file:
                 print('File must be provided.')
-                quit()
+                exit()
             else:
                 sigsci.delete_whitelist_paths()
 
@@ -1281,7 +1281,7 @@ if __name__ == '__main__':
             # post ip whitelist
             if not sigsci.file:
                 print('File must be provided.')
-                quit()
+                exit()
             else:
                 sigsci.post_whitelist()
 
@@ -1289,7 +1289,7 @@ if __name__ == '__main__':
             # delete ip whitelist
             if not sigsci.file:
                 print('File must be provided.')
-                quit()
+                exit()
             else:
                 sigsci.delete_whitelist()
 
@@ -1301,7 +1301,7 @@ if __name__ == '__main__':
             # post ip blacklist
             if not sigsci.file:
                 print('File must be provided.')
-                quit()
+                exit()
             else:
                 sigsci.post_blacklist()
 
@@ -1309,7 +1309,7 @@ if __name__ == '__main__':
             # delete ip blacklist
             if not sigsci.file:
                 print('File must be provided.')
-                quit()
+                exit()
             else:
                 sigsci.delete_blacklist()
 
@@ -1321,7 +1321,7 @@ if __name__ == '__main__':
             # post ip request_rules
             if not sigsci.file:
                 print('File must be provided.')
-                quit()
+                exit()
             else:
                 sigsci.post_request_rules()
 
@@ -1329,7 +1329,7 @@ if __name__ == '__main__':
             # delete ip request_rules
             if not sigsci.file:
                 print('File must be provided.')
-                quit()
+                exit()
             else:
                 sigsci.delete_request_rules()
 
@@ -1341,7 +1341,7 @@ if __name__ == '__main__':
             # post redactions
             if not sigsci.file:
                 print('File must be provided.')
-                quit()
+                exit()
             else:
                 sigsci.post_redactions()
 
@@ -1349,7 +1349,7 @@ if __name__ == '__main__':
             # delete redactions
             if not sigsci.file:
                 print('File must be provided.')
-                quit()
+                exit()
             else:
                 sigsci.delete_redactions()
 
@@ -1367,7 +1367,7 @@ if __name__ == '__main__':
                 for tag in sigsci.tags:
                     if not set([tag.upper()]).issubset(set(TAGLIST)):
                         print('Invalid tag in tag list: %s' % str(tag))
-                        quit()
+                        exit()
 
             # get requests
             sigsci.get_requests()
