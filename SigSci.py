@@ -843,11 +843,11 @@ class SigSciAPI(object):
         self.get_configuration(self.HEADERLINKS_EP)
 
     def create_site(self, name, displayName, agentLevel):
-        try:
-            # WARNING: This is an undocumented endpoint. No support provided, and the endpoint may change.
-            # /corps/{corpName}/sites?expand=members
-            url = self.base_url + self.CORPS_EP + self.corp + '/sites?expand=members'
+        # WARNING: This is an undocumented endpoint. No support provided, and the endpoint may change.
+        # /corps/{corpName}/sites?expand=members
+        url = self.base_url + self.CORPS_EP + self.corp + '/sites?expand=members'
 
+        try:
             site = {'name': name, 'displayName': displayName, 'agentLevel': agentLevel}
 
             r = requests.post(url, cookies=self.authn.cookies, headers=self.get_headers(), json=site)
