@@ -848,7 +848,7 @@ class SigSciAPI(object):
             # /corps/{corpName}/sites?expand=members
             url = self.base_url + self.CORPS_EP + self.corp + '/sites?expand=members'
 
-            site = {'name':name, 'displayName':displayName, 'agentLevel':agentLevel}
+            site = {'name': name, 'displayName': displayName, 'agentLevel': agentLevel}
 
             r = requests.post(url, cookies=self.authn.cookies, headers=self.get_headers(), json=site)
             j = json.loads(r.text)
