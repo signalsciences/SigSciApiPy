@@ -86,6 +86,10 @@ BLACKLIST_DELETE = False
 REQUEST_RULES = False
 REQUEST_RULES_ADD = False
 REQUEST_RULES_DELETE = False
+# default for signal rules
+SIGNAL_RULES = False
+SIGNAL_RULES_ADD = False
+SIGNAL_RULES_DELETE = False
 # default for redactions
 REDACTIONS = False
 REDACTIONS_ADD = False
@@ -169,6 +173,7 @@ class SigSciAPI(object):
     ALERTS_EP = '/alerts'
     RULES_EP = '/rules'
     REQUEST_RULES_EP = '/requestRules'
+    SIGNAL_RULES_EP = '/signalRules'
     TAGS_EP = '/tags'
     TIMESERIES_EP = '/timeseries/requests'
     EVENTS_EP = '/events'
@@ -817,6 +822,21 @@ class SigSciAPI(object):
         # /corps/{corpName}/sites/{siteName}/blacklist/{source}
         self.delete_configuration(self.REQUEST_RULES_EP)
 
+    def get_signal_rules(self):
+        # WARNING: This is an undocumented endpoint. No support provided, and the endpoint may change.
+        # /corps/{corpName}/sites/{siteName}/signalRules
+        self.get_configuration(self.SIGNAL_RULES_EP)
+
+    def post_signal_rules(self):
+        # WARNING: This is an undocumented endpoint. No support provided, and the endpoint may change.
+        # /corps/{corpName}/sites/{siteName}/whitelist
+        self.post_configuration(self.SIGNAL_RULES_EP)
+
+    def delete_signal_rules(self):
+        # WARNING: This is an undocumented endpoint. No support provided, and the endpoint may change.
+        # /corps/{corpName}/sites/{siteName}/blacklist/{source}
+        self.delete_configuration(self.SIGNAL_RULES_EP)
+
     def get_redactions(self):
         # https://dashboard.signalsciences-stage.net/documentation/api#_corps__corpName__sites__siteName__redactions_get
         # /corps/{corpName}/sites/{siteName}/redactions
@@ -1085,6 +1105,9 @@ if __name__ == '__main__':
     parser.add_argument('--request-rules', help='Retrieve request rules.', default=False, action='store_true')
     parser.add_argument('--request-rules-add', help='Add request rules.', default=False, action='store_true')
     parser.add_argument('--request-rules-delete', help='Delete request rules.', default=False, action='store_true')
+    parser.add_argument('--signal-rules', help='Retrieve signal rules.', default=False, action='store_true')
+    parser.add_argument('--signal-rules-add', help='Add signal rules.', default=False, action='store_true')
+    parser.add_argument('--signal-rules-delete', help='Delete signal rules.', default=False, action='store_true')
     parser.add_argument('--redactions', help='Retrieve redactions.', default=False, action='store_true')
     parser.add_argument('--redactions-add', help='Add to redactions.', default=False, action='store_true')
     parser.add_argument('--redactions-delete', help='Delete redactions.', default=False, action='store_true')
@@ -1151,6 +1174,9 @@ if __name__ == '__main__':
     sigsci.request_rules = os.environ.get("SIGSCI_REQUEST_RULES") if os.environ.get('SIGSCI_REQUEST_RULES') is not None else REQUEST_RULES
     sigsci.request_rules_add = os.environ.get("SIGSCI_REQUEST_RULES_ADD") if os.environ.get('SIGSCI_REQUEST_RULES_ADD') is not None else REQUEST_RULES_ADD
     sigsci.request_rules_delete = os.environ.get("SIGSCI_REQUEST_RULES_DELETE") if os.environ.get('SIGSCI_REQUEST_RULES_DELETE') is not None else REQUEST_RULES_DELETE
+    sigsci.signal_rules = os.environ.get("SIGSCI_SIGNAL_RULES") if os.environ.get('SIGSCI_SIGNAL_RULES') is not None else SIGNAL_RULES
+    sigsci.signal_rules_add = os.environ.get("SIGSCI_SIGNAL_RULES_ADD") if os.environ.get('SIGSCI_SIGNAL_RULES_ADD') is not None else SIGNAL_RULES_ADD
+    sigsci.signal_rules_delete = os.environ.get("SIGSCI_SIGNAL_RULES_DELETE") if os.environ.get('SIGSCI_SIGNAL_RULES_DELETE') is not None else SIGNAL_RULES_DELETE
     sigsci.redactions = os.environ.get("SIGSCI_REDACTIONS") if os.environ.get('SIGSCI_REDACTIONS') is not None else REDACTIONS
     sigsci.redactions_add = os.environ.get("SIGSCI_REDACTIONS_ADD") if os.environ.get('SIGSCI_REDACTIONS_ADD') is not None else REDACTIONS_ADD
     sigsci.redactions_delete = os.environ.get("SIGSCI_REDACTIONS_DELETE") if os.environ.get('SIGSCI_REDACTIONS_DELETE') is not None else REDACTIONS_DELETE
@@ -1195,6 +1221,9 @@ if __name__ == '__main__':
     sigsci.request_rules = arguments.request_rules if arguments.request_rules is not None else sigsci.request_rules
     sigsci.request_rules_add = arguments.request_rules_add if arguments.request_rules_add is not None else sigsci.request_rules_add
     sigsci.request_rules_delete = arguments.request_rules_delete if arguments.request_rules_delete is not None else sigsci.request_rules_delete
+    sigsci.signal_rules = arguments.signal_rules if arguments.signal_rules is not None else sigsci.signal_rules
+    sigsci.signal_rules_add = arguments.signal_rules_add if arguments.signal_rules_add is not None else sigsci.signal_rules_add
+    sigsci.signal_rules_delete = arguments.signal_rules_delete if arguments.signal_rules_delete is not None else sigsci.signal_rules_delete
     sigsci.redactions = arguments.redactions if arguments.redactions is not None else sigsci.redactions
     sigsci.redactions_add = arguments.redactions_add if arguments.redactions_add is not None else sigsci.redactions_add
     sigsci.redactions_delete = arguments.redactions_delete if arguments.redactions_delete is not None else sigsci.redactions_delete
@@ -1354,6 +1383,26 @@ if __name__ == '__main__':
                 exit()
             else:
                 sigsci.delete_request_rules()
+
+        elif sigsci.signal_rules:
+            # get ip signal_rules
+            sigsci.get_signal_rules()
+
+        elif sigsci.signal_rules_add:
+            # post ip signal_rules
+            if not sigsci.file:
+                print('File must be provided.')
+                exit()
+            else:
+                sigsci.post_signal_rules()
+
+        elif sigsci.signal_rules_delete:
+            # delete ip signal_rules
+            if not sigsci.file:
+                print('File must be provided.')
+                exit()
+            else:
+                sigsci.delete_signal_rules()
 
         elif sigsci.redactions:
             # get redactions
