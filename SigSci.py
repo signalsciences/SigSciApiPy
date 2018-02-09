@@ -1013,12 +1013,12 @@ class SigSciAPI(object):
 
             self.from_time = self.to_epoch(now, self.from_time)
 
-        if self.until_time is None:
-            # set until time to 7 days after from time
-            self.until_time = int(self.from_time) + (86400 * 7)
-        else:
-            self.until_specified = True
-            self.until_time = self.to_epoch(now, self.until_time)
+            if self.until_time is None:
+                # set until time to 7 days after from time
+                self.until_time = int(self.from_time) + (86400 * 7)
+            else:
+                self.until_specified = True
+                self.until_time = self.to_epoch(now, self.until_time)
 
         # if until time is beyond now, set it to now.
         if self.until_time > calendar.timegm(now.utctimetuple()):
