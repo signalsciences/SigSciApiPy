@@ -435,7 +435,14 @@ class SigSciAPI(object):
                 self.query_params += ','.join(self.ctags)
 
             url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.FEED_EP + '?' + str(self.query_params).strip()
-            r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
+
+            try:
+                # try block attempts to handle unexpected connection issues
+                r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
+            except Exception as e:
+                # try again
+                r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
+
             j = json.loads(r.text)
 
             if 'message' in j:
@@ -447,7 +454,14 @@ class SigSciAPI(object):
             next_ref = j['next']
             while next_ref['uri'].strip() != '':
                 url = self.base + next_ref['uri']
-                r = requests.get(url, headers=self.get_headers())
+
+                try:
+                    # try block attempts to handle unexpected connection issues
+                    r = requests.get(url, headers=self.get_headers())
+                except Exception as e:
+                    # try again
+                    r = requests.get(url, headers=self.get_headers())
+
                 j = json.loads(r.text)
 
                 if 'message' in j:
