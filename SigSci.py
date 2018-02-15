@@ -761,6 +761,10 @@ class SigSciAPI(object):
         # WARNING: This is an undocumented endpoint. No support provided, and the endpoint may change.
         self.get_configuration(self.CONFIGURED_TEMPLATES_EP)
 
+    def post_configured_templates(self, template):
+        # WARNING: This is an undocumented endpoint. No support provided, and the endpoint may change.
+        self.post_configuration(self.CONFIGURED_TEMPLATES_EP + '/' + template)
+
     def get_whitelist_parameters(self):
         # https://dashboard.signalsciences.net/documentation/api#_corps__corpName__sites__siteName__paramwhitelist_get
         # /corps/{corpName}/sites/{siteName}/paramwhitelist
