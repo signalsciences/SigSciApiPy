@@ -668,25 +668,34 @@ class SigSciAPI(object):
             with open(self.file) as data_file:
                 data = json.load(data_file)
 
-            for config in data['data']:
-                if 'created' in config:
-                    del config['created']
-
-                if 'createdBy' in config:
-                    del config['createdBy']
-
-                if 'id' in config:
-                    del config['id']
-
-                if EP == self.TAGS_EP and 'tagName' in config:
-                    del config['tagName']
-
-                r = requests.post(url, cookies=self.authn.cookies, headers=self.get_headers(), json=config)
+            if 'data' not in data:
+                # no data section, just post as is.
+                r = requests.post(url, cookies=self.authn.cookies, headers=self.get_headers(), json=data)
                 j = json.loads(r.text)
 
                 if 'message' in j:
-                    print('Data: %s ' % json.dumps(config))
+                    print('Data: %s ' % json.dumps(data))
                     raise ValueError(j['message'])
+            else:
+                for config in data['data']:
+                    if 'created' in config:
+                        del config['created']
+
+                    if 'createdBy' in config:
+                        del config['createdBy']
+
+                    if 'id' in config:
+                        del config['id']
+
+                    if EP == self.TAGS_EP and 'tagName' in config:
+                        del config['tagName']
+
+                    r = requests.post(url, cookies=self.authn.cookies, headers=self.get_headers(), json=config)
+                    j = json.loads(r.text)
+
+                    if 'message' in j:
+                        print('Data: %s ' % json.dumps(config))
+                        raise ValueError(j['message'])
 
             print("Post complete!")
 
