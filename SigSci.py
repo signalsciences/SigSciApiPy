@@ -56,6 +56,8 @@ SORT = None  # example: SORT = 'asc'
 AGENTS = False
 # default for feed requests
 FEED = False
+# default for feed requests version 2
+FEED2 = False
 # default for timeseries
 TIMESERIES = False
 ROLLUP = 60
@@ -468,6 +470,92 @@ class SigSciAPI(object):
                     raise ValueError(j['message'])
 
                 self.output_results(j)
+
+                next_ref = j['next']
+
+        except Exception as e:
+            print('Error: %s ' % str(e))
+            print('Query: %s ' % url)
+
+    def get_feed_requests2(self):
+        """
+        SigSciAPI.get_feed_requests2()
+
+        Version 2 of Feed Output
+
+        Before calling, set:
+            (Required):
+                SigSciAPI.corp
+                SigSciAPI.site
+
+            (Optional):
+                SigSciAPI.from_time
+                SigSciAPI.until_time
+                SigSciAPI.tags
+                SigSciAPI.file
+                SigSciAPI.format
+
+        """
+        # https://dashboard.signalsciences.net/documentation/api#_corps__corpName__sites__siteName__feed_requests_get
+        # /corps/{corpName}/sites/{siteName}/feed/requests
+        try:
+            self.query_params = 'from=%s' % str(self.from_time)
+            self.query_params += '&until=%s' % str(self.until_time)
+
+            if self.tags is not None:
+                self.query_params += '&tags='
+                self.query_params += ','.join(self.tags)
+
+            if self.ctags is not None:
+                if self.tags is None:
+                    self.query_params += '&tags='
+
+                self.query_params += ','.join(self.ctags)
+
+            url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.FEED_EP + '?' + str(self.query_params).strip()
+
+            try:
+                # try block attempts to handle unexpected connection issues
+                r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
+            except Exception as e:
+                # try again
+                r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
+
+            j = json.loads(r.text)
+
+            if 'message' in j:
+                raise ValueError(j['message'])
+
+            d = j['data']
+            for x in d:
+                self.output_results(x)
+
+            # get all next
+            next_ref = j['next']
+            while next_ref['uri'].strip() != '':
+                url = self.base + next_ref['uri']
+
+                try:
+                    # try block attempts to handle unexpected connection issues
+                    r = requests.get(url, headers=self.get_headers())
+                    if r.status_code == 401:   ## Reauthenticate if token expires early
+                        if sigsci.authenticate():
+                            r = requests.get(url, headers=self.get_headers())
+                except Exception as e:
+                    # try again
+                    r = requests.get(url, headers=self.get_headers())
+                    if r.status_code == 401:   ## Reauthenticate if token expires early
+                        if sigsci.authenticate():
+                            r = requests.get(url, headers=self.get_headers())
+
+                j = json.loads(r.text)
+
+                if 'message' in j:
+                    raise ValueError(j['message'])
+
+                d = j['data']
+                for x in d:
+                    self.output_results(x)
 
                 next_ref = j['next']
 
@@ -959,9 +1047,11 @@ class SigSciAPI(object):
         utm = None
         self.until_specified = False
 
-        if self.feed or self.timeseries:
+        _feed = True if self.feed is True or self.feed2 is True else False
+
+        if _feed or self.timeseries:
             # if requests feed, take delay into account
-            if self.feed:
+            if _feed:
                 delay = 5
             else:
                 delay = 0
@@ -977,14 +1067,14 @@ class SigSciAPI(object):
                 if self.from_time[-1:].lower() == 'd':
                     minutes = delay
 
-                    if self.feed:
+                    if _feed:
                         # minus 1 minute to ensure from timestamp cannot be older than 24 hours 5 minutes ago
                         minutes = delay - 1
 
                     ftm = now - datetime.timedelta(days=delta_value, minutes=minutes)
                 elif self.from_time[-1].lower() == 'h':
                     minutes = delay
-                    if delta_value == 24 and self.feed:
+                    if delta_value == 24 and _feed:
                         # minus 1 minute to ensure from timestamp cannot be older than 24 hours 5 minutes ago
                         minutes = delay - 1
 
@@ -1097,6 +1187,7 @@ if __name__ == '__main__':
     parser.add_argument('--sort', help='Specify sort order (default: asc).', type=str, default='asc', choices=['desc', 'asc'])
     parser.add_argument('--agents', help='Retrieve agent metrics.', default=False, action='store_true')
     parser.add_argument('--feed', help='Retrieve data feed.', default=False, action='store_true')
+    parser.add_argument('--feed2', help='Retrieve data feed. Version 2', default=False, action='store_true')
     parser.add_argument('--timeseries', help='Retrieve timeseries data.', default=False, action='store_true')
     parser.add_argument('--rollup', help='Rollup interval in seconds for timeseries requests.', default=60)
     parser.add_argument('--list-events', help='List events (flagged IPs).', default=False, action='store_true')
@@ -1166,6 +1257,7 @@ if __name__ == '__main__':
     sigsci.sort = os.environ.get("SIGSCI_SORT") if os.environ.get('SIGSCI_SORT') is not None else SORT
     sigsci.agents = os.environ.get("SIGSCI_AGENTS") if os.environ.get('SIGSCI_AGENTS') is not None else AGENTS
     sigsci.feed = os.environ.get("SIGSCI_FEED") if os.environ.get('SIGSCI_FEED') is not None else FEED
+    sigsci.feed2 = os.environ.get("SIGSCI_FEED2") if os.environ.get('SIGSCI_FEED2') is not None else FEED2
     sigsci.timeseries = os.environ.get("SIGSCI_TIMESERIES") if os.environ.get('SIGSCI_TIMESERIES') is not None else TIMESERIES
     sigsci.rollup = os.environ.get("SIGSCI_ROLLUP") if os.environ.get('SIGSCI_ROLLUP') is not None else ROLLUP
     sigsci.list_events = os.environ.get("SIGSCI_LIST_EVENTS") if os.environ.get('SIGSCI_LIST_EVENTS') is not None else LIST_EVENTS
@@ -1213,6 +1305,7 @@ if __name__ == '__main__':
     sigsci.sort = arguments.sort if arguments.sort is not None else sigsci.sort
     sigsci.agents = arguments.agents if arguments.agents is not None else sigsci.agents
     sigsci.feed = arguments.feed if arguments.feed is not None else sigsci.feed
+    sigsci.feed2 = arguments.feed2 if arguments.feed2 is not None else sigsci.feed2
     sigsci.timeseries = arguments.timeseries if arguments.timeseries is not None else sigsci.timeseries
     sigsci.rollup = arguments.rollup if arguments.rollup is not None else sigsci.rollup
     sigsci.list_events = arguments.list_events if arguments.list_events is not None else sigsci.list_events
@@ -1256,6 +1349,10 @@ if __name__ == '__main__':
         elif sigsci.feed:
             # get feed
             sigsci.get_feed_requests()
+
+        elif sigsci.feed2:
+            # get feed v2
+            sigsci.get_feed_requests2()
 
         elif sigsci.timeseries:
             # get timeseries data
