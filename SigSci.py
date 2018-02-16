@@ -538,13 +538,15 @@ class SigSciAPI(object):
                 try:
                     # try block attempts to handle unexpected connection issues
                     r = requests.get(url, headers=self.get_headers())
-                    if r.status_code == 401:   ## Reauthenticate if token expires early
+                    # Reauthenticate if token expires early
+                    if r.status_code == 401: 
                         if sigsci.authenticate():
                             r = requests.get(url, headers=self.get_headers())
                 except Exception as e:
                     # try again
                     r = requests.get(url, headers=self.get_headers())
-                    if r.status_code == 401:   ## Reauthenticate if token expires early
+                    # Reauthenticate if token expires early
+                    if r.status_code == 401:
                         if sigsci.authenticate():
                             r = requests.get(url, headers=self.get_headers())
 
