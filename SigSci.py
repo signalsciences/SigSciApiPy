@@ -448,7 +448,9 @@ class SigSciAPI(object):
             if 'message' in j:
                 raise ValueError(j['message'])
 
-            self.output_results(j['data'])
+            d = j['data']
+            for x in d:
+                self.output_results(x)
 
             # get all next
             next_ref = j['next']
@@ -467,7 +469,9 @@ class SigSciAPI(object):
                 if 'message' in j:
                     raise ValueError(j['message'])
 
-                self.output_results(j)
+                d = j['data']
+                for x in d:
+                    self.output_results(x)
 
                 next_ref = j['next']
 
