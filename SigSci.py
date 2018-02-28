@@ -143,6 +143,7 @@ class SigSciAPI(object):
     query = 'from:-6h '
     query_params = None
     feed = None
+    feed2 = None
     timeseries = None
     from_time = '-1h'
     until_time = None
