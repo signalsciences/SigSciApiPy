@@ -13,16 +13,19 @@ usage: SigSci.py [-h] [--from  =<value>] [--until =<value>]
                  [--server SERVER] [--ip IP] [--limit LIMIT]
                  [--field {all,totalCount,next,data}] [--file FILE] [--list]
                  [--format {json,csv}] [--pretty] [--sort {desc,asc}]
-                 [--agents] [--feed] [--timeseries] [--rollup ROLLUP]
-                 [--list-events] [--event-by-id =<value>] [--custom-alerts]
-                 [--custom-alerts-add] [--custom-alerts-delete]
-                 [--whitelist-parameters] [--whitelist-parameters-add]
-                 [--whitelist-parameters-delete] [--whitelist-paths]
-                 [--whitelist-paths-add] [--whitelist-paths-delete]
-                 [--whitelist] [--whitelist-add] [--whitelist-delete]
-                 [--blacklist] [--blacklist-add] [--blacklist-delete]
-                 [--redactions] [--redactions-add] [--redactions-delete]
-                 [--integrations] [--headerlinks] [--version]
+                 [--agents] [--feed] [--feed2] [--timeseries]
+                 [--rollup ROLLUP] [--list-events] [--event-by-id =<value>]
+                 [--custom-alerts] [--custom-alerts-add]
+                 [--custom-alerts-delete] [--whitelist-parameters]
+                 [--whitelist-parameters-add] [--whitelist-parameters-delete]
+                 [--whitelist-paths] [--whitelist-paths-add]
+                 [--whitelist-paths-delete] [--whitelist] [--whitelist-add]
+                 [--whitelist-delete] [--blacklist] [--blacklist-add]
+                 [--blacklist-delete] [--request-rules] [--request-rules-add]
+                 [--request-rules-delete] [--signal-rules]
+                 [--signal-rules-add] [--signal-rules-delete] [--redactions]
+                 [--redactions-add] [--redactions-delete] [--integrations]
+                 [--headerlinks] [--version]
 
 Signal Sciences API Client.
 
@@ -37,7 +40,7 @@ optional arguments:
   --server SERVER       Filter results by server name.
   --ip IP               Filter results by remote ip.
   --limit LIMIT         Limit the number of results returned from the server
-                        (default: 1000).
+                        (max: 999).
   --field {all,totalCount,next,data}
                         Specify fields to return (default: data).
   --file FILE           Output results to the specified file.
@@ -47,6 +50,7 @@ optional arguments:
   --sort {desc,asc}     Specify sort order (default: asc).
   --agents              Retrieve agent metrics.
   --feed                Retrieve data feed.
+  --feed2               Retrieve data feed. Version 2
   --timeseries          Retrieve timeseries data.
   --rollup ROLLUP       Rollup interval in seconds for timeseries requests.
   --list-events         List events (flagged IPs).
@@ -73,6 +77,14 @@ optional arguments:
   --blacklist           Retrieve IP blacklist.
   --blacklist-add       Add to IP blacklist.
   --blacklist-delete    Delete IP blacklist.
+  --request-rules       Retrieve request rules.
+  --request-rules-add   Add request rules.
+  --request-rules-delete
+                        Delete request rules.
+  --signal-rules        Retrieve signal rules.
+  --signal-rules-add    Add signal rules.
+  --signal-rules-delete
+                        Delete signal rules.
   --redactions          Retrieve redactions.
   --redactions-add      Add to redactions.
   --redactions-delete   Delete redactions.
