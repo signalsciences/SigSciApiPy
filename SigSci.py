@@ -827,17 +827,17 @@ class SigSciAPI(object):
         # /corps/{corpName}/sites/{siteName}/alerts/{alertID}
         self.delete_configuration(self.ALERTS_EP)
 
-    def get_advanced_rules(self):
+    def get_custom_rules(self):
         # WARNING: This is an undocumented endpoint. No support provided, and the endpoint may change.
         # /corps/{corpName}/sites/{siteName}/advancedRules
         self.get_configuration(self.RULES_EP)
 
-    def post_advanced_rules(self):
+    def post_custom_rules(self):
         # WARNING: This is an undocumented endpoint. No support provided, and the endpoint may change.
         # /corps/{corpName}/sites/{siteName}/advancedRules
         self.post_configuration(self.RULES_EP)
 
-    def delete_advanced_rules(self):
+    def delete_custom_rules(self):
         # WARNING: This is an undocumented endpoint. No support provided, and the endpoint may change.
         # /corps/{corpName}/sites/{siteName}/advancedRules/{ruleID}
         self.delete_configuration(self.RULES_EP)
