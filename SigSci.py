@@ -174,7 +174,7 @@ class SigSciAPI(object):
     AGENTS_EP = '/agents'
     FEED_EP = '/feed/requests'
     ALERTS_EP = '/alerts'
-    RULES_EP = '/rules'
+    RULES_EP = '/advancedRules'
     REQUEST_RULES_EP = '/requestRules'
     SIGNAL_RULES_EP = '/signalRules'
     TAGS_EP = '/tags'
@@ -828,18 +828,18 @@ class SigSciAPI(object):
         self.delete_configuration(self.ALERTS_EP)
 
     def get_custom_rules(self):
-        # https://dashboard.signalsciences.net/documentation/api#_corps__corpName__sites__siteName__rules_get
-        # /corps/{corpName}/sites/{siteName}/rules
+        # WARNING: This is an undocumented endpoint. No support provided, and the endpoint may change.
+        # /corps/{corpName}/sites/{siteName}/advancedRules
         self.get_configuration(self.RULES_EP)
 
     def post_custom_rules(self):
-        # https://dashboard.signalsciences.net/documentation/api#_corps__corpName__sites__siteName__rules_post
-        # /corps/{corpName}/sites/{siteName}/rules
+        # WARNING: This is an undocumented endpoint. No support provided, and the endpoint may change.
+        # /corps/{corpName}/sites/{siteName}/advancedRules
         self.post_configuration(self.RULES_EP)
 
     def delete_custom_rules(self):
-        # https://dashboard.signalsciences.net/documentation/api#_corps__corpName__sites__siteName__rules__ruleID__delete
-        # /corps/{corpName}/sites/{siteName}/rules/{ruleID}
+        # WARNING: This is an undocumented endpoint. No support provided, and the endpoint may change.
+        # /corps/{corpName}/sites/{siteName}/advancedRules/{ruleID}
         self.delete_configuration(self.RULES_EP)
 
     def get_custom_tags(self):
