@@ -54,12 +54,16 @@ SORT = None  # example: SORT = 'asc'
 
 # default for retrieving agent metrics
 AGENTS = False
+# default for retrieving agent timeseries metrics
+AGENT_METRICS = None
 # default for feed requests
 FEED = False
 # default for feed requests version 2
 FEED2 = False
 # default for timeseries
 TIMESERIES = False
+TIMESERIES_AGENTS = False
+AGENT_METRICS = None
 ROLLUP = 60
 # list events
 LIST_EVENTS = False
@@ -145,6 +149,7 @@ class SigSciAPI(object):
     feed = None
     feed2 = None
     timeseries = None
+    timeseries_agents = None
     from_time = '-1h'
     until_time = None
     until_specified = False
@@ -179,6 +184,7 @@ class SigSciAPI(object):
     SIGNAL_RULES_EP = '/signalRules'
     TAGS_EP = '/tags'
     TIMESERIES_EP = '/timeseries/requests'
+    TIMESERIES_AGENTS_EP = '/timeseries/agents'
     EVENTS_EP = '/events'
     WLPARAMS_EP = '/paramwhitelist'
     WLPATHS_EP = '/pathwhitelist'
@@ -611,6 +617,64 @@ class SigSciAPI(object):
             print('Error: %s ' % str(e))
             print('Query: %s ' % url)
             sys.exit()
+
+    def get_timeseries_agents(self, agent_name):
+        """
+        SigSciAPI.get_timeseries_agents()
+        NOTE: This is currently limited to per_hour transforms in csv output only
+        Before calling, set:
+            (Required):
+                SigSciAPI.corp
+                SigSciAPI.site
+
+            (Optional):
+                SigSciAPI.from_time
+                SigSciAPI.until_time
+                SigSciAPI.file
+                SigSciAPI.format
+
+        """
+        # TODO: User Beware! Undocumented API endpoint....https://media3.giphy.com/media/eUgMrlVxAv5x6/200_s.gif
+        # https://dashboard.signalsciences.net/documentation/api#_corps__corpName__sites__siteName__timeseries_requests_get
+        # /corps/{corpName}/sites/{siteName}/timeseries/agents
+        metrics =['requests.total', 'runtime.mem_size', 'agent.connections_open',
+                    'agent.connections_total', 'agent.connections_dropped', 'host.clock_skew',
+                    'agent.uptime', 'agent.decision_time_50th', 'agent.decision_time_95th',
+                    'agent.decision_time_99th', 'host.cpu', 'host.agent_cpu',
+                    'agent.request_size', 'requests.uploaded', 'requests.after_cleanup',
+                    'requests.after_sampling', 'requests.after_validation', 'runtime.num_goroutines',
+                    'agent.rpc_prerequest', 'agent.rpc_updaterequest', 'agent.rpc_postrequest',
+                    'runtime.num_gc', 'agent.upload_metadata_failures', 'agent.rule_updates',
+                    'runtime.gc_pause_millis', 'agent.missed_update_request', 'agent.latency_time_50th',
+                    'agent.latency_time_95th', 'agent.latency_time_99th', 'requests.total',
+                    'agent.connections_open', 'runtime.mem_size']
+        try:
+            self.query_params = '?metric={}'.format('&metric='.join([metric for metric in metrics]))
+            self.query_params += '&agent={}'.format(agent_name)
+            # TODO: Add dynamic transform and format options here
+            self.query_params += '&transform=per_hour&format=csv'
+
+            if self.from_time is not None:
+                self.query_params += '&from={}'.format(str(self.from_time))
+
+            if self.until_time is not None:
+                self.query_params += '&until={}'.format(str(self.until_time))
+
+            url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.TIMESERIES_AGENTS_EP + self.query_params
+            r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
+                
+            try:
+                j = json.loads(r.text)
+                print('API response error: {}'.format(j['message']))
+                quit()
+            except:
+                pass
+            self.csv_out(r.text)
+
+        except Exception as e:
+            print('Error: %s ' % str(e))
+            print('Query: %s ' % url)
+            quit()
 
     def get_list_events(self, tag=None):
         """
@@ -1055,6 +1119,21 @@ class SigSciAPI(object):
 
         elif self.format == 'csv':
             print("CSV output not available for this request.")
+    
+    def csv_out(self, j):
+        if 'message' in j:
+            raise ValueError(j['message'])
+
+        if self.format == 'csv':
+            if not self.file:
+                print(j)
+            else:
+                csvwriter = csv.writer(open(self.file, "a"))
+                c = csv.reader(j.splitlines())
+                csvwriter.writerows(c)
+                
+        elif self.format == 'json':
+            print("JSON output is not supported for this request, please use CSV.")
 
     def parse_init_time(self):
         # parse from/until time
@@ -1205,6 +1284,8 @@ if __name__ == '__main__':
     parser.add_argument('--feed', help='Retrieve data feed.', default=False, action='store_true')
     parser.add_argument('--feed2', help='Retrieve data feed. Version 2', default=False, action='store_true')
     parser.add_argument('--timeseries', help='Retrieve timeseries data.', default=False, action='store_true')
+    parser.add_argument('--agent-metrics', help='Retrieve timeseries metrics for specified agent.', default=None)
+    parser.add_argument('--timeseries-agents', help='Retrieve timeseries agent data.', default=False, action='store_true')
     parser.add_argument('--rollup', help='Rollup interval in seconds for timeseries requests.', default=60)
     parser.add_argument('--list-events', help='List events (flagged IPs).', default=False, action='store_true')
     parser.add_argument('--event-by-id', help='Get an event by event ID.', type=str, default=None, dest='event_by_id', metavar='=<value>')
@@ -1275,6 +1356,8 @@ if __name__ == '__main__':
     sigsci.feed = os.environ.get("SIGSCI_FEED") if os.environ.get('SIGSCI_FEED') is not None else FEED
     sigsci.feed2 = os.environ.get("SIGSCI_FEED2") if os.environ.get('SIGSCI_FEED2') is not None else FEED2
     sigsci.timeseries = os.environ.get("SIGSCI_TIMESERIES") if os.environ.get('SIGSCI_TIMESERIES') is not None else TIMESERIES
+    sigsci.timeseries_agents = os.environ.get("SIGSCI_TIMESERIES_AGENTS") if os.environ.get('SIGSCI_TIMESERIES_AGENTS') is not None else TIMESERIES_AGENTS
+    sigsci.agent_metrics = os.environ.get("SIGSCI_AGENT_METRICS") if os.environ.get('SIGSCI_AGENT_METRICS') is not None else AGENT_METRICS
     sigsci.rollup = os.environ.get("SIGSCI_ROLLUP") if os.environ.get('SIGSCI_ROLLUP') is not None else ROLLUP
     sigsci.list_events = os.environ.get("SIGSCI_LIST_EVENTS") if os.environ.get('SIGSCI_LIST_EVENTS') is not None else LIST_EVENTS
     sigsci.event_by_id = os.environ.get("SIGSCI_EVENT_BY_ID") if os.environ.get('SIGSCI_EVENT_BY_ID') is not None else EVENT_BY_ID
@@ -1323,6 +1406,8 @@ if __name__ == '__main__':
     sigsci.feed = arguments.feed if arguments.feed is not None else sigsci.feed
     sigsci.feed2 = arguments.feed2 if arguments.feed2 is not None else sigsci.feed2
     sigsci.timeseries = arguments.timeseries if arguments.timeseries is not None else sigsci.timeseries
+    sigsci.timeseries_agents = arguments.timeseries_agents if arguments.timeseries_agents is not None else sigsci.timeseries_agents
+    sigsci.agent_metrics = arguments.agent_metrics if arguments.agent_metrics is not None else sigsci.agent_metrics
     sigsci.rollup = arguments.rollup if arguments.rollup is not None else sigsci.rollup
     sigsci.list_events = arguments.list_events if arguments.list_events is not None else sigsci.list_events
     sigsci.event_by_id = arguments.event_by_id if arguments.event_by_id is not None else sigsci.event_by_id
@@ -1378,6 +1463,10 @@ if __name__ == '__main__':
 
             else:
                 print('The timeseries option requires at least one tag, use the --tags option.')
+
+        elif sigsci.timeseries_agents:
+            # get timeseries agents data
+            sigsci.get_timeseries_agents()
 
         elif sigsci.list_events:
             # get event data
