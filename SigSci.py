@@ -1238,10 +1238,14 @@ if __name__ == '__main__':
 
     # first get configuration, environment variables (if set) override
     # settings specified at the beginning of this script.
-    if os.environ.get('SIGSCI_EMAIL') is not None: sigsci.email = os.environ.get('SIGSCI_EMAIL')
-    if os.environ.get('SIGSCI_PASSWORD') is not None: sigsci.pword = os.environ.get("SIGSCI_PASSWORD")
-    if os.environ.get('SIGSCI_CORP') is not None: sigsci.corp = os.environ.get("SIGSCI_CORP")
-    if os.environ.get('SIGSCI_SITE') is not None: sigsci.site = os.environ.get("SIGSCI_SITE")
+    if os.environ.get('SIGSCI_EMAIL') is not None:
+        sigsci.email = os.environ.get('SIGSCI_EMAIL')
+    if os.environ.get('SIGSCI_PASSWORD') is not None:
+        sigsci.pword = os.environ.get("SIGSCI_PASSWORD")
+    if os.environ.get('SIGSCI_CORP') is not None:
+        sigsci.corp = os.environ.get("SIGSCI_CORP")
+    if os.environ.get('SIGSCI_SITE') is not None:
+        sigsci.site = os.environ.get("SIGSCI_SITE")
     sigsci.from_time = os.environ.get("SIGSCI_FROM") if os.environ.get('SIGSCI_FROM') is not None else FROM
     sigsci.until_time = os.environ.get("SIGSCI_UNTIL") if os.environ.get('SIGSCI_UNTIL') is not None else UNTIL
     sigsci.tags = os.environ.get("SIGSCI_TAGS") if os.environ.get('SIGSCI_TAGS') is not None else TAGS
