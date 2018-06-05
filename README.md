@@ -106,27 +106,16 @@ export SIGSCI_CORP=<Corp Name>
 export SIGSCI_SITE=<Site Name>
 ```
 
-#### Authenticate Using Script Variables
+#### Authenticate Using Configuration File
 
-Edit SigSci.py by setting the following variables in the configuration section of the script:
+You can specify a configuration file with the `--config` option. See [example configuration file](example.conf).
 
 ```
-...
-#### Configuration Section ################
-EMAIL    = '' # The email address associated with your
-              # Signal Sciences account, e.g. user@yourdomain.com
-
-PASSWORD = '' # The password associated with your Signal Sciences account.
-
-# Your CORP and SITE can be found by logging
-# into the Signal Sciences Dashboard. The URL 
-# for the overview page contains these values.
-# Example:
-# https://dashboard.signalsciences.net/<CORP>/<SITE>
-#
-CORP = ''
-SITE = ''
-...
+[sigsci]
+email=<API User Email>
+password=<API User Password>
+corp=<Corp Name>
+site=<Site Name>
 ```
 
 ### Example Command Line Usage
