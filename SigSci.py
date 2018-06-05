@@ -13,6 +13,7 @@ import json
 import os
 import sys
 import math
+import ConfigParser
 from builtins import str
 
 import requests
@@ -1188,6 +1189,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Signal Sciences API Client.', prefix_chars='--')
 
+    parser.add_argument('--config', help='Configuration file.', type=str, default=None)
     parser.add_argument('--from', help='Filter results from a specified time.', dest='from_time', metavar=' =<value>', type=str, default=None)
     parser.add_argument('--until', help='Filter results until a specified time.', dest='until_time', metavar='=<value>')
     parser.add_argument('--tags', help='Filter results on one or more tags.', nargs='*')
@@ -1352,6 +1354,19 @@ if __name__ == '__main__':
     sigsci.redactions_delete = arguments.redactions_delete if arguments.redactions_delete is not None else sigsci.redactions_delete
     sigsci.integrations = arguments.integrations if arguments.integrations is not None else sigsci.integrations
     sigsci.headerlinks = arguments.headerlinks if arguments.headerlinks is not None else sigsci.headerlinks
+
+    # if using configuration file
+    if arguments.config is not None:
+        if not os.path.isfile(arguments.config):
+            sys.exit('Configuration file not found!')
+
+        agent_config_file = ConfigParser.ConfigParser()
+        agent_config_file.read(arguments.config)
+
+        sigsci.email = agent_config_file.get('sigsci', 'email')
+        sigsci.pword = agent_config_file.get('sigsci', 'password')
+        sigsci.corp = agent_config_file.get('sigsci', 'corp')
+        sigsci.site = agent_config_file.get('sigsci', 'site')
 
     # authenticate before doing anything.
     if sigsci.authenticate():
