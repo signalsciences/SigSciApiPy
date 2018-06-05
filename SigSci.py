@@ -13,7 +13,7 @@ import json
 import os
 import sys
 import math
-import ConfigParser
+from configparser import ConfigParser
 from builtins import str
 import requests
 
@@ -1350,7 +1350,7 @@ if __name__ == '__main__':
         if not os.path.isfile(arguments.config):
             sys.exit('Configuration file not found!')
 
-        agent_config_file = ConfigParser.ConfigParser()
+        agent_config_file = ConfigParser()
         agent_config_file.read(arguments.config)
 
         sigsci.email = agent_config_file.get('sigsci', 'email')
