@@ -6,4 +6,4 @@ mock
 pylint
 requests
 nose
-pycodestyle
+pycodestyle==2.3.1
