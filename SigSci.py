@@ -15,26 +15,7 @@ import sys
 import math
 import ConfigParser
 from builtins import str
-
 import requests
-
-# Configuration Section ###################
-
-# The email address associated with your
-# Signal Sciences account, e.g. user@yourdomain.com
-EMAIL = ''
-
-# The password associated with your Signal Sciences account.
-PASSWORD = ''
-
-# Your CORP and SITE can be found by logging
-# into the Signal Sciences Dashboard. The URL
-# for the overview page contains these values.
-# Example:
-# https://dashboard.signalsciences.net/<CORP>/<SITE>
-#
-CORP = ''
-SITE = ''
 
 # API Query settings
 # For help with time search syntax see:
