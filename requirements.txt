@@ -6,3 +6,4 @@ mock
 pylint
 requests
 nose
+pycodestyle
