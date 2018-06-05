@@ -723,7 +723,12 @@ class SigSciAPI(object):
 
     def get_configuration(self, EP):
         try:
+            # default config limit to 100
+            if self.limit is None:
+                self.limit = 100
+
             url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + EP
+            url += '?limit=' + str(self.limit)
             r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
             j = json.loads(r.text)
 
