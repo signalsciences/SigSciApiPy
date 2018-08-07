@@ -89,7 +89,7 @@ HEALTH = False
 sys.dont_write_bytecode = True
 
 
-class SigSciAPI(object):
+class SigSciAPI():
     """
     SigSciAPI()
     Methods:
