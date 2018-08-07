@@ -742,11 +742,6 @@ class SigSciAPI(object):
             print('Query: %s ' % url)
             sys.exit()
 
-        except Exception as e:
-            print('Error: %s ' % str(e))
-            print('Query: %s ' % url)
-            sys.exit()
-
     def post_configuration(self, EP):
         try:
             url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + EP
