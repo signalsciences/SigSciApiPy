@@ -82,6 +82,8 @@ REDACTIONS_DELETE = False
 INTEGRATIONS = False
 # default for headerlinks
 HEADERLINKS = False
+# default for health
+HEALTH = False
 ###########################################
 
 sys.dont_write_bytecode = True
@@ -169,6 +171,7 @@ class SigSciAPI(object):
     REDACTIONS_EP = '/redactions'
     INTEGRATIONS_EP = '/integrations'
     HEADERLINKS_EP = '/headerLinks'
+    HEALTH_EP = '/health'
     CONFIGURED_TEMPLATES_EP = '/configuredtemplates'
 
     def authenticate(self):
@@ -739,6 +742,11 @@ class SigSciAPI(object):
             print('Query: %s ' % url)
             sys.exit()
 
+        except Exception as e:
+            print('Error: %s ' % str(e))
+            print('Query: %s ' % url)
+            sys.exit()
+
     def post_configuration(self, EP):
         try:
             url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + EP
@@ -966,6 +974,25 @@ class SigSciAPI(object):
         # https://docs.signalsciences.net/api/#_corps__corpName__sites__siteName__headerLinks_get
         # /corps/{corpName}/sites/{siteName}/headerLinks
         self.get_configuration(self.HEADERLINKS_EP)
+
+    def get_health(self):
+        # https://docs.signalsciences.net/api/#health
+        # GET /corps/{corpName}/health
+        try:
+            # default config limit to 100
+            if self.limit is None:
+                self.limit = 100
+
+            url = self.base_url + self.CORPS_EP + self.corp + self.HEALTH_EP
+            r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
+            j = json.loads(r.text)
+
+            self.json_out(j)
+
+        except Exception as e:
+            print('Error: %s ' % str(e))
+            print('Query: %s ' % url)
+            sys.exit()
 
     def create_site(self, name, displayName, agentLevel):
         # WARNING: This is an undocumented endpoint. No support provided, and the endpoint may change.
@@ -1222,6 +1249,7 @@ if __name__ == '__main__':
     parser.add_argument('--redactions-delete', help='Delete redactions.', default=False, action='store_true')
     parser.add_argument('--integrations', help='Retrieve integrations.', default=False, action='store_true')
     parser.add_argument('--headerlinks', help='Retrieve headerlinks.', default=False, action='store_true')
+    parser.add_argument('--health', help='Retrieve health check data.', default=False, action='store_true')
     parser.add_argument('--version', help='Display version.', default=False, action='store_true')
 
     arguments = parser.parse_args()
@@ -1296,6 +1324,7 @@ if __name__ == '__main__':
     sigsci.redactions_delete = os.environ.get("SIGSCI_REDACTIONS_DELETE") if os.environ.get('SIGSCI_REDACTIONS_DELETE') is not None else REDACTIONS_DELETE
     sigsci.integrations = os.environ.get("SIGSCI_INTEGRATIONS") if os.environ.get('SIGSCI_INTEGRATIONS') is not None else INTEGRATIONS
     sigsci.headerlinks = os.environ.get("SIGSCI_HEADERLINKS") if os.environ.get('SIGSCI_HEADERLINKS') is not None else HEADERLINKS
+    sigsci.health = os.environ.get("SIGSCI_HEALTH") if os.environ.get('SIGSCI_HEALTH') is not None else HEALTH
 
     # if command line arguments exist then override any previously set values.
     # note: there is no command line argument for EMAIL, PASSWORD, CORP, or SITE.
@@ -1344,6 +1373,7 @@ if __name__ == '__main__':
     sigsci.redactions_delete = arguments.redactions_delete if arguments.redactions_delete is not None else sigsci.redactions_delete
     sigsci.integrations = arguments.integrations if arguments.integrations is not None else sigsci.integrations
     sigsci.headerlinks = arguments.headerlinks if arguments.headerlinks is not None else sigsci.headerlinks
+    sigsci.health = arguments.health if arguments.health is not None else sigsci.health
 
     # if using configuration file
     if arguments.config is not None:
@@ -1567,6 +1597,10 @@ if __name__ == '__main__':
         elif sigsci.headerlinks:
             # get headerlinks
             sigsci.get_headerlinks()
+
+        elif sigsci.health:
+            # get health
+            sigsci.get_health()
 
         else:
             # verify provided tags are supported tags
