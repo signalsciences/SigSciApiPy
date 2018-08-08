@@ -244,6 +244,9 @@ class SigSciAPI():
         if self.ip is not None:
             self.query += 'ip:%s ' % str(self.ip)
 
+        if self.agent_code is not None:
+            self.query += 'agentcode:%s ' % str(self.agent_code)
+
         if self.tags is not None:
             for tag in self.tags:
                 if tag.startswith('-'):
@@ -257,9 +260,6 @@ class SigSciAPI():
                     self.query += '-tag:{} '.format(tag.replace('-', ''))
                 else:
                     self.query += 'tag:{} '.format(tag)
-
-        if self.agent_code is not None:
-            self.query += 'agentcode:%s ' % str(self.agent_code)
 
         # force sort time-asc so we can properly capture last_epoch
         self.query += 'sort:time-asc'
@@ -1162,7 +1162,7 @@ class SigSciAPI():
     def to_epoch(now, value):
         epoch = None
 
-        if value.startswith('-'):
+        if str(value).startswith('-'):
             delta_value = int(value[1:-1])
 
             if value[-1:].lower() == 'd':
