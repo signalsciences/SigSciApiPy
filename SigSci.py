@@ -138,6 +138,7 @@ class SigSciAPI():
     server = None
     ip = None
     limit = 999
+    agent_code = None
     field = 'data'
     file = None
     format = 'json'
