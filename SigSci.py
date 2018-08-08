@@ -27,6 +27,7 @@ CTAGS = None  # example: CTAGS = 'bad-bot failed-login'
 SERVER = None  # example: SERVER = 'example.com'
 IP = None  # example: IP = '66.228.162.36'
 LIMIT = None  # example: LIMIT = 250
+AGENT_CODE = None  # example: 200
 FIELD = None  # example: FIELD = 'all'
 FILE = None  # example: FILE = '/tmp/sigsci.json'
 FORMAT = None  # example: FORMAT = 'csv'
@@ -255,6 +256,9 @@ class SigSciAPI():
                     self.query += '-tag:{} '.format(tag.replace('-', ''))
                 else:
                     self.query += 'tag:{} '.format(tag)
+
+        if self.agent_code is not None:
+            self.query += 'agentcode:%s ' % str(self.agent_code)
 
         # force sort time-asc so we can properly capture last_epoch
         self.query += 'sort:time-asc'
@@ -1205,6 +1209,7 @@ if __name__ == '__main__':
     parser.add_argument('--server', help='Filter results by server name.', default=None)
     parser.add_argument('--ip', help='Filter results by remote ip.', default=None)
     parser.add_argument('--limit', help='Limit the number of results returned from the server (max: 999).', type=int, default=None)
+    parser.add_argument('--agent-code', help='Filter results by agent code', type=int, default=None)
     parser.add_argument('--field', help='Specify fields to return (default: data).', type=str, default='data', choices=['all', 'totalCount', 'next', 'data'])
     parser.add_argument('--file', help='Output results to the specified file.', type=str, default=None)
     parser.add_argument('--list', help='List all supported tags', default=False, action='store_true')
@@ -1281,6 +1286,7 @@ if __name__ == '__main__':
     sigsci.server = os.environ.get("SIGSCI_SERVER") if os.environ.get('SIGSCI_SERVER') is not None else SERVER
     sigsci.ip = os.environ.get("SIGSCI_IP") if os.environ.get('SIGSCI_IP') is not None else IP
     sigsci.limit = os.environ.get("SIGSCI_LIMIT") if os.environ.get('SIGSCI_LIMIT') is not None else LIMIT
+    sigsci.agent_code = os.environ.get("SIGSCI_AGENT_CODE") if os.environ.get('SIGSCI_AGENT_CODE') is not None else AGENT_CODE
     sigsci.field = os.environ.get("SIGSCI_FIELD") if os.environ.get('SIGSCI_FIELD') is not None else FIELD
     sigsci.file = os.environ.get("SIGSCI_FILE") if os.environ.get('SIGSCI_FILE') is not None else FILE
     sigsci.format = os.environ.get("SIGSCI_FORMAT") if os.environ.get('SIGSCI_FORMAT') is not None else FORMAT
@@ -1330,6 +1336,7 @@ if __name__ == '__main__':
     sigsci.server = arguments.server if arguments.server is not None else sigsci.server
     sigsci.ip = arguments.ip if arguments.ip is not None else sigsci.ip
     sigsci.limit = arguments.limit if arguments.limit is not None else sigsci.limit
+    sigsci.agent_code = arguments.agent_code if arguments.agent_code is not None else sigsci.agent_code
     sigsci.field = arguments.field if arguments.field is not None else sigsci.field
     sigsci.file = arguments.file if arguments.file is not None else sigsci.file
     sigsci.format = arguments.format if arguments.format is not None else sigsci.format
