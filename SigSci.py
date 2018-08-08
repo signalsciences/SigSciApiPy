@@ -1209,7 +1209,7 @@ if __name__ == '__main__':
     parser.add_argument('--server', help='Filter results by server name.', default=None)
     parser.add_argument('--ip', help='Filter results by remote ip.', default=None)
     parser.add_argument('--limit', help='Limit the number of results returned from the server (max: 999).', type=int, default=None)
-    parser.add_argument('--agent-code', help='Filter results by agent code', type=int, default=None)
+    parser.add_argument('--agent-code', help='Filter results by agent code', type=str, default=None)
     parser.add_argument('--field', help='Specify fields to return (default: data).', type=str, default='data', choices=['all', 'totalCount', 'next', 'data'])
     parser.add_argument('--file', help='Output results to the specified file.', type=str, default=None)
     parser.add_argument('--list', help='List all supported tags', default=False, action='store_true')
