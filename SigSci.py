@@ -83,6 +83,10 @@ REDACTIONS_DELETE = False
 INTEGRATIONS = False
 # default for headerlinks
 HEADERLINKS = False
+# default for members
+MEMBERS = False
+MEMBERS_ADD = False
+MEMBERS_DELETE = False
 # default for health
 HEALTH = False
 ###########################################
@@ -173,6 +177,7 @@ class SigSciAPI():
     REDACTIONS_EP = '/redactions'
     INTEGRATIONS_EP = '/integrations'
     HEADERLINKS_EP = '/headerLinks'
+    MEMBERS_EP = '/members'
     HEALTH_EP = '/health'
     CONFIGURED_TEMPLATES_EP = '/configuredtemplates'
 
@@ -724,6 +729,12 @@ class SigSciAPI():
     def get_members(self):
         url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.MEMBERS_EP
         return self.get_list(url)
+
+    def post_member(self, email):
+        # https://docs.signalsciences.net/api/#_corps__corpName__sites__siteName__members__siteMemberEmail__invite_post
+        # POST /corps/{corpName}/sites/{siteName}/members/{siteMemberEmail}/invite
+        endpoint = '{}/{}/invite'.format(self.MEMBERS_EP, email)
+        self.post_configuration(endpoint)
 
     def get_users(self):
         url = self.base_url + self.CORPS_EP + self.corp + self.USERS_EP
