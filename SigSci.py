@@ -167,6 +167,7 @@ class SigSciAPI():
     RULES_EP = '/advancedRules'
     REQUEST_RULES_EP = '/requestRules'
     SIGNAL_RULES_EP = '/signalRules'
+    RULE_LISTS_EP = '/lists'
     TAGS_EP = '/tags'
     TIMESERIES_EP = '/timeseries/requests'
     EVENTS_EP = '/events'
@@ -842,6 +843,16 @@ class SigSciAPI():
         # WARNING: This is an undocumented endpoint. No support provided, and the endpoint may change.
         # /corps/{corpName}/sites/{siteName}/advancedRules
         self.post_configuration(self.RULES_EP)
+
+    def get_rule_lists(self):
+        # WARNING: This is an undocumented endpoint. No support provided, and the endpoint may change.
+        # /corps/{corpName}/sites/{siteName}/lists
+        self.get_configuration(self.RULE_LISTS_EP)
+
+    def post_rule_lists(self):
+        # WARNING: This is an undocumented endpoint. No support provided, and the endpoint may change.
+        # /corps/{corpName}/sites/{siteName}/lists
+        self.post_configuration(self.RULE_LISTS_EP)
 
     def delete_custom_rules(self):
         # WARNING: This is an undocumented endpoint. No support provided, and the endpoint may change.
