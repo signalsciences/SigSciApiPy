@@ -8,6 +8,7 @@ from __future__ import print_function
 import argparse
 import csv
 import datetime
+import time
 import calendar
 import json
 import os
@@ -41,6 +42,9 @@ AGENTS = False
 FEED = False
 # default for feed requests version 2
 FEED2 = False
+# defaults for polling
+POLL_REQUESTS = False
+POLL_EVENTS = False
 # default for timeseries
 TIMESERIES = False
 ROLLUP = 60
@@ -561,6 +565,171 @@ class SigSciAPI():
         except Exception as e:
             print('Error: %s ' % str(e))
             print('Query: %s ' % url)
+
+    def poll_req_continuously(self):
+        """
+        SigSciAPI.poll_req_continuously()
+
+        Polling with Version 2 of Feed Output
+
+        Before calling, set:
+            (Required):
+                SigSciAPI.corp
+                SigSciAPI.site
+
+        """
+
+        prev_set = {}
+        curr_set = {}
+        try:
+            while True:
+                # https://dashboard.signalsciences.net/documentation/api#_corps__corpName__sites__siteName__feed_requests_get
+                # /corps/{corpName}/sites/{siteName}/feed/requests
+                self.from_time = '-7m'
+                self.until_time = '-5m'
+                self.parse_init_time()
+                self.query_params = 'from=%s' % str(self.from_time)
+                self.query_params += '&until=%s' % str(self.until_time)
+
+                url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.FEED_EP + '?' + str(self.query_params).strip()
+
+                try:
+                    # try block attempts to handle unexpected connection issues
+                    r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
+                    # Reauthenticate if token expires early
+                    if r.status_code == 401:
+                        if sigsci.authenticate():
+                            r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
+                except Exception as e:
+                    # try again
+                    r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
+                    # Reauthenticate if token expires early
+                    if r.status_code == 401:
+                        if sigsci.authenticate():
+                            r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
+
+                j = json.loads(r.text)
+
+                if 'message' in j:
+                    raise ValueError(j['message'])
+
+                d = j['data']
+                for x in d:
+                    curr_set[x['id']] = x
+
+                # get all next
+                next_ref = j['next']
+                while next_ref['uri'].strip() != '':
+                    url = self.base + next_ref['uri']
+
+                    try:
+                        # try block attempts to handle unexpected connection issues
+                        r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
+                        # Reauthenticate if token expires early
+                        if r.status_code == 401:
+                            if sigsci.authenticate():
+                                r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
+                    except Exception as e:
+                        # try again
+                        r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
+                        # Reauthenticate if token expires early
+                        if r.status_code == 401:
+                            if sigsci.authenticate():
+                                r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
+
+                    j = json.loads(r.text)
+
+                    if 'message' in j:
+                        raise ValueError(j['message'])
+
+                    d = j['data']
+                    for x in d:
+                        curr_set[x['id']] = x
+
+                    next_ref = j['next']
+
+                for id in curr_set:
+                    if id not in prev_set:
+                        # we've haven't seen this request, output it
+                        self.output_results(curr_set[id])
+
+                # swap curr to prev
+                prev_set = curr_set
+                curr_set = {}
+
+                time.sleep(60)
+
+        except Exception as e:
+            print('Error: %s ' % str(e))
+            print('Query: %s ' % url)
+            sys.exit()
+
+    def poll_ev_continuously(self):
+        """
+        SigSciAPI.poll_ev_continuously()
+
+        Polling events
+
+        Before calling, set:
+            (Required):
+                SigSciAPI.corp
+                SigSciAPI.site
+
+        """
+
+        prev_set = {}
+        curr_set = {}
+        try:
+            while True:
+                self.from_time = '-7m'
+                self.until_time = '-5m'
+                self.parse_init_time()
+                query_params = '?limit=1000'
+                query_params += '&from=%s' % str(self.from_time)
+                query_params += '&until=%s' % str(self.until_time)
+
+                url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.EVENTS_EP + query_params
+
+                try:
+                    # try block attempts to handle unexpected connection issues
+                    r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
+                    # Reauthenticate if token expires early
+                    if r.status_code == 401:
+                        if sigsci.authenticate():
+                            r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
+                except Exception as e:
+                    # try again
+                    r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
+                    # Reauthenticate if token expires early
+                    if r.status_code == 401:
+                        if sigsci.authenticate():
+                            r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
+
+                j = json.loads(r.text)
+
+                if 'message' in j:
+                    raise ValueError(j['message'])
+
+                d = j['data']
+                for x in d:
+                    curr_set[x['id']] = x
+
+                for id in curr_set:
+                    if id not in prev_set:
+                        # we've haven't seen this event, output it
+                        self.output_results(curr_set[id])
+
+                # swap curr to prev
+                prev_set = curr_set
+                curr_set = {}
+
+                time.sleep(60)
+
+        except Exception as e:
+            print('Error: %s ' % str(e))
+            print('Query: %s ' % url)
+            sys.exit()
+
 
     def get_timeseries(self, tags, rollup=60):
         """
@@ -1242,6 +1411,8 @@ if __name__ == '__main__':
     parser.add_argument('--agents', help='Retrieve agent metrics.', default=False, action='store_true')
     parser.add_argument('--feed', help='Retrieve data feed.', default=False, action='store_true')
     parser.add_argument('--feed2', help='Retrieve data feed. Version 2', default=False, action='store_true')
+    parser.add_argument('--poll-requests', help='Poll continuously for request data.', default=False, action='store_true')
+    parser.add_argument('--poll-events', help='Poll continuously for event data.', default=False, action='store_true')
     parser.add_argument('--timeseries', help='Retrieve timeseries data.', default=False, action='store_true')
     parser.add_argument('--rollup', help='Rollup interval in seconds for timeseries requests.', default=60)
     parser.add_argument('--list-events', help='List events (flagged IPs).', default=False, action='store_true')
@@ -1318,6 +1489,8 @@ if __name__ == '__main__':
     sigsci.agents = os.environ.get("SIGSCI_AGENTS") if os.environ.get('SIGSCI_AGENTS') is not None else AGENTS
     sigsci.feed = os.environ.get("SIGSCI_FEED") if os.environ.get('SIGSCI_FEED') is not None else FEED
     sigsci.feed2 = os.environ.get("SIGSCI_FEED2") if os.environ.get('SIGSCI_FEED2') is not None else FEED2
+    sigsci.poll_requests = os.environ.get("SIGSCI_POLL_REQUESTS") if os.environ.get('SIGSCI_POLL_REQUESTS') is not None else POLL_REQUESTS
+    sigsci.poll_events = os.environ.get("SIGSCI_POLL_EVENTS") if os.environ.get('SIGSCI_POLL_EVENTS') is not None else POLL_EVENTS
     sigsci.timeseries = os.environ.get("SIGSCI_TIMESERIES") if os.environ.get('SIGSCI_TIMESERIES') is not None else TIMESERIES
     sigsci.rollup = os.environ.get("SIGSCI_ROLLUP") if os.environ.get('SIGSCI_ROLLUP') is not None else ROLLUP
     sigsci.list_events = os.environ.get("SIGSCI_LIST_EVENTS") if os.environ.get('SIGSCI_LIST_EVENTS') is not None else LIST_EVENTS
@@ -1368,6 +1541,8 @@ if __name__ == '__main__':
     sigsci.agents = arguments.agents if arguments.agents is not None else sigsci.agents
     sigsci.feed = arguments.feed if arguments.feed is not None else sigsci.feed
     sigsci.feed2 = arguments.feed2 if arguments.feed2 is not None else sigsci.feed2
+    sigsci.poll_requests = arguments.poll_requests if arguments.poll_requests is not None else sigsci.poll_requests
+    sigsci.poll_events = arguments.poll_events if arguments.poll_events is not None else sigsci.poll_events
     sigsci.timeseries = arguments.timeseries if arguments.timeseries is not None else sigsci.timeseries
     sigsci.rollup = arguments.rollup if arguments.rollup is not None else sigsci.rollup
     sigsci.list_events = arguments.list_events if arguments.list_events is not None else sigsci.list_events
@@ -1433,6 +1608,14 @@ if __name__ == '__main__':
         elif sigsci.feed2:
             # get feed v2
             sigsci.get_feed_requests2()
+
+        elif sigsci.poll_requests:
+            # get continuously updating feed
+            sigsci.poll_req_continuously()
+
+        elif sigsci.poll_events:
+            # get continuously updating feed
+            sigsci.poll_ev_continuously()
 
         elif sigsci.timeseries:
             # get timeseries data
