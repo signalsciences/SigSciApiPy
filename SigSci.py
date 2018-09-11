@@ -730,7 +730,6 @@ class SigSciAPI():
             print('Query: %s ' % url)
             sys.exit()
 
-
     def get_timeseries(self, tags, rollup=60):
         """
         SigSciAPI.get_timeseries(tag, rollup)
