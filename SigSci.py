@@ -180,6 +180,7 @@ class SigSciAPI():
     HEADERLINKS_EP = '/headerLinks'
     MEMBERS_EP = '/members'
     HEALTH_EP = '/health'
+    REPORTS_EP = '/reports/attacks'
     CONFIGURED_TEMPLATES_EP = '/configuredtemplates'
 
     def authenticate(self):
@@ -561,6 +562,21 @@ class SigSciAPI():
         except Exception as e:
             print('Error: %s ' % str(e))
             print('Query: %s ' % url)
+
+    def get_overview_report(self):
+        # https://docs.signalsciences.net/api/#get-overview-report-data
+        # GET /corps/{corpName}/reports/attacks
+        try:
+            url = self.base_url + self.CORPS_EP + self.corp + self.REPORTS_EP
+            r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
+            j = json.loads(r.text)
+
+            self.json_out(j)
+
+        except Exception as e:
+            print('Error: %s ' % str(e))
+            print('Query: %s ' % url)
+            sys.exit()
 
     def get_timeseries(self, tags, rollup=60):
         """
