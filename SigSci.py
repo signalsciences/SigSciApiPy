@@ -1176,6 +1176,11 @@ class SigSciAPI():
         # /corps/{corpName}/sites/{siteName}/redactions
         self.get_configuration(self.INTEGRATIONS_EP)
 
+    def post_integrations(self):
+            # https://docs.signalsciences.net/api/#_corps__corpName__sites__siteName__integrations_post
+            # /corps/{corpName}/sites/{siteName}/integrations
+            self.post_configuration(self.INTEGRATIONS_EP)
+
     def get_headerlinks(self):
         # https://docs.signalsciences.net/api/#_corps__corpName__sites__siteName__headerLinks_get
         # /corps/{corpName}/sites/{siteName}/headerLinks
