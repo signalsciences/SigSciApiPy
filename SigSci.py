@@ -443,7 +443,7 @@ class SigSciAPI():
             try:
                 # try block attempts to handle unexpected connection issues
                 r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
-            except Exception as e:
+            except Exception:
                 # try again
                 r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
 
@@ -462,7 +462,7 @@ class SigSciAPI():
                 try:
                     # try block attempts to handle unexpected connection issues
                     r = requests.get(url, headers=self.get_headers())
-                except Exception as e:
+                except Exception:
                     # try again
                     r = requests.get(url, headers=self.get_headers())
 
@@ -519,7 +519,7 @@ class SigSciAPI():
             try:
                 # try block attempts to handle unexpected connection issues
                 r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
-            except Exception as e:
+            except Exception:
                 # try again
                 r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
 
@@ -544,7 +544,7 @@ class SigSciAPI():
                     if r.status_code == 401:
                         if sigsci.authenticate():
                             r = requests.get(url, headers=self.get_headers())
-                except Exception as e:
+                except Exception:
                     # try again
                     r = requests.get(url, headers=self.get_headers())
                     # Reauthenticate if token expires early
@@ -616,7 +616,7 @@ class SigSciAPI():
                     if r.status_code == 401:
                         if sigsci.authenticate():
                             r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
-                except Exception as e:
+                except Exception:
                     # try again
                     r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
                     # Reauthenticate if token expires early
@@ -645,7 +645,7 @@ class SigSciAPI():
                         if r.status_code == 401:
                             if sigsci.authenticate():
                                 r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
-                    except Exception as e:
+                    except Exception:
                         # try again
                         r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
                         # Reauthenticate if token expires early
@@ -713,7 +713,7 @@ class SigSciAPI():
                     if r.status_code == 401:
                         if sigsci.authenticate():
                             r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
-                except Exception as e:
+                except Exception:
                     # try again
                     r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
                     # Reauthenticate if token expires early
