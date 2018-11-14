@@ -97,7 +97,16 @@ optional arguments:
 
 There are two options for specifying your credentials for authentication:
 
-#### Authenticate Using Environment Variables
+#### Authenticate Using Environment Variables (with API token)
+
+```
+export SIGSCI_EMAIL=<API User Email>
+export SIGSCI_API_TOKEN=<API Token>
+export SIGSCI_CORP=<Corp Name>
+export SIGSCI_SITE=<Site Name>
+```
+
+#### Authenticate Using Environment Variables (without API token)
 
 ```
 export SIGSCI_EMAIL=<API User Email>
@@ -109,6 +118,18 @@ export SIGSCI_SITE=<Site Name>
 #### Authenticate Using Configuration File
 
 You can specify a configuration file with the `--config` option. See [example configuration file](example.conf).
+
+### With API token
+
+```
+[sigsci]
+email=<API User Email>
+api-token =<API Token>
+corp=<Corp Name>
+site=<Site Name>
+```
+
+### Without API token
 
 ```
 [sigsci]
