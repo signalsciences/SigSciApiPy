@@ -98,6 +98,11 @@ HEALTH = False
 sys.dont_write_bytecode = True
 
 
+class Authn:
+    def __init__(self):
+        self.cookies = {}
+
+
 class SigSciAPI():
     """
     SigSciAPI()
@@ -131,6 +136,7 @@ class SigSciAPI():
     token = None
     email = None
     pword = None
+    api_token = None
     corp = None
     site = None
     query = 'from:-6h '
@@ -193,15 +199,20 @@ class SigSciAPI():
 
         Before calling, set:
             SigSciAPI.email
-            SigSciAPI.pword
+            SigSciAPI.pword or SigSciAPI.api_token
 
         Stores auth token in:
             SigSciAPI.authn.token
         """
 
-        self.authn = requests.post(self.base_url + self.LOGIN_EP,
-                                   data={'email': self.email, 'password': self.pword},
-                                   allow_redirects=False)
+        if self.api_token is not None:
+            self.authn = Authn()
+            return True
+
+        else:
+            self.authn = requests.post(self.base_url + self.LOGIN_EP,
+                                       data={'email': self.email, 'password': self.pword},
+                                       allow_redirects=False)
 
         if self.authn.status_code == 401:
             print(self.authn.json()['message'])
@@ -221,6 +232,10 @@ class SigSciAPI():
 
         if self.token is not None:
             headers['Authorization'] = 'Bearer %s' % self.token
+
+        if self.api_token is not None:
+            headers['X-Api-User'] = self.email
+            headers['X-Api-Token'] = self.api_token
 
         if self.xheaders:
             headers.update(self.xheaders)
@@ -1489,6 +1504,8 @@ if __name__ == '__main__':
         sigsci.email = os.environ.get('SIGSCI_EMAIL')
     if os.environ.get('SIGSCI_PASSWORD') is not None:
         sigsci.pword = os.environ.get("SIGSCI_PASSWORD")
+    if os.environ.get('SIGSCI_API_TOKEN') is not None:
+        sigsci.api_token = os.environ.get("SIGSCI_API_TOKEN")
     if os.environ.get('SIGSCI_CORP') is not None:
         sigsci.corp = os.environ.get("SIGSCI_CORP")
     if os.environ.get('SIGSCI_SITE') is not None:
@@ -1605,6 +1622,7 @@ if __name__ == '__main__':
 
         sigsci.email = agent_config_file.get('sigsci', 'email')
         sigsci.pword = agent_config_file.get('sigsci', 'password')
+        sigsci.api_token = agent_config_file.get('sigsci', 'api-token')
         sigsci.corp = agent_config_file.get('sigsci', 'corp')
         sigsci.site = agent_config_file.get('sigsci', 'site')
 
