@@ -95,7 +95,7 @@ optional arguments:
 
 ### Authentication
 
-There are two options for specifying your credentials for authentication:
+There are several options for specifying your credentials for authentication. You can set credentails via environment variables or via a configuration file. In addition, you can use API tokens (preferred) or password.
 
 #### Authenticate Using Environment Variables (with API token)
 
