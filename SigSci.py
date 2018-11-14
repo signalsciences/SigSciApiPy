@@ -1621,8 +1621,10 @@ if __name__ == '__main__':
         agent_config_file.read(arguments.config)
 
         sigsci.email = agent_config_file.get('sigsci', 'email')
-        sigsci.pword = agent_config_file.get('sigsci', 'password')
-        sigsci.api_token = agent_config_file.get('sigsci', 'api-token')
+        if agent_config_file.has_option('sigsci', 'password'):
+            sigsci.pword = agent_config_file.get('sigsci', 'password')
+        if agent_config_file.has_option('sigsci', 'api-token'):
+            sigsci.api_token = agent_config_file.get('sigsci', 'api-token')
         sigsci.corp = agent_config_file.get('sigsci', 'corp')
         sigsci.site = agent_config_file.get('sigsci', 'site')
 
