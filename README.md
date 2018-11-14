@@ -97,7 +97,7 @@ optional arguments:
 
 There are several options for specifying your credentials for authentication. You can set credentials via environment variables or via a configuration file. In addition, you can use API tokens (preferred) or password.
 
-Note: if you set values for both API token and password, API token will take precedence.
+Note: If you set values for both API token and password, API token will take precedence.
 
 #### Authenticate Using Environment Variables (with API token)
 
