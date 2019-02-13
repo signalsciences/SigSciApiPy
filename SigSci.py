@@ -1053,6 +1053,11 @@ class SigSciAPI():
         # /corps/{corpName}/sites/{siteName}/lists
         self.post_configuration(self.RULE_LISTS_EP)
 
+    def delete_rule_lists(self):
+        # WARNING: This is an undocumented endpoint. No support provided, and the endpoint may change.
+        # /corps/{corpName}/sites/{siteName}/lists
+        self.delete_configuration(self.RULE_LISTS_EP)
+
     def delete_custom_rules(self):
         # WARNING: This is an undocumented endpoint. No support provided, and the endpoint may change.
         # /corps/{corpName}/sites/{siteName}/advancedRules/{ruleID}
