@@ -188,7 +188,6 @@ class SigSciAPI():
     REDACTIONS_EP = '/redactions'
     INTEGRATIONS_EP = '/integrations'
     HEADERLINKS_EP = '/headerLinks'
-    MEMBERS_EP = '/members'
     HEALTH_EP = '/health'
     REPORTS_EP = '/reports/attacks'
     CONFIGURED_TEMPLATES_EP = '/configuredtemplates'
@@ -929,6 +928,11 @@ class SigSciAPI():
     def get_members(self):
         url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.MEMBERS_EP
         return self.get_list(url)
+
+    def post_members(self):
+        # https://docs.signalsciences.net/api/#_corps__corpName__sites__siteName__members_post
+        # POST /corps/{corpName}/sites/{siteName}/members
+        self.post_configuration(self.MEMBERS_EP)
 
     def post_member(self, email):
         # https://docs.signalsciences.net/api/#_corps__corpName__sites__siteName__members__siteMemberEmail__invite_post
