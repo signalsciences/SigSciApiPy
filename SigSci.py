@@ -419,6 +419,138 @@ class SigSciAPI():
             print('Query: %s ' % url)
             sys.exit()
 
+    def raw_query_api(self, raw_query):
+        """
+        SigSciAPI.raw_query_api()
+        """
+        # https://docs.signalsciences.net/api/#_corps__corpName__sites__siteName__requests_get
+        # /corps/{corpName}/sites/{siteName}/requests
+        try:
+            url = None
+            query_params = raw_query.split(" ")
+            query = ""
+
+            for param in query_params:
+                if param.startswith("from:"):
+                    self.from_time = param.split(":")[1]
+
+                elif param.startswith("until:"):
+                    self.until_time = param.split(":")[1]
+
+                else:
+                    query = "{} ".format(param)
+
+            self.parse_init_time()
+
+            if self.field == 'data':
+                self.limit = 1000
+                last_epoch = 0
+                loop_count = 0
+                get_next = True
+                now = datetime.datetime.utcnow().replace(second=0, microsecond=0)
+                now_epoch = calendar.timegm(now.utctimetuple())
+
+                if self.file is not None:
+                    outfile = open(self.file, 'w')
+
+                    if self.format == 'json':
+                        outfile.write('[')
+
+                while last_epoch <= self.until_time and get_next:
+                    self.build_search_query()
+                    print(self.query)
+                    url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.REQEUSTS_EP + '?q=' + str("{} {}".format(self.query, query)).strip()
+
+                    if self.limit is not None:
+                        url += '&limit=' + str(self.limit)
+
+                    r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
+                    j = json.loads(r.text)
+
+                    # check for API call error
+                    if 'message' in j:
+                        raise ValueError(j['message'])
+
+                    # get timestamp of last record
+                    record_count = 0
+
+                    for record in j['data']:
+                        record_count += 1
+                        last_timestamp = datetime.datetime.strptime(record['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
+                        last_epoch = calendar.timegm(last_timestamp.utctimetuple())
+
+                        # output to file or stdout
+                        if self.format == 'json':
+                            if loop_count == 0:
+                                if self.file is not None:
+                                    outfile.write('{}'.format(json.dumps(record)))
+                                else:
+                                    print('{}'.format(json.dumps(record)))
+                            else:
+                                if self.file is not None:
+                                    outfile.write(',{}'.format(json.dumps(record)))
+                                else:
+                                    print(',{}'.format(json.dumps(record)))
+                        elif self.format == 'csv':
+                            if self.file is not None:
+                                csvwriter = csv.writer(outfile)
+                            else:
+                                csvwriter = csv.writer(sys.stdout)
+
+                            tag_list = ''
+                            detector = record['tags']
+
+                            for t in detector:
+                                tag_list = tag_list + t['type'] + '|'
+
+                            # default, output fields for requests
+                            csvwriter.writerow([str(record['timestamp']), str(record['id']), str(record['remoteIP']), str(record['remoteCountryCode']), str(record['path']).encode('utf8'), str(tag_list[:-1]), str(record['responseCode']), str(record['agentResponseCode'])])
+
+                        else:
+                            print('Error: Invalid output format!')
+
+                        loop_count += 1
+
+                    # set from_time for next iteration
+                    if record_count < 1000:
+                        # shift to next window
+                        self.from_time = int(self.from_time) + (86400 * 7)
+                        self.until_time = int(self.from_time) + (86400 * 7)
+                    else:
+                        self.from_time = last_epoch
+
+                    if self.from_time > self.until_time or self.from_time > now_epoch:
+                        get_next = False
+
+                    # force limit to 1000 on subsequent iterations to reduce the number of api calls
+                    self.limit = 1000
+
+                if self.file is not None:
+                    if self.format == 'json':
+                        outfile.write(']')
+
+                    outfile.close()
+
+            else:
+                print("what")
+                self.build_search_query()
+                print(self.query)
+                url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + self.REQEUSTS_EP + '?q=' + str("{} {}".format(self.query, query)).strip()
+
+                if self.limit is not None:
+                    url += '&limit=' + str(self.limit)
+
+                r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
+                j = json.loads(r.text)
+
+                # output the results
+                self.output_results(j[self.field])
+
+        except Exception as e:
+            print('Error: %s ' % str(e))
+            print('Query: %s ' % url)
+            sys.exit()
+
     def get_feed_requests(self):
         """
         SigSciAPI.get_feed_requests()
