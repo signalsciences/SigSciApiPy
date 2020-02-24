@@ -175,6 +175,7 @@ class SigSciAPI():
     FEED_EP = '/feed/requests'
     ALERTS_EP = '/alerts'
     RULES_EP = '/advancedRules'
+    CORP_REQUEST_RULES_EP = '/rules'
     REQUEST_RULES_EP = '/requestRules'
     SIGNAL_RULES_EP = '/signalRules'
     RULE_LISTS_EP = '/lists'
@@ -1179,10 +1180,18 @@ class SigSciAPI():
         # /corps/{corpName}/sites/{siteName}/advancedRules
         self.post_configuration(self.RULES_EP)
 
+    def get_site_rule_lists(self):
+        # new method name for get_rule_lists()
+        self.get_configuration(self.RULE_LISTS_EP)
+
     def get_rule_lists(self):
         # WARNING: This is an undocumented endpoint. No support provided, and the endpoint may change.
         # /corps/{corpName}/sites/{siteName}/lists
         self.get_configuration(self.RULE_LISTS_EP)
+
+    def post_site_rule_lists(self):
+        # new method name for post_rule_lists()
+        self.post_configuration(self.RULE_LISTS_EP)
 
     def post_rule_lists(self):
         # WARNING: This is an undocumented endpoint. No support provided, and the endpoint may change.
@@ -1199,10 +1208,18 @@ class SigSciAPI():
         # /corps/{corpName}/sites/{siteName}/advancedRules/{ruleID}
         self.delete_configuration(self.RULES_EP)
 
+    def get_site_signals(self):
+        # New method name for get_custom_tags()
+        self.get_configuration(self.TAGS_EP)
+
     def get_custom_tags(self):
         # WARNING: This is an undocumented endpoint. No support provided, and the endpoint may change.
         # /corps/{corpName}/sites/{siteName}/tags
         self.get_configuration(self.TAGS_EP)
+
+    def post_site_signals(self):
+        # New method name for post_custom_tags()
+        self.post_configuration(self.TAGS_EP)
 
     def post_custom_tags(self):
         # WARNING: This is an undocumented endpoint. No support provided, and the endpoint may change.
@@ -1282,10 +1299,26 @@ class SigSciAPI():
         # /corps/{corpName}/sites/{siteName}/blacklist/{source}
         self.delete_configuration(self.BLACKLIST_EP)
 
+    def get_corp_request_rules(self):
+        # /corps/{corpName}/rules
+        self.get_configuration(self.CORP_REQUEST_RULES_EP)
+
+    def post_corp_request_rules(self):
+        # /corps/{corpName}/rules
+        self.post_configuration(self.CORP_REQUEST_RULES_EP)
+
+    def get_site_request_rules(self):
+        # New name for get_request_rules()
+        self.get_configuration(self.REQUEST_RULES_EP)
+
     def get_request_rules(self):
         # WARNING: This is an undocumented endpoint. No support provided, and the endpoint may change.
         # /corps/{corpName}/sites/{siteName}/requestRules
         self.get_configuration(self.REQUEST_RULES_EP)
+
+    def post_site_request_rules(self):
+        # New name for post_site_request_rules()
+        self.post_configuration(self.REQUEST_RULES_EP)
 
     def post_request_rules(self):
         # WARNING: This is an undocumented endpoint. No support provided, and the endpoint may change.
@@ -1297,10 +1330,18 @@ class SigSciAPI():
         # /corps/{corpName}/sites/{siteName}/blacklist/{source}
         self.delete_configuration(self.REQUEST_RULES_EP)
 
+    def get_site_signal_rules(self):
+        # New name for get_signal_rules()
+        self.get_configuration(self.SIGNAL_RULES_EP)
+
     def get_signal_rules(self):
         # WARNING: This is an undocumented endpoint. No support provided, and the endpoint may change.
         # /corps/{corpName}/sites/{siteName}/signalRules
         self.get_configuration(self.SIGNAL_RULES_EP)
+
+    def post_site_signal_rules(self):
+        # New name for post_signal_rules()
+        self.post_configuration(self.SIGNAL_RULES_EP)
 
     def post_signal_rules(self):
         # WARNING: This is an undocumented endpoint. No support provided, and the endpoint may change.
@@ -1772,8 +1813,8 @@ if __name__ == '__main__':
     # authenticate before doing anything.
     if sigsci.authenticate():
         # check if specified file already exist.
-        if sigsci.file is not None and os.path.isfile(sigsci.file):
-            sys.exit('Output file already exists. Delete the existing file or choose a new file name.')
+        #if sigsci.file is not None and os.path.isfile(sigsci.file):
+        #    sys.exit('Output file already exists. Delete the existing file or choose a new file name.')
 
         sigsci.parse_init_time()
 
