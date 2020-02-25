@@ -175,7 +175,7 @@ class SigSciAPI():
     FEED_EP = '/feed/requests'
     ALERTS_EP = '/alerts'
     RULES_EP = '/advancedRules'
-    CORP_REQUEST_RULES_EP = '/rules'
+    CORP_RULES_EP = '/rules'
     REQUEST_RULES_EP = '/requestRules'
     SIGNAL_RULES_EP = '/signalRules'
     RULE_LISTS_EP = '/lists'
@@ -1077,13 +1077,19 @@ class SigSciAPI():
         url = self.base_url + self.CORPS_EP + self.corp + self.USERS_EP
         return self.get_list(url)
 
-    def get_configuration(self, EP):
+    def get_configuration(self, EP, level='site'):
         try:
             # default config limit to 100
             if self.limit is None:
                 self.limit = 100
 
-            url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + EP
+            url = self.base_url + self.CORPS_EP + self.corp
+            
+            if level == 'site':
+                url += self.SITES_EP + self.site
+            
+            url += EP
+
             url += '?limit=' + str(self.limit)
             r = requests.get(url, cookies=self.authn.cookies, headers=self.get_headers())
             j = json.loads(r.text)
@@ -1095,9 +1101,14 @@ class SigSciAPI():
             print('Query: %s ' % url)
             sys.exit()
 
-    def post_configuration(self, EP):
+    def post_configuration(self, EP, level='site'):
         try:
-            url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + EP
+            url = self.base_url + self.CORPS_EP + self.corp
+
+            if level == 'site':
+                url += self.SITES_EP + self.site
+
+            url += EP
 
             with open(self.file) as data_file:
                 data = json.load(data_file)
@@ -1299,13 +1310,13 @@ class SigSciAPI():
         # /corps/{corpName}/sites/{siteName}/blacklist/{source}
         self.delete_configuration(self.BLACKLIST_EP)
 
-    def get_corp_request_rules(self):
+    def get_corp_rules(self):
         # /corps/{corpName}/rules
-        self.get_configuration(self.CORP_REQUEST_RULES_EP)
+        self.get_configuration(self.CORP_RULES_EP, level='corp')
 
-    def post_corp_request_rules(self):
+    def post_corp_rules(self):
         # /corps/{corpName}/rules
-        self.post_configuration(self.CORP_REQUEST_RULES_EP)
+        self.post_configuration(self.CORP_RULES_EP, level='corp')
 
     def get_site_request_rules(self):
         # New name for get_request_rules()
