@@ -178,7 +178,9 @@ class SigSciAPI():
     CORP_RULES_EP = '/rules'
     REQUEST_RULES_EP = '/requestRules'
     SIGNAL_RULES_EP = '/signalRules'
+    CORP_RULE_LISTS_EP = '/lists'
     RULE_LISTS_EP = '/lists'
+    CORP_SIGNALS_EP = '/tags'
     TAGS_EP = '/tags'
     TIMESERIES_EP = '/timeseries/requests'
     EVENTS_EP = '/events'
@@ -1084,10 +1086,10 @@ class SigSciAPI():
                 self.limit = 100
 
             url = self.base_url + self.CORPS_EP + self.corp
-            
+
             if level == 'site':
                 url += self.SITES_EP + self.site
-            
+
             url += EP
 
             url += '?limit=' + str(self.limit)
@@ -1191,6 +1193,10 @@ class SigSciAPI():
         # /corps/{corpName}/sites/{siteName}/advancedRules
         self.post_configuration(self.RULES_EP)
 
+    def get_corp_rule_lists(self):
+        # /corps/{corpName}/lists
+        self.get_configuration(self.CORP_RULE_LISTS_EP, level='corp')
+
     def get_site_rule_lists(self):
         # new method name for get_rule_lists()
         self.get_configuration(self.RULE_LISTS_EP)
@@ -1199,6 +1205,10 @@ class SigSciAPI():
         # WARNING: This is an undocumented endpoint. No support provided, and the endpoint may change.
         # /corps/{corpName}/sites/{siteName}/lists
         self.get_configuration(self.RULE_LISTS_EP)
+
+    def post_corp_rule_lists(self):
+        # /corps/{corpName}/lists
+        self.post_configuration(self.CORP_RULE_LISTS_EP, level='corp')
 
     def post_site_rule_lists(self):
         # new method name for post_rule_lists()
@@ -1219,6 +1229,10 @@ class SigSciAPI():
         # /corps/{corpName}/sites/{siteName}/advancedRules/{ruleID}
         self.delete_configuration(self.RULES_EP)
 
+    def get_corp_signals(self):
+        # /corps/{corpName}/tags
+        self.get_configuration(self.CORP_SIGNALS_EP, level='corp')
+
     def get_site_signals(self):
         # New method name for get_custom_tags()
         self.get_configuration(self.TAGS_EP)
@@ -1227,6 +1241,10 @@ class SigSciAPI():
         # WARNING: This is an undocumented endpoint. No support provided, and the endpoint may change.
         # /corps/{corpName}/sites/{siteName}/tags
         self.get_configuration(self.TAGS_EP)
+
+    def post_corp_signals(self):
+        # /corps/{corpName}/tags
+        self.post_configuration(self.CORP_SIGNALS_EP, level='corp')
 
     def post_site_signals(self):
         # New method name for post_custom_tags()
