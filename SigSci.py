@@ -1241,7 +1241,7 @@ class SigSciAPI():
         # WARNING: This is an undocumented endpoint. No support provided, and the endpoint may change.
         # /corps/{corpName}/sites/{siteName}/advancedRules
         self.post_configuration(self.RULES_EP)
-    
+
     def patch_custom_rules(self):
         # WARNING: This is an undocumented endpoint. No support provided, and the endpoint may change.
         # /corps/{corpName}/sites/{siteName}/advancedRules
@@ -1896,7 +1896,7 @@ if __name__ == '__main__':
     # authenticate before doing anything.
     if sigsci.authenticate():
         # check if specified file already exist.
-        #if sigsci.file is not None and os.path.isfile(sigsci.file):
+        # if sigsci.file is not None and os.path.isfile(sigsci.file):
         #    sys.exit('Output file already exists. Delete the existing file or choose a new file name.')
 
         sigsci.parse_init_time()
