@@ -1151,6 +1151,55 @@ class SigSciAPI():
             print('Query: %s ' % url)
             sys.exit()
 
+    def patch_configuration(self, EP, level='site'):
+        try:
+            url = self.base_url + self.CORPS_EP + self.corp
+
+            if level == 'site':
+                url += self.SITES_EP + self.site
+
+            url += EP
+
+            with open(self.file) as data_file:
+                data = json.load(data_file)
+
+            if 'data' not in data:
+                # no data section, just post as is.
+                r = requests.patch(url, cookies=self.authn.cookies, headers=self.get_headers(), json=data)
+                j = json.loads(r.text)
+
+                if 'message' in j:
+                    print('Data: %s ' % json.dumps(data))
+                    raise ValueError(j['message'])
+            else:
+                for config in data['data']:
+                    if 'created' in config:
+                        del config['created']
+
+                    if 'createdBy' in config:
+                        del config['createdBy']
+
+                    if 'id' in config:
+                        url += '/{}'.format(config['id'])
+                        del config['id']
+
+                    if EP == self.TAGS_EP and 'tagName' in config:
+                        del config['tagName']
+
+                    r = requests.patch(url, cookies=self.authn.cookies, headers=self.get_headers(), json=config)
+                    j = json.loads(r.text)
+
+                    if 'message' in j:
+                        print('Data: %s ' % json.dumps(config))
+                        raise ValueError(j['message'])
+
+            print("Patch complete!")
+
+        except Exception as e:
+            print('Error: %s ' % str(e))
+            print('Query: %s ' % url)
+            sys.exit()
+
     def delete_configuration(self, EP):
         try:
             url = self.base_url + self.CORPS_EP + self.corp + self.SITES_EP + self.site + EP
@@ -1192,6 +1241,11 @@ class SigSciAPI():
         # WARNING: This is an undocumented endpoint. No support provided, and the endpoint may change.
         # /corps/{corpName}/sites/{siteName}/advancedRules
         self.post_configuration(self.RULES_EP)
+    
+    def patch_custom_rules(self):
+        # WARNING: This is an undocumented endpoint. No support provided, and the endpoint may change.
+        # /corps/{corpName}/sites/{siteName}/advancedRules
+        self.patch_configuration(self.RULES_EP)
 
     def get_corp_rule_lists(self):
         # /corps/{corpName}/lists
