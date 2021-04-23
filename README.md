@@ -5,6 +5,16 @@ Sample Signal Sciences Python API Client
 
 This script can be used on the command line to query the Signal Sciences API, or it can be included as a module to query the API in your own Python script.
 
+## :rotating_light: NOTICE :rotating_light:
+
+Effective **May 17th 2021** the default branch will change from `master` to `main`. Run the following commands to update a local clone:
+```
+git branch -m master main
+git fetch origin
+git branch -u origin/main main
+git remote set-head origin -a
+```
+
 ### Command Line Options
 
 ```
